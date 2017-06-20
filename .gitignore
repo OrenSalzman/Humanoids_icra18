@@ -5,11 +5,13 @@
 *.bbl
 *.blg
 *.pptx
-*.pdf
 *.lof
 *.lot
 *.idx
 *.ind
 *.ilg
 *.toc
+*.dvi
+*.gz
 latexSuite*
+main.pdf
