@@ -8,10 +8,11 @@
 \usepackage{xspace}
 \usepackage{scalerel}
 \usepackage{xcolor}
-\usepackage[caption=false,font=footnotesize]{subfig}
+%\usepackage[caption=false,font=footnotesize]{subfig}
 \usepackage[left]{showlabels}
 \usepackage{multicol}
 \usepackage[bookmarks=true]{hyperref}
+\usepackage{graphicx,subfigure}
 
 \begin{document}
 
@@ -41,7 +42,7 @@ We demonstrate our approach for the case where the planning algorithm is Multi-H
 %Intro
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\begin{comment}
-\section{Introduction}
+\section{Introduction and related work}
 \label{sec:intro}
 
 Motion-planning is a fundamental problem in robotics that has been studied for over four decades. 
@@ -55,8 +56,8 @@ there has been far less research incorporating guidance as an interactive part o
 Broadly speaking, interactive planning has been typically used in the context of sampling-based motion-planning algorithms~\cite{L06}.
 User guidance was employed by biasing the sampling scheme of the planner.
 This was done by having the user mark regions in the \emph{workspace} that should be avoided or 
-explored~\cite{DSJA14}.
-%explored~\cite{DSJA14, MTMKDC15, YPB15}.
+%explored~\cite{DSJA14}.
+explored~\cite{DSJA14, MTMKDC15, YPB15}.
 Alternatively interactive devices such as a 3D mouse or a haptic arm have been used to generate paths in a (low-dimensional) configuration space. This path was then used by a planner to bias its 
 %sampling domain~\cite{TFF12}.
 sampling domain~\cite{BTFF16, FTF09, TFF12}.
@@ -84,7 +85,7 @@ We then continue (Sec.~\ref{sec:eval}) to demonstrate its effectiveness in simul
 
 \begin{figure}[tb]
   \centering
-  	\includegraphics[width=0.283\textwidth]{workspace.png}
+  	\includegraphics[width=0.283\textwidth]{fig/workspace.png}
   	\vspace{-2mm}
   \caption{
 		Planning domain---Humanoid robot needs to climb the stairs while avoiding collision with the obstacles and while adhering to the physical stability constraints.
@@ -118,6 +119,95 @@ We then continue (Sec.~\ref{sec:eval}) to demonstrate its effectiveness in simul
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
+
+\os{emphasize that in contrast to existing approaches we \emph{identify} when to ask for help}
+
+%\section{Related work}
+%\label{sec:related}
+%
+
+While our approach is general and can be incorporated with any motion-planning algorithm (see discussion in Sec.~\ref{}) it is especially suitable for search-based planning algorithms (see, e.g.,~\cite{CCL14}) that perform a systematic search guided by heuristic functions.
+Specifically, we demonstrate it's effectiveness for the case where the motion-planning algorithm is multi-heuristic A* (MHA*)~\cite{ASNHL16, NAL15}.
+MHA* is a search-based planning algorithm that takes in multiple, arbitrarily inadmissible heuristic functions in addition to a single consistent heuristic.
+It uses them simultaneously to search the configuration space in an A*-like manner that was shown to be both complete and ensures bounds on sub-optimality. 
+This allows the search to efficiently combine the guiding powers of different heuristic functions. 
+
+The multiple heuristics that MHA* can use allows naturally to dynamically add and remove heuristics~\cite{INL15} or to automatically calibrate the weight given to each heuristic~\cite{PNAL15}.
+Furthermore, using heuristics gives a principled way to identify when the planner ceases to make progress (see, e.g.,~\cite{VNL17}).
+
+We demonstrate our approach for planning the motion of a humanoid robot. Such robots often have several dozens of degrees of freedom making planning a challenging task, especially when taking additional constraints into account such as stability and contact constraints.
+One approach, is to use a predefined, carefully chosen fixed gaits~\cite{KKKHKHAI04}. 
+However, when the terrain is uneven, such planners are inadequate at computing stable motions~\cite{HBLHW08}.
+Another approach is to reduce the search space by decomposing the degrees of freedom into functional groups such as locomotion and manipulation.
+Then functional-specific algorithms such as footstep planning are applied to the low-dimensional space (see, e.g.,~\cite{CLCKHK05, KNKII01, PSBLY12, XCXZC09, KKNII02} for a prtial list).
+A high-dimensional planner is then used to ``track'' the plan generated in the low-dimensional space.
+
+In this work, we employ the recently-introduced adaptive dimensionality framework~\cite{GCBSL11, GSL12, GSL13}.
+Roughly speaking,  it consists of two stages: an adaptive planning phase which attempts to plan in a low-dimensional space when possible and a tracking phase which plans in the high-dimensional space.
+Our user-guided planner is integrated within the high-dimensional planner.
+
+
+%\subsection{Motion planning for humanoid robots}
+%Our work is n
+%
+%
+%Names that have to be mentioned:
+%
+%Kris K. Hauser + Timothy Bretl + Jean{-}Claude Latombe 
+%Sébastien Dalibard+ Florent Lamiraux+ Jean-Paul Laumond
+%
+%optimization-based techniques
+%
+%Humanoid robots often have several dozens of degrees of freedom. Planning in such a high-dimensional space is a challenging task, especially when taking additional constraints into account such as stability and contact constraints.
+%One approach, is to use a predefined, carefully chosen fixed gaits~\cite{KKKHKHAI04}. 
+%However, when the terrain is uneven, such planners are inadequate at computing stable motions~\cite{HBLHW08}.
+%Another approach is to reduce the search space by decomposing the degrees of freedom into functional groups such as locomotion and manipulation.
+%Then functional-specific algorithms such as footstep planning are applied to the low-dimensional space (see, e.g.,~\cite{CLCKHK05, KNKII01, PSBLY12, XCXZC09, KKNII02} for a prtial list).
+%A high-dimensional planner is then used to ``track'' the plan generated in the low-dimensional space.
+% 
+%
+%%J. Chestnutt, J. Kuffner, K. Nishiwaki, and S. Kagami, “Planning biped navigation strategies in complex environments,” in Proc. IEEE Int. Conf.
+%%Humanoid Robots, 2003. [CD-ROM].
+%
+%
+%Another example is climbing a ladder. Xhang \etal~\cite{ZLHEOPPL13} generate multi-limb motion planning algorithms~\cite{12-14} by motion primitives [13], which are motions that make or break a single limb contact 
+%%[12] K. Hauser, T. BretJ, and J.-c. Latombe, "Non-gaited humanoid loco­
+%%motion planning," in Proc. IEEE-RAS Int. Con! on Humanoid Robots,
+%%Dec. 2005, pp. 7-12.
+%%[13] K. Hauser, T. Bretl, K. Harada, and J.-c. Latombe, "Using motion
+%%primitives in probabilistic sample-based planning for humanoid robots,"
+%%in Workshop on the Algorithmic Foundations of Robotics (WAFR), 2006.
+%%[14] K. Hauser, T. BretJ, J.-c. Latombe, K. Harada, and B. Wilcox, "Motion
+%%planning for legged robots on varied terrain," The International Journal
+%%of Robotics Research, vol. 27, no. 11-12, pp. 1325-1349, December
+%%2008.
+%\subsubsection*{Motion planning}
+%Perrin \etal~\cite{SBLY12}
+%or fast footstep planning for legged robots on a flat ground with 3-D obstacle avoidance. We use swept volume approximations that are computed offline in order to considerably reduce the time spent in collision checking during the online planning phase, in which a rapidly exploring random tree variant is used to find collision-free sequences of half-steps (which are produced by a specific walking pattern generator). Then, an original homotopy is used to smooth the sequences into natural motions, gently avoiding the obstacles. The results are experimentally validated on the robot HRP-2.
+%
+%From a motion planning perspective, most motions are generated in advance based on functional
+%decomposition of the degrees of freedom, for example locomotion and manipulation.
+%
+%
+%Dalibard \etal~\cite{DKLNTL13} presents a method for planning collision-free whole-body walking motions for humanoid robots by using a randomized algorithm for constrained motion planning, that is used to generate collision-free statically balanced paths solving manipulation tasks which are transformed to collision-free dynamically balanced trajectories. 
+%
+%
+%Kanoun \etal~\cite{KLY11} plan foot placements according to kinematic tasks addressing the question ``where should the robot place itself in order to accomplish an arbitrary kinematic goal?''
+%
+%Kuffner \etal~\cite{KKNII02} uses an RRT-Iike algorithm to perform a whole-body motion
+%planning method that takes both obstacle avoidance as well as dynamic balance constraints into account. This is done by using a pre-computed set of statically stable postures and then
+%filtering the configuration space path into a dynamically stable trajectory.
+%
+%
+%Dalibard \etal~\cite{DNLL09} use local Jacobian-based methods within randomized motion planning.
+%
+%Human inspired:
+%
+%Mombaur \etal~\cite{MTL10} uses inverse optimal control to transfer biological motions to humanoids
+%
+%\subsubsection*{Manipulation}
+%Dalibard \etal~\cite{DNLL10} presents a method to perform manipulation task planning
+%for a humanoid robot while stepping. It introduces the concept of ``documented`` objects. Namely, objects that provide information on how to manipulate them.
 
 \section{Planning framework}
 \label{sec:planning}
@@ -154,8 +244,8 @@ ordered according to some heuristic function~$h_\Q(\cdot)$,
 $s_i$ be the node expanded from~$\Q$ at the $i$'th iteration and $\omega_1, \omega_2$ be parameters such that $\omega_1 > \omega_2$.
 %
 We define 
-$\kappa_\Q(i, \omega_1) = \min_{i-\omega_1 \leq j \leq i} \{ h_\Q(s_j)\}$.
-Namely, $\kappa_\Q(\omega,i)$ denotes the minimal value attained by $h_\Q$ in the past~$\omega_1$ states. 
+$\kappa_\Q(i, \omega) = \min_{i-\omega \leq j \leq i} \{ h_\Q(s_j)\}$.
+Namely, $\kappa_\Q(i, \omega)$ denotes the minimal value attained by $h_\Q$ in the past~$\omega$ states. 
 %
 We will say that the planner is in a local minima for $\Q$ if 
 $\kappa_\Q(i, \omega_1) \geq \kappa_\Q(i - \omega_2, \omega_1 - \omega_2) - \varepsilon$.
@@ -164,6 +254,8 @@ there was no reduction
 (by more than some threshold $\varepsilon$) 
 in the minimum value of~$h_\Q$ 
 in the last $\omega_2$ states expanded from $\Q$.
+
+\os{generalize to multiple queues}
 
 %
 %$\{h_\Q(s(i-\omega)), \ldots h_\Q(s(i))\}$ to be the minimum heuristic value attained by the last $\omega$ nodes that were expanded from~$\Q$ (assuming we are at the $i$'th iteration).
@@ -214,9 +306,51 @@ $$
 Namely,~$\hat{h}$ estimates the 
 cost to reach the goal (via the term~$h_{\text{goal}}$) by passing through $\hat{q}$ (via the term $h_{\hat{q}}$). If the state was reached by passing through $\hat{q}$, then the value of $\hat{h}$ is simply the estimation of the cost to reach the goal.
 
+\begin{figure*}[t]%
+%\captionsetup{format = plain}
+  \centering%
+  \subfigure[]
+  {
+  \includegraphics[width=0.225\textwidth]{fig/example_1.pdf}
+  \label{fig:dynamic_heuristic1}
+  }
+  \subfigure[]
+  {
+  \label{fig:dynamic_heuristic2}
+  \includegraphics[width=0.225\textwidth]{fig/example_2.pdf}
+  }
+  \subfigure[]
+  {
+  \label{fig:dynamic_heuristic3}
+  \includegraphics[width=0.225\textwidth]{fig/example_3.pdf}
+  }  
+  \subfigure[]
+  {
+  \label{fig:dynamic_heuristic4}
+  \includegraphics[width=0.225\textwidth]{fig/example_4.pdf}
+  }
+  \caption{%
+    Algorithm progression.
+    States popped from a priority queue are depicted using dark colors while states still in a queue are depicted by a light color.
+    Start, target and user-guided states are depicted in purple with the letters \texttt{s}, \texttt{t}, \texttt{g}, respectively. 
+    %
+    In this example MHA* is implemented using shared queues and alternating between queues in a round-robin fashion. Furthermore, heuristics are inflated by a weight of $w=\infty$. Namely, the priority queues are ordered according to the heuristic-value of the states.
+    %
+	\subref{fig:dynamic_heuristic1}~MHA* starts with the single anchor heuristic (green) which is the Euclidean distance to goal and a local minimum is identified.
+    %
+	\subref{fig:dynamic_heuristic2}~User provides guidance and the algorithm automatically generates an additional heuristic (red) that drives the search towards the guidance (notice that the anchore heuristic continues to search the local minimum).
+    %
+	\subref{fig:dynamic_heuristic3}~After passing through the guidance, the additional heuristic (red) drives the search towards the goal.
+    %
+	\subref{fig:dynamic_heuristic4}~After the additional heuristic found states that are at the top of the priority queue of the anchor heuristic, the additional heuristic is deleted and the anchor heuristic drives the search towards the goal.
+  }%
+  \label{fig:filmstrip-dynamic_heuristic}%
+  \vspace{-2.5mm}
+\end{figure*}
 
 Equipped with the heuristic $\hat{h}$, we add a new queue to the MHA* algorithm prioritized using the heuristic $\hat{h}$ (Alg~\ref{alg:main}, line~4). 
-States expanded using this queue will be biased towards $\hat{q}$ (see also~\cite{INL15} for more details on adding heuristics and queues dynamically to MHA*).
+States expanded using this queue will be biased towards $\hat{q}$ (see also~\cite{INL15} for more details on adding heuristics and queues dynamically to MHA*
+and~\cite{NAL15} for more details on dealing with calibrating the different values used by different heuristic functions).
 Note that in MHA*, nodes are shared between the different queues.
 Thus, once a state has been found that can be used to get the planner out of the local minima, it will be expanded by the other queues using their heuristics.
 Once this is detected (Alg~\ref{alg:main}, line~8), the newly-added queue is removed.
@@ -238,7 +372,7 @@ as well as in the supplementary video\footnote{
 
 \begin{figure}[tb]
   \centering
-  	\includegraphics[width=0.4\textwidth]{heuristic_value.jpg}
+  	\includegraphics[width=0.4\textwidth]{fig/heuristic_value.jpg}
   	\vspace{-2mm}
   \caption{
 		Progress of MHA*---heuristic values as a function of the number of queue expansions.
