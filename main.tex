@@ -45,12 +45,11 @@ We demonstrate our approach for the case where the planning algorithm is Multi-H
 \section{Introduction and related work}
 \label{sec:intro}
 
-Motion-planning is a fundamental problem in robotics that has been studied for over four decades. 
+Motion-planning is a fundamental problem in robotics that has been studied for over four decades~\cite{CBHKKLT05,L06,S04}.
 However, efficiently planning paths in high-dimensional, constrained spaces remains an ongoing challenge.
-One approach to address this challenge is to incorporate user guidance.
+One approach to address this challenge is to incorporate user input to guide the motion-planning algorithm.
 While there has been much work on planning using human demonstration 
-(see, e.g.,~\cite{HS16, PHCL16, SHLA16, YA17}), 
-%(see, e.g.,~\cite{SHLA16, YA17} for a partial list), 
+(see, e.g.,~\cite{ACVB09, HS16, PHCL16, SHLA16, YA17}), 
 there has been far less research incorporating guidance as an interactive part of the planning~loop.
 
 Broadly speaking, interactive planning has been typically used in the context of sampling-based motion-planning algorithms~\cite{L06}.
@@ -58,20 +57,17 @@ User guidance was employed by biasing the sampling scheme of the planner.
 This was done by having the user mark regions in the \emph{workspace} that should be avoided or 
 %explored~\cite{DSJA14}.
 explored~\cite{DSJA14, MTMKDC15, YPB15}.
-Alternatively interactive devices such as a 3D mouse or a haptic arm have been used to generate paths in a (low-dimensional) configuration space. This path was then used by a planner to bias its 
+Alternatively, interactive devices such as a 3D mouse or a haptic arm have been used to generate paths in a (low-dimensional) configuration space. This path was then used by a planner to bias its 
 %sampling domain~\cite{TFF12}.
 sampling domain~\cite{BTFF16, FTF09, TFF12}.
 %Interestingly, in all the examples mentioned, an implicit assumption taken is that the user is dedicated to guide and interact with the planning algorithm.
 
 We are interested in planning in high-dimensional, constrained spaces such as those encountered by a humanoid robot (see Fig.~\ref{fig:robot}).
 In such settings, workspace regions often give little guidance to the planner due to the dimension of the configuration space as well as the physical constraints of the robot.
-Similarly, obtaining user guidance in the configuration space is extremely time consuming, even for expert users.
-
-
+Additionally, obtaining user guidance in the configuration space is extremely time consuming, even for expert users.
 Thus,  while beneficial, user guidance should be employed scarcely.
-Our key insight is that carefully chosen individual configurations suggested by a user can be used to effectively guide the planner when in need of guidance.
 
-
+Our key insight is that carefully chosen individual configurations suggested by a user can be used to effectively guide the planner when in need.
 Transforming this insight into a planning framework requires addressing three fundamental questions:
 
 \begin{itemize}
@@ -79,9 +75,22 @@ Transforming this insight into a planning framework requires addressing three fu
 	\item[\textbf{Q2.}] What form should the user's guidance take?
 	\item[\textbf{Q3.}] How should the guidance be used?
 \end{itemize}
- 
-In the following, we detail our planning framework (Sec.~\ref{sec:high}) and how it addresses each of these questions (Sec.~\ref{sec:q1}-\ref{sec:q3}).
-We then continue (Sec.~\ref{sec:eval}) to demonstrate its effectiveness in simulations and conclude by describing possible additional future work.
+
+Identifying \emph{when} to obtain guidance 
+(Q1, Sec~\ref{sec:q1}) 
+comes in stark contrast to existing approaches---we suggest to only employ user guidance when the planner \emph{identifies} that it ceases to make significant progress towards the goal.
+The specific type of guidance given 
+(Q2, Sec~\ref{sec:q2}),
+as previously mentioned,
+is configuration-space based and \emph{not} workspace-based. This deviation from previous work is due to our specific setting of high-dimensional, constrained systems.
+Finally, guidance is used 
+(Q3, Sec~\ref{sec:q2})
+to \emph{bias} the search algorithm towards regions that are likely to be beneficial. 
+It is worth emphasising that this is done without requiring the user to understand the underlying search algorithm. 
+
+% 
+%In the following, we detail our planning framework (Sec.~\ref{sec:high}) and how it addresses each of these questions (Sec.~\ref{sec:q1}-\ref{sec:q3}).
+%We then continue (Sec.~\ref{sec:eval}) to demonstrate its effectiveness in simulations and conclude by describing possible additional future work.
 
 \begin{figure}[tb]
   \centering
@@ -93,34 +102,7 @@ We then continue (Sec.~\ref{sec:eval}) to demonstrate its effectiveness in simul
    	\label{fig:robot}
 \end{figure}
 
-%\algrenewcommand\algorithmicindent{.8em}
-\begin{algorithm}[tb]
-\caption{Planning framework ($\A$)}
-\label{alg:main}	
-\begin{algorithmic}[1]
-\small
-\While{$\neg\A.$\texttt{is\_solution\_found()} } 
-	\While{$\neg\A.$\texttt{is\_in\_local\_minima()}} 
-		\State $\A.$\texttt{run()}
-		\Comment{no user guidance}
-	\EndWhile
-	
-	\State {$g \leftarrow$ \texttt{get\_user\_guidance()}}
-	\Comment{$\A$ is in a local minima}
-	\State $\A.$\texttt{update\_user\_guidance($g$)}
-	\Comment{account for guidance}
-	\While{$\A.$\texttt{is\_in\_local\_minima()}}
-		\State $\A.$\texttt{run()}
-		\Comment{planner uses guidance}
-	\EndWhile
 
-	\State $\A.$\texttt{update\_user\_guidance($\neg g$)}
-	\Comment {remove  guidance}
-\EndWhile
-\end{algorithmic}
-\end{algorithm}
-
-\os{emphasize that in contrast to existing approaches we \emph{identify} when to ask for help}
 
 %\section{Related work}
 %\label{sec:related}
@@ -128,15 +110,15 @@ We then continue (Sec.~\ref{sec:eval}) to demonstrate its effectiveness in simul
 
 While our approach is general and can be incorporated with any motion-planning algorithm (see discussion in Sec.~\ref{}) it is especially suitable for search-based planning algorithms (see, e.g.,~\cite{CCL14}) that perform a systematic search guided by heuristic functions.
 Specifically, we demonstrate it's effectiveness for the case where the motion-planning algorithm is multi-heuristic A* (MHA*)~\cite{ASNHL16, NAL15}.
-MHA* is a search-based planning algorithm that takes in multiple, arbitrarily inadmissible heuristic functions in addition to a single consistent heuristic.
+MHA* is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent admissible heuristic.
 It uses them simultaneously to search the configuration space in an A*-like manner that was shown to be both complete and ensures bounds on sub-optimality. 
 This allows the search to efficiently combine the guiding powers of different heuristic functions. 
 
-The multiple heuristics that MHA* can use allows naturally to dynamically add and remove heuristics~\cite{INL15} or to automatically calibrate the weight given to each heuristic~\cite{PNAL15}.
+The multiple heuristics that MHA* can use allows to dynamically add and remove heuristics~\cite{INL15} or to automatically calibrate the weight given to each heuristic~\cite{PNAL15}.
 Furthermore, using heuristics gives a principled way to identify when the planner ceases to make progress (see, e.g.,~\cite{VNL17}).
 
 We demonstrate our approach for planning the motion of a humanoid robot. Such robots often have several dozens of degrees of freedom making planning a challenging task, especially when taking additional constraints into account such as stability and contact constraints.
-One approach, is to use a predefined, carefully chosen fixed gaits~\cite{KKKHKHAI04}. 
+One approach to plan the motion for such systems, is to use predefined, carefully chosen fixed gaits~\cite{KKKHKHAI04}. 
 However, when the terrain is uneven, such planners are inadequate at computing stable motions~\cite{HBLHW08}.
 Another approach is to reduce the search space by decomposing the degrees of freedom into functional groups such as locomotion and manipulation.
 Then functional-specific algorithms such as footstep planning are applied to the low-dimensional space (see, e.g.,~\cite{CLCKHK05, KNKII01, PSBLY12, XCXZC09, KKNII02} for a prtial list).
@@ -145,6 +127,10 @@ A high-dimensional planner is then used to ``track'' the plan generated in the l
 In this work, we employ the recently-introduced adaptive dimensionality framework~\cite{GCBSL11, GSL12, GSL13}.
 Roughly speaking,  it consists of two stages: an adaptive planning phase which attempts to plan in a low-dimensional space when possible and a tracking phase which plans in the high-dimensional space.
 Our user-guided planner is integrated within the high-dimensional planner.
+
+After describing our approach (Sec.~\ref{sec:planning}) we demonstrate the effectiveness of our planner (Sec.~\ref{sec:eval})
+\os{finish general description}
+
 
 
 %\subsection{Motion planning for humanoid robots}
@@ -208,14 +194,42 @@ Our user-guided planner is integrated within the high-dimensional planner.
 %\subsubsection*{Manipulation}
 %Dalibard \etal~\cite{DNLL10} presents a method to perform manipulation task planning
 %for a humanoid robot while stepping. It introduces the concept of ``documented`` objects. Namely, objects that provide information on how to manipulate them.
-
+\section{ALgorithmic background---MHA*}
+\os{do we need a section detailing MHA*}
 \section{Planning framework}
 \label{sec:planning}
+\algrenewcommand\algorithmicindent{.8em}
+\begin{algorithm}[tb]
+\caption{Planning framework ($\A$)}
+\label{alg:main}	
+\begin{algorithmic}[1]
+\small
+\While{$\neg\A.$\texttt{is\_solution\_found()} } 
+	\While{$\neg\A.$\texttt{is\_in\_local\_minimum()}} 
+		\State $\A.$\texttt{run()}
+		\Comment{no user guidance}
+	\EndWhile
+%	
+	\State {$g \leftarrow$ \texttt{get\_user\_guidance()}}
+	\Comment{$\A$ is in a local minimum}
+	\State $\A.$\texttt{update\_user\_guidance($g$)}
+	\Comment{account for guidance}
+	\While{$\A.$\texttt{is\_in\_local\_minimum()}}
+		\State $\A.$\texttt{run()}
+		\Comment{$\A$ uses guidance to escape local minimum}
+	\EndWhile
+
+	\State $\A.$\texttt{update\_user\_guidance($\neg g$)}
+	\Comment {remove  guidance}
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
 \subsection{High-level approach}
 \label{sec:high}
 To employ our planning framework, we assume that we are given a motion-planning algorithm $\A$ that is endowed with two non-standard procedures which are planner dependent.
-The first, \texttt{is\_in\_local\_minima()}, 
-identifies when it is in a \emph{local minima}, namely when $\A$'s search does not progress towards the goal. 
+The first, \texttt{is\_in\_local\_minimum()}, 
+identifies when it is in a \emph{local minimum}, namely when $\A$'s search does not progress towards the goal. 
 The second, \texttt{update\_user\_guidance()}, 
 incorporates (or removes) the user guidance provided to $\A$. 
 
@@ -231,80 +245,11 @@ We demonstrate our planning framework for the case where the motion-planning alg
 MHA* is a search-based planning algorithm that takes in multiple, arbitrarily inadmissible heuristic functions in addition to a single consistent heuristic.
 It uses them simultaneously to search the configuration space in an A*-like manner that was shown to be both complete and ensures bounds on sub-optimality. 
 This allows the search to efficiently combine the guiding powers of different heuristic functions. 
+For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:filmstrip-dynamic_heuristic}.
 
-
-\subsection{Invoking user guidance}
-\label{sec:q1}
-The heuristic functions of search-based planning algorithms, such as MHA*, can be used to estimate in a principled manner when the planner is in a local minima (Alg~\ref{alg:main}, lines 2, 6). 
-%Specifically, in such algorithms,  we proceed by iteratively choosing  the current-best state from a priority queue and computing all its successors. 
-%
-We suggest to identify when the planner is in a local minima as follows:
-Let~$\Q$ be a priority queue 
-ordered according to some heuristic function~$h_\Q(\cdot)$,
-$s_i$ be the node expanded from~$\Q$ at the $i$'th iteration and $\omega_1, \omega_2$ be parameters such that $\omega_1 > \omega_2$.
-%
-We define 
-$\kappa_\Q(i, \omega) = \min_{i-\omega \leq j \leq i} \{ h_\Q(s_j)\}$.
-Namely, $\kappa_\Q(i, \omega)$ denotes the minimal value attained by $h_\Q$ in the past~$\omega$ states. 
-%
-We will say that the planner is in a local minima for $\Q$ if 
-$\kappa_\Q(i, \omega_1) \geq \kappa_\Q(i - \omega_2, \omega_1 - \omega_2) - \varepsilon$.
-Namely, if looking at the previous $\omega_1$ iterations, 
-there was no reduction 
-(by more than some threshold $\varepsilon$) 
-in the minimum value of~$h_\Q$ 
-in the last $\omega_2$ states expanded from $\Q$.
-
-\os{generalize to multiple queues}
-
-%
-%$\{h_\Q(s(i-\omega)), \ldots h_\Q(s(i))\}$ to be the minimum heuristic value attained by the last $\omega$ nodes that were expanded from~$\Q$ (assuming we are at the $i$'th iteration).
-%We will say that the planner is in a local minima for $\Q$ if 
-%$\kappa_\Q(\omega,i) \geq \kappa_\Q(\omega,i-1) - \varepsilon$.
-%Namely, if there was no reduction 
-%(by more than some threshold $\varepsilon$) 
-%in the minimum value of~$h_\Q$ in the last $\omega$ states expanded from $\Q$.
-
-%
-%
-%
-%\os{possibly remove next paragraph}
-%
-%Once a local minimum is identified, should we immediately ask for user guidance? If we are in a shallow local minima, providing the planner with additional computation time (possibly much shorter than the time required by the user to produce guidance) may be sufficient.
-%This is an example of the ski rental problem~\cite{KMMO94} in which there is a tradeoff between continuing to pay a repeating cost (letting the algorithm try to escape its local minima) or paying a one-time cost which eliminates or reduces the repeating cost (invoking user guidance).
-%By using a randomized approach we can obtain a $\frac{e}{e-1}\approx1.58$ competitive ratio\footnote{The competitive ratio of an online algorithm \texttt{ALG} is the ratio between the performance of \texttt{ALG} and the performance of an optimal offline algorithm.}~\cite{KMMO94}.
-%Indeed, this approach has already been used to identify when robots should ask for help from a user~\cite{RV12}.
-
-\subsection{Form of user guidance}
-\label{sec:q2}
-We chose to obtain user guidance 
-(Alg~\ref{alg:main}, line~4)
-in the form of an intermediate configuration $\hat{q}$ that is used to guide the planner. We discuss alternative options in Sec~\ref{sec:eval}.
-
-The framework includes a graphical user interface (GUI) capable of  depicting the robot and the workspace.
-Once user guidance is invoked, 
-a configuration in the local minima is obtained and the robot is placed in that configuration (as well as the start configuration and target region) in the GUI.
-This allows the user to try and understand where the planner faces difficulty and how to guide it out of the local minima.
-The user then suggests the guidance $\hat{q}$ by moving the robot's joints and end effectors.
-We note that the user is \emph{not} required to be familiar with the search algorithm.
-
-\subsection{Using user guidance}
-\label{sec:q3}
-We assume that MHA* has at least one heuristic $h_{\text{goal}}$ which approximates the cost to reach the goal from every state.
-Furthermore, we assume that there exists a family of (possibly inadmissible) heuristic functions $\H$, such that for every configuration~$q$, there exists a heuristic $h_q \in \H$ where~$h_q(s)$ estimates the cost to reach $q$ from state $s$.
-%%%%
-
-Given a user guide in the form of a configuration $\hat{q}$, we dynamically generate a new heuristic $$
-    \hat{h}(s)= 
-\begin{cases}
-    h_{\hat{q}}(s) + h_{\text{goal}}(\hat{q}),	& 
-    		\text{if } \hat{q} \text{ is not an ancestor of } s,\\
-    h_{\textbf{•}{goal}}(s),            		& 
-    		\text{if } \hat{q} \text{ is an ancestor of } s.
-\end{cases}
-$$
-Namely,~$\hat{h}$ estimates the 
-cost to reach the goal (via the term~$h_{\text{goal}}$) by passing through $\hat{q}$ (via the term $h_{\hat{q}}$). If the state was reached by passing through $\hat{q}$, then the value of $\hat{h}$ is simply the estimation of the cost to reach the goal.
+Our implementation is slightly more complicated than that described in Alg~\ref{alg:main}.
+Specifically, the planner can be in a local minima in the dynamically-generated queue that is used to escape the original local minima. 
+In such cases we request new guidance from the user and replace the previous guidance with the new one.
 
 \begin{figure*}[t]%
 %\captionsetup{format = plain}
@@ -348,6 +293,118 @@ cost to reach the goal (via the term~$h_{\text{goal}}$) by passing through $\hat
   \vspace{-2.5mm}
 \end{figure*}
 
+
+\subsection{Invoking user guidance}
+\label{sec:q1}
+
+\begin{figure}[tb]
+  \centering
+  	\includegraphics[width=0.49\textwidth]{fig/local_min_detection_4.pdf}
+  	\vspace{-5mm}
+  \caption{
+		Visualization of the way local minima are detected.
+		The heuristic value $h(s_i)$ has three local minima, $m_1, m_2$ and $m_3$.
+		Local minima $m_2$ is very small while~$m_3$ is not a local minimum per se, yet the progress made between consecutive steps is smaller than the predefined threshold~$\varepsilon$.
+		When the value of $\kappa(i,w) -  \kappa(i-\omega_2,\omega_1-\omega_2)$ is larger than $\varepsilon$, a local minimum is detected, visualized by a gray region.
+		Notice that the hysteresis parameters~$\kappa_1$ and $\kappa_2$ 
+		(i)~induce a lag from the time that the minimum occurs until it is detected,
+		(ii)~allow to avoid detecting minimum $m_2$.		
+  	}
+   	\label{fig:robot}
+  	\vspace{-5mm}
+\end{figure}
+
+The heuristic functions of search-based planning algorithms, such as MHA*, can be used to estimate in a principled manner when the planner is in a local minimum (Alg~\ref{alg:main}, lines 2, 6). 
+%Specifically, in such algorithms,  we proceed by iteratively choosing  the current-best state from a priority queue and computing all its successors. 
+%
+We suggest to identify when the planner is in a local minimum as follows:
+Let~$\Q$ be a priority queue 
+ordered according to some heuristic function~$h_\Q(\cdot)$,
+$s_i$ be the node expanded from~$\Q$ at the $i$'th iteration and $\omega_1, \omega_2$ be parameters such that $\omega_1 > \omega_2$.
+%
+We define 
+$\kappa_\Q(i, \omega) = \min_{i-\omega \leq j \leq i} \{ h_\Q(s_j)\}$.
+Namely, $\kappa_\Q(i, \omega)$ denotes the minimal value attained by $h_\Q$ in the past~$\omega$ states. 
+%
+\begin{definition}
+A queue~$\Q$ is defined to be in a local minimum if 
+$\kappa_\Q(i, \omega_1) \geq \kappa_\Q(i - \omega_2, \omega_1 - \omega_2) - \varepsilon$.
+\end{definition}
+\noindent Namely~$\Q$ is in a local minimum if looking at the previous~$\omega_1$ iterations, 
+there was no reduction 
+(by more than some threshold $\varepsilon$) 
+in the minimum value of~$h_\Q$ 
+in the last $\omega_2$ states expanded from $\Q$.
+
+\begin{definition}
+MHA* is defined to be in a local minimum if 
+all it's queues are in local minima.
+\end{definition}
+
+Thus, our algorithm is given three additional parameters~$\omega_1, \omega_2$ and $\varepsilon$ 
+and implements the function \texttt{is\_in\_local\_minimum()} by maintaining for each queue~$\Q$ the values 
+$\kappa_\Q(i, \omega_1)$ and $\kappa_\Q(i - \omega_2, \omega_1 - \omega_2)$.
+Note that testing if a single queue is in a local minimum takes $O(1)$ time.
+
+
+
+
+%
+%$\{h_\Q(s(i-\omega)), \ldots h_\Q(s(i))\}$ to be the minimum heuristic value attained by the last $\omega$ nodes that were expanded from~$\Q$ (assuming we are at the $i$'th iteration).
+%We will say that the planner is in a local minima for $\Q$ if 
+%$\kappa_\Q(\omega,i) \geq \kappa_\Q(\omega,i-1) - \varepsilon$.
+%Namely, if there was no reduction 
+%(by more than some threshold $\varepsilon$) 
+%in the minimum value of~$h_\Q$ in the last $\omega$ states expanded from $\Q$.
+
+%
+%
+%
+%\os{possibly remove next paragraph}
+%
+%Once a local minimum is identified, should we immediately ask for user guidance? If we are in a shallow local minima, providing the planner with additional computation time (possibly much shorter than the time required by the user to produce guidance) may be sufficient.
+%This is an example of the ski rental problem~\cite{KMMO94} in which there is a tradeoff between continuing to pay a repeating cost (letting the algorithm try to escape its local minima) or paying a one-time cost which eliminates or reduces the repeating cost (invoking user guidance).
+%By using a randomized approach we can obtain a $\frac{e}{e-1}\approx1.58$ competitive ratio\footnote{The competitive ratio of an online algorithm \texttt{ALG} is the ratio between the performance of \texttt{ALG} and the performance of an optimal offline algorithm.}~\cite{KMMO94}.
+%Indeed, this approach has already been used to identify when robots should ask for help from a user~\cite{RV12}.
+
+\subsection{Form of user guidance}
+\label{sec:q2}
+We chose to obtain user guidance 
+(Alg~\ref{alg:main}, line~4)
+in the form of an intermediate configuration $\hat{q}$ that is used to guide the planner. We discuss alternative options in Sec~\ref{sec:eval}.
+
+The framework includes a graphical user interface (GUI) capable of  depicting the robot and the workspace.
+Once user guidance is invoked, 
+a configuration in the local minima is obtained and the robot is placed in that configuration (as well as the start configuration and target region) in the GUI.
+This allows the user to try and understand where the planner faces difficulty and how to guide it out of the local minima.
+The user then suggests the guidance $\hat{q}$ by moving the robot's joints and end effectors.
+We note that the user is \emph{not} required to be familiar with the search algorithm.
+
+\subsection{Using user guidance}
+\label{sec:q3}
+\os{should we add a queue for every heiristic that is used in Vanilla MHA*? }
+
+\os{should we use DTS? }
+
+\os{this notation is not consistent with the one in Sec B}
+
+We assume that MHA* has at least one heuristic $h_{\text{goal}}$ which approximates the cost to reach the goal from every state.
+Furthermore, we assume that there exists a family of (possibly inadmissible) heuristic functions $\H$, such that for every configuration~$q$, there exists a heuristic $h_q \in \H$ where~$h_q(s)$ estimates the cost to reach $q$ from state $s$.
+%%%%
+
+Given user guidance in the form of a configuration $\hat{q}$, we dynamically generate a new heuristic $$
+    \hat{h}(s)= 
+\begin{cases}
+    h_{\hat{q}}(s) + h_{\text{goal}}(\hat{q}),	& 
+    		\text{if } \hat{q} \text{ is not an ancestor of } s,\\
+    h_{\textbf{•}{goal}}(s),            		& 
+    		\text{if } \hat{q} \text{ is an ancestor of } s.
+\end{cases}
+$$
+Namely,~$\hat{h}$ estimates the 
+cost to reach the goal (via the term~$h_{\text{goal}}$) by passing through $\hat{q}$ (via the term $h_{\hat{q}}$). If the state was reached by passing through $\hat{q}$, then the value of $\hat{h}$ is simply the estimation of the cost to reach the goal.
+
+
 Equipped with the heuristic $\hat{h}$, we add a new queue to the MHA* algorithm prioritized using the heuristic $\hat{h}$ (Alg~\ref{alg:main}, line~4). 
 States expanded using this queue will be biased towards $\hat{q}$ (see also~\cite{INL15} for more details on adding heuristics and queues dynamically to MHA*
 and~\cite{NAL15} for more details on dealing with calibrating the different values used by different heuristic functions).
@@ -355,9 +412,6 @@ Note that in MHA*, nodes are shared between the different queues.
 Thus, once a state has been found that can be used to get the planner out of the local minima, it will be expanded by the other queues using their heuristics.
 Once this is detected (Alg~\ref{alg:main}, line~8), the newly-added queue is removed.
 
-Our implementation is slightly more complicated than that described in Alg~\ref{alg:main}.
-Specifically, the planner can be in a local minima in the dynamically-generated queue that is used to escape the original local minima. 
-In such cases we request new guidance from the user and replace the previous guidance with the new one.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Evaluation
