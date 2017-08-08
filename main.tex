@@ -109,13 +109,11 @@ It is worth emphasising that this is done without requiring the user to understa
 %
 
 While our approach is general and can be incorporated with any motion-planning algorithm (see discussion in Sec.~\ref{}) it is especially suitable for search-based planning algorithms (see, e.g.,~\cite{CCL14}) that perform a systematic search guided by heuristic functions.
-Specifically, we demonstrate it's effectiveness for the case where the motion-planning algorithm is multi-heuristic A* (MHA*)~\cite{ASNHL16, NAL15}.
-MHA* is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent admissible heuristic.
-It uses them simultaneously to search the configuration space in an A*-like manner that was shown to be both complete and ensures bounds on sub-optimality. 
-This allows the search to efficiently combine the guiding powers of different heuristic functions. 
+Specifically, we demonstrate it's effectiveness for the case where the motion-planning algorithm is multi-heuristic A* (MHA*)~\cite{ASNHL16, NAL15} which we detail in Sec.~\ref{sec:mha}.
+%MHA* is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent admissible heuristic.
+%It uses them simultaneously to search the configuration space in an A*-like manner that was shown to be both complete and ensures bounds on sub-optimality. 
+%This allows the search to efficiently combine the guiding powers of different heuristic functions. 
 
-The multiple heuristics that MHA* can use allows to dynamically add and remove heuristics~\cite{INL15} or to automatically calibrate the weight given to each heuristic~\cite{PNAL15}.
-Furthermore, using heuristics gives a principled way to identify when the planner ceases to make progress (see, e.g.,~\cite{VNL17}).
 
 We demonstrate our approach for planning the motion of a humanoid robot. Such robots often have several dozens of degrees of freedom making planning a challenging task, especially when taking additional constraints into account such as stability and contact constraints.
 One approach to plan the motion for such systems, is to use predefined, carefully chosen fixed gaits~\cite{KKKHKHAI04}. 
@@ -195,7 +193,23 @@ After describing our approach (Sec.~\ref{sec:planning}) we demonstrate the effec
 %Dalibard \etal~\cite{DNLL10} presents a method to perform manipulation task planning
 %for a humanoid robot while stepping. It introduces the concept of ``documented`` objects. Namely, objects that provide information on how to manipulate them.
 \section{ALgorithmic background---MHA*}
-\os{do we need a section detailing MHA*}
+\label{sec:mha}
+\os{do we need a section detailing MHA*?}
+
+MHA* is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent admissible heuristic termed the \emph{anchor} heuristic.
+It uses the the heuristic functions to simultaneously perform a set of A*-like searches that was shown to be both complete.
+Using multiple heuristics allows the search to efficiently combine the guiding powers of the different heuristic functions. 
+
+Specifically, for each search, MHA* uses a separate priority queues associated with each heuristic. 
+The algorithm iterates between the search in a structured manner that ensures bounds on sub-optimality. 
+This can be done in a round-robin fashion, or using more 
+sophisticated approaches that allow to automatically calibrate the weight given to each heuristic~\cite{PNAL15}.
+
+Part of the efficiency of MHA* is due to the fact that the value of the cost-to-come (the $g$-value) computed for each state is shared between all the different searches\footnote{To be precise, Aine et al.~\cite{ASNHL16} define two variants of MHA*: Independent and Shared MHA* where the queues do not share and share the $g$-values of states, respectively. In this paper when we use the term MHA* to refer to the shared variant.}.
+
+The multiple heuristics that MHA* can use allows to automatically calibrate the weight given to each heuristic~\cite{PNAL15}.
+Furthermore, using heuristics gives a principled way to identify when the planner ceases to make progress (see, e.g.,~\cite{VNL17}).
+
 \section{Planning framework}
 \label{sec:planning}
 \algrenewcommand\algorithmicindent{.8em}
@@ -242,9 +256,9 @@ Once it escapes the local minima $\A$ is updated to remove the guidance that was
 
 
 We demonstrate our planning framework for the case where the motion-planning algorithm $\A$ is multi-heuristic A* (MHA*)~\cite{ASNHL16}.
-MHA* is a search-based planning algorithm that takes in multiple, arbitrarily inadmissible heuristic functions in addition to a single consistent heuristic.
-It uses them simultaneously to search the configuration space in an A*-like manner that was shown to be both complete and ensures bounds on sub-optimality. 
-This allows the search to efficiently combine the guiding powers of different heuristic functions. 
+%MHA* is a search-based planning algorithm that takes in multiple, arbitrarily inadmissible heuristic functions in addition to a single consistent heuristic.
+%It uses them simultaneously to search the configuration space in an A*-like manner that was shown to be both complete and ensures bounds on sub-optimality. 
+%This allows the search to efficiently combine the guiding powers of different heuristic functions. 
 For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:filmstrip-dynamic_heuristic}.
 
 Our implementation is slightly more complicated than that described in Alg~\ref{alg:main}.
@@ -302,32 +316,33 @@ In such cases we request new guidance from the user and replace the previous gui
   \centering%
   \subfigure[]
   {
-  \includegraphics[width=0.265\textwidth]{fig/local_min_detection_1.pdf}
+  \includegraphics[width=0.34\textwidth]{fig/local_min_detection_1.pdf}
   \label{fig:local_min1}
   }
   \hspace{-10mm}
-  \subfigure[]
-  {
-  \label{fig:local_min2}
-  \includegraphics[width=0.265\textwidth]{fig/local_min_detection_2.pdf}
-  }
-  \hspace{-10mm}
+%  \subfigure[]
+%  {
+%  \label{fig:local_min2}
+%  \includegraphics[width=0.265\textwidth]{fig/local_min_detection_2.pdf}
+%  }
+%  \hspace{-10mm}
   \subfigure[]
   {
   \label{fig:local_min3}
-  \includegraphics[width=0.265\textwidth]{fig/local_min_detection_3.pdf}
+  \includegraphics[width=0.34\textwidth]{fig/local_min_detection_3.pdf}
   }  
   \hspace{-10mm}
   \subfigure[]
   {
   \label{fig:local_min4}
-  \includegraphics[width=0.265\textwidth]{fig/local_min_detection_4.pdf}
+  \includegraphics[width=0.34\textwidth]{fig/local_min_detection_4.pdf}
   }
   \caption{%
     Visualization of the way stagnation regions are detected.   
 	\subref{fig:local_min1}~The heuristic value $h(s_i)$ (solid blue) has three local minima, $m_1, m_2$ and $m_3$ followed by three stagnation regions (light grey). Local minima $m_2$ is very small while~$m_3$ is not a local minimum per se, yet the progress made between consecutive steps is smaller than the predefined threshold~$\varepsilon$.
     %
-    \subref{fig:local_min2}~The function $\kappa(i,\omega_1)$ (dashed green) returns the minimal value $h(s_i)$ attained over the past~$\omega_1$ iterations (referred to  as the ``recent history'').
+%    \subref{fig:local_min2}~
+	The function $\kappa(i,\omega_1)$ (dashed green) returns the minimal value $h(s_i)$ attained over the past~$\omega_1$ iterations (referred to  as the ``recent history'').
     %
     \subref{fig:local_min3}~The function $\kappa(i-\omega_2,\omega_1-\omega_2)$ (dotted red) returns the minimal value $h(s_i)$ attained over the beginning of the recent history.
     %
@@ -480,7 +495,7 @@ as well as in the supplementary video\footnote{
   	\includegraphics[width=0.4\textwidth]{fig/heuristic_value.jpg}
   	\vspace{-2mm}
   \caption{
-		Progress of MHA*---heuristic values as a function of the number of queue expansions.
+		Progress of MHA* with and without user guidance---heuristic values as a function of the number of queue expansions.
 		When a local minima is detected (red cross) in the baseline heuristic (cyan), a dynamic heuristic is generated (blue) until the local minima is escaped (green circle) or until a local minima is detected (blue cross) in the dynamic heuristic.
 		Plots depicting the baseline heuristic values when only a limited amount of guidance is given demonstrate that without guidance, the planner remains stuck in local minima (we note that as MHA* is complete, it will eventually escape all local minima).
 		}
