@@ -297,22 +297,73 @@ In such cases we request new guidance from the user and replace the previous gui
 \subsection{Invoking user guidance}
 \label{sec:q1}
 
-\begin{figure}[tb]
-  \centering
-  	\includegraphics[width=0.49\textwidth]{fig/local_min_detection_4.pdf}
-  	\vspace{-5mm}
-  \caption{
-		Visualization of the way local minima are detected.
-		The heuristic value $h(s_i)$ has three local minima, $m_1, m_2$ and $m_3$.
-		Local minima $m_2$ is very small while~$m_3$ is not a local minimum per se, yet the progress made between consecutive steps is smaller than the predefined threshold~$\varepsilon$.
-		When the value of $\kappa(i,w) -  \kappa(i-\omega_2,\omega_1-\omega_2)$ is larger than $\varepsilon$, a local minimum is detected, visualized by a gray region.
-		Notice that the hysteresis parameters~$\kappa_1$ and $\kappa_2$ 
-		(i)~induce a lag from the time that the minimum occurs until it is detected,
-		(ii)~allow to avoid detecting minimum $m_2$.		
-  	}
-   	\label{fig:robot}
-  	\vspace{-5mm}
-\end{figure}
+\begin{figure*}[t]%
+%\captionsetup{format = plain}
+  \centering%
+  \subfigure[]
+  {
+  \includegraphics[width=0.265\textwidth]{fig/local_min_detection_1.pdf}
+  \label{fig:local_min1}
+  }
+  \hspace{-10mm}
+  \subfigure[]
+  {
+  \label{fig:local_min2}
+  \includegraphics[width=0.265\textwidth]{fig/local_min_detection_2.pdf}
+  }
+  \hspace{-10mm}
+  \subfigure[]
+  {
+  \label{fig:local_min3}
+  \includegraphics[width=0.265\textwidth]{fig/local_min_detection_3.pdf}
+  }  
+  \hspace{-10mm}
+  \subfigure[]
+  {
+  \label{fig:local_min4}
+  \includegraphics[width=0.265\textwidth]{fig/local_min_detection_4.pdf}
+  }
+  \caption{%
+    Visualization of the way stagnation regions are detected.   
+	\subref{fig:local_min1}~The heuristic value $h(s_i)$ (solid blue) has three local minima, $m_1, m_2$ and $m_3$ followed by three stagnation regions (light grey). Local minima $m_2$ is very small while~$m_3$ is not a local minimum per se, yet the progress made between consecutive steps is smaller than the predefined threshold~$\varepsilon$.
+    %
+    \subref{fig:local_min2}~The function $\kappa(i,\omega_1)$ (dashed green) returns the minimal value $h(s_i)$ attained over the past~$\omega_1$ iterations (referred to  as the ``recent history'').
+    %
+    \subref{fig:local_min3}~The function $\kappa(i-\omega_2,\omega_1-\omega_2)$ (dotted red) returns the minimal value $h(s_i)$ attained over the beginning of the recent history.
+    %
+    \subref{fig:local_min3}~The difference between the two functions (solid purple) indicates if there was significant progress (i.e. more than $\varepsilon$) made at the end of the recent horizon when compared to the beginning of the recent history. 
+    If not, then the planner detects a stagnation region (dark grey).
+		Notice that the hysteresis parameters~$\omega_1$ and $\omega_2$ 
+		(i)~induce a lag from the time that the stagnation region starts until it is detected,
+		(ii)~allow to avoid detecting a stagnation region~$r_2$.  
+		}%
+
+  \label{fig:filmstrip-local-min}%
+
+  \vspace{-2.5mm}
+
+\end{figure*}
+
+
+
+
+
+%\begin{figure}[tb]
+%  \centering
+%  	\includegraphics[width=0.49\textwidth]{fig/local_min_detection_4.pdf}
+%  	\vspace{-5mm}
+%  \caption{
+%		Visualization of the way local minima are detected.
+%		The heuristic value $h(s_i)$ has three local minima, $m_1, m_2$ and $m_3$.
+%		Local minima $m_2$ is very small while~$m_3$ is not a local minimum per se, yet the progress made between consecutive steps is smaller than the predefined threshold~$\varepsilon$.
+%		When the value of $\kappa(i,w) -  \kappa(i-\omega_2,\omega_1-\omega_2)$ is larger than $\varepsilon$, a local minimum is detected, visualized by a gray region.
+%		Notice that the hysteresis parameters~$\kappa_1$ and $\kappa_2$ 
+%		(i)~induce a lag from the time that the minimum occurs until it is detected,
+%		(ii)~allow to avoid detecting minimum $m_2$.		
+%  	}
+%   	\label{fig:robot}
+%  	\vspace{-5mm}
+%\end{figure}
 
 The heuristic functions of search-based planning algorithms, such as MHA*, can be used to estimate in a principled manner when the planner is in a local minimum (Alg~\ref{alg:main}, lines 2, 6). 
 %Specifically, in such algorithms,  we proceed by iteratively choosing  the current-best state from a priority queue and computing all its successors. 
