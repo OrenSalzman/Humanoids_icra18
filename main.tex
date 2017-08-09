@@ -31,9 +31,10 @@
 \begin{abstract}
 We consider the problem of planning a collision-free path for a high-dimensional robot.
 Specifically, we suggest a planning framework where a motion-planning algorithm can obtain guidance from a user.
-In contrast to existing approaches, we suggest to seek user guidance only when the planner identifies that it is in a local minimum, namely when it ceases to make significant progress towards the goal.
+In contrast to existing approaches, we suggest to seek user guidance only when the planner identifies that it ceases to make significant progress towards the goal.
 User guidance is given in the form of an intermediate configuration $\hat{q}$ which, in turn, is used to bias the planner to go through $\hat{q}$.
 We demonstrate our approach for the case where the planning algorithm is Multi-Heuristic A* (MHA*) and the robot is a 34-DOF humanoid.
+\os{We show that...}
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
@@ -42,7 +43,7 @@ We demonstrate our approach for the case where the planning algorithm is Multi-H
 %Intro
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\begin{comment}
-\section{Introduction and related work}
+\section{Introduction}
 \label{sec:intro}
 
 Motion-planning is a fundamental problem in robotics that has been studied for over four decades~\cite{CBHKKLT05,L06,S04}.
@@ -57,12 +58,13 @@ User guidance was employed by biasing the sampling scheme of the planner.
 This was done by having the user mark regions in the \emph{workspace} that should be avoided or 
 %explored~\cite{DSJA14}.
 explored~\cite{DSJA14, MTMKDC15, YPB15}.
+\os{Mention Vinitha's paper when arXived}
 Alternatively, interactive devices such as a 3D mouse or a haptic arm have been used to generate paths in a (low-dimensional) configuration space. This path was then used by a planner to bias its 
 %sampling domain~\cite{TFF12}.
 sampling domain~\cite{BTFF16, FTF09, TFF12}.
 %Interestingly, in all the examples mentioned, an implicit assumption taken is that the user is dedicated to guide and interact with the planning algorithm.
 
-We are interested in planning in high-dimensional, constrained spaces such as those encountered by a humanoid robot (see Fig.~\ref{fig:robot}).
+We are interested in planning in high-dimensional, constrained spaces such as those encountered by a humanoid robot (see Fig.~\ref{fig:robot} and Sec.~\ref{sec:rel}).
 In such settings, workspace regions often give little guidance to the planner due to the dimension of the configuration space as well as the physical constraints of the robot.
 Additionally, obtaining user guidance in the configuration space is extremely time consuming, even for expert users.
 Thus,  while beneficial, user guidance should be employed scarcely.
@@ -73,7 +75,7 @@ Transforming this insight into a planning framework requires addressing three fu
 \begin{itemize}
 	\item[\textbf{Q1.}] When should the planner ask the user for guidance?
 	\item[\textbf{Q2.}] What form should the user's guidance take?
-	\item[\textbf{Q3.}] How should the guidance be used?
+	\item[\textbf{Q3.}] How should the guidance be used by the planner?
 \end{itemize}
 
 Identifying \emph{when} to obtain guidance 
@@ -83,9 +85,7 @@ The specific type of guidance given
 (Q2, Sec~\ref{sec:q2}),
 as previously mentioned,
 is configuration-space based and \emph{not} workspace-based. This deviation from previous work is due to our specific setting of high-dimensional, constrained systems.
-Finally, guidance is used 
-(Q3, Sec~\ref{sec:q2})
-to \emph{bias} the search algorithm towards regions that are likely to be beneficial. 
+Finally, guidance is used to \emph{bias} the search algorithm towards regions that are likely to be beneficial (Q3, Sec~\ref{sec:q2}). 
 It is worth emphasising that this is done without requiring the user to understand the underlying search algorithm. 
 
 % 
@@ -108,23 +108,14 @@ It is worth emphasising that this is done without requiring the user to understa
 %\label{sec:related}
 %
 
-While our approach is general and can be incorporated with any motion-planning algorithm (see discussion in Sec.~\ref{}) it is especially suitable for search-based planning algorithms (see, e.g.,~\cite{CCL14}) that perform a systematic search guided by heuristic functions.
+While our approach is general and can be incorporated with any motion-planning algorithm (see discussion in Sec.~\ref{sec:future}) it is especially suitable for search-based planning algorithms (see, e.g.,~\cite{CCL14}) that perform a systematic search guided by heuristic functions.
 Specifically, we demonstrate it's effectiveness for the case where the motion-planning algorithm is multi-heuristic A* (MHA*)~\cite{ASNHL16, NAL15} which we detail in Sec.~\ref{sec:mha}.
 %MHA* is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent admissible heuristic.
 %It uses them simultaneously to search the configuration space in an A*-like manner that was shown to be both complete and ensures bounds on sub-optimality. 
 %This allows the search to efficiently combine the guiding powers of different heuristic functions. 
 
 
-We demonstrate our approach for planning the motion of a humanoid robot. Such robots often have several dozens of degrees of freedom making planning a challenging task, especially when taking additional constraints into account such as stability and contact constraints.
-One approach to plan the motion for such systems, is to use predefined, carefully chosen fixed gaits~\cite{KKKHKHAI04}. 
-However, when the terrain is uneven, such planners are inadequate at computing stable motions~\cite{HBLHW08}.
-Another approach is to reduce the search space by decomposing the degrees of freedom into functional groups such as locomotion and manipulation.
-Then functional-specific algorithms such as footstep planning are applied to the low-dimensional space (see, e.g.,~\cite{CLCKHK05, KNKII01, PSBLY12, XCXZC09, KKNII02} for a prtial list).
-A high-dimensional planner is then used to ``track'' the plan generated in the low-dimensional space.
 
-In this work, we employ the recently-introduced adaptive dimensionality framework~\cite{GCBSL11, GSL12, GSL13}.
-Roughly speaking,  it consists of two stages: an adaptive planning phase which attempts to plan in a low-dimensional space when possible and a tracking phase which plans in the high-dimensional space.
-Our user-guided planner is integrated within the high-dimensional planner.
 
 After describing our approach (Sec.~\ref{sec:planning}) we demonstrate the effectiveness of our planner (Sec.~\ref{sec:eval})
 \os{finish general description}
@@ -192,13 +183,25 @@ After describing our approach (Sec.~\ref{sec:planning}) we demonstrate the effec
 %\subsubsection*{Manipulation}
 %Dalibard \etal~\cite{DNLL10} presents a method to perform manipulation task planning
 %for a humanoid robot while stepping. It introduces the concept of ``documented`` objects. Namely, objects that provide information on how to manipulate them.
-\section{ALgorithmic background---MHA*}
-\label{sec:mha}
-\os{do we need a section detailing MHA*?}
+\section{Related work and algorithmic background}
+\subsection{Motion planning for humanoid robots}
+\label{sec:rel}
+Humanoid robots, for which we demonstrate our approach, often have several dozens of degrees of freedom making planning a challenging task, especially when taking additional constraints into account such as stability and contact constraints.
+One approach to plan the motion for such systems, is to use predefined, carefully chosen fixed gaits~\cite{KKKHKHAI04}. 
+However, when the terrain is uneven, such planners are inadequate at computing stable motions~\cite{HBLHW08}.
+Another approach is to reduce the search space by decomposing the degrees of freedom into functional groups such as locomotion and manipulation.
+Then functional-specific algorithms such as footstep planning are applied to the low-dimensional space (see, e.g.,~\cite{CLCKHK05, KNKII01, PSBLY12, XCXZC09, KKNII02} for a prtial list).
+A high-dimensional planner is then used to ``track'' the plan generated in the low-dimensional space.
 
-MHA* is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent admissible heuristic termed the \emph{anchor} heuristic.
-It uses the the heuristic functions to simultaneously perform a set of A*-like searches that was shown to be both complete.
-Using multiple heuristics allows the search to efficiently combine the guiding powers of the different heuristic functions. 
+In this work, we employ the recently-introduced adaptive dimensionality framework~\cite{GCBSL11, GSL12, GSL13}.
+Roughly speaking,  it consists of two stages: an adaptive planning phase which attempts to plan in a low-dimensional space when possible and a tracking phase which plans in the high-dimensional space.
+Our user-guided planner is integrated within the high-dimensional planner.
+
+\subsection{Multi Heuristic A* (MHA*)}
+\label{sec:mha}
+Multi Heuristic A* (MHA*)~\cite{ASNHL16, NAL15} is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent admissible heuristic termed the \emph{anchor} heuristic.
+It uses the the heuristic functions to simultaneously perform a set of A*-like searches.
+Using multiple searches allows the algorithm to efficiently combine the guiding powers of the different heuristic functions. 
 
 Specifically, for each search, MHA* uses a separate priority queues associated with each heuristic. 
 The algorithm iterates between the search in a structured manner that ensures bounds on sub-optimality. 
@@ -206,6 +209,28 @@ This can be done in a round-robin fashion, or using more
 sophisticated approaches that allow to automatically calibrate the weight given to each heuristic~\cite{PNAL15}.
 
 Part of the efficiency of MHA* is due to the fact that the value of the cost-to-come (the $g$-value) computed for each state is shared between all the different searches\footnote{To be precise, Aine et al.~\cite{ASNHL16} define two variants of MHA*: Independent and Shared MHA* where the queues do not share and share the $g$-values of states, respectively. In this paper when we use the term MHA* to refer to the shared variant.}.
+Sharing cost-to-come values between searches implies that if a better path to a state is discovered by any of the searches, the information is updated in all the
+priority queues. 
+Moreover, if one search ceases to make progress towards the goal (to be formally defined in Sec.~\ref{sec:planning}) it can use ``promising'' states found by other searches to escape this depression region~\cite{HB12, I92}.
+Furthermore, path sharing allows SMHA* to expand each state at most twice.
+
+
+%heuristic depression
+%regions, i.e., regions in the search space where the correlation between the heuristic values and the actual cost-to-go is
+%weak
+%
+%Intuitively, a heuristic depression is a bounded region of the search space
+%in which the heuristic is inaccurate with respect to the heuristic values of the states in
+%the border of the region
+%
+%Ishida (1992) gave a constructive definition for \textbf{heuristic depressions}. The construction
+%starts with a node s such that its heuristic value is equal to or less than those of the
+%surrounding states. The region is then extended by adding a state of its border if all states
+%in the resulting region have a heuristic value lower or equal than those of the states in the
+%border. As a result, the heuristic depression D is a maximal connected component of states
+%such that all states in the boundary of D h
+
+
 
 The multiple heuristics that MHA* can use allows to automatically calibrate the weight given to each heuristic~\cite{PNAL15}.
 Furthermore, using heuristics gives a principled way to identify when the planner ceases to make progress (see, e.g.,~\cite{VNL17}).
@@ -293,7 +318,7 @@ In such cases we request new guidance from the user and replace the previous gui
     States popped from a priority queue are depicted using dark colors while states still in a queue are depicted by a light color.
     Start, target and user-guided states are depicted in purple with the letters \texttt{s}, \texttt{t}, \texttt{g}, respectively. 
     %
-    In this example MHA* is implemented using shared queues and alternating between queues in a round-robin fashion. Furthermore, heuristics are inflated by a weight of $w=\infty$. Namely, the priority queues are ordered according to the heuristic-value of the states.
+    In this example MHA* alternates between queues in a round-robin fashion. Furthermore, heuristics are inflated by a weight of $w=\infty$. Namely, the priority queues are ordered according to the heuristic-value of the states.
     %
 	\subref{fig:dynamic_heuristic1}~MHA* starts with the single anchor heuristic (green) which is the Euclidean distance to goal and a local minimum is identified.
     %
@@ -301,7 +326,7 @@ In such cases we request new guidance from the user and replace the previous gui
     %
 	\subref{fig:dynamic_heuristic3}~After passing through the guidance, the additional heuristic (red) drives the search towards the goal.
     %
-	\subref{fig:dynamic_heuristic4}~After the additional heuristic found states that are at the top of the priority queue of the anchor heuristic, the additional heuristic is deleted and the anchor heuristic drives the search towards the goal.
+	\subref{fig:dynamic_heuristic4}~After the additional heuristic found states that are placed at the top of the priority queue of the anchor heuristic, the additional heuristic is deleted and the anchor heuristic drives the search towards the goal.
   }%
   \label{fig:filmstrip-dynamic_heuristic}%
   \vspace{-2.5mm}
@@ -346,7 +371,7 @@ In such cases we request new guidance from the user and replace the previous gui
     %
     \subref{fig:local_min3}~The function $\kappa(i-\omega_2,\omega_1-\omega_2)$ (dotted red) returns the minimal value $h(s_i)$ attained over the beginning of the recent history.
     %
-    \subref{fig:local_min3}~The difference between the two functions (solid purple) indicates if there was significant progress (i.e. more than $\varepsilon$) made at the end of the recent horizon when compared to the beginning of the recent history. 
+    \subref{fig:local_min4}~The difference between the two functions (solid purple) indicates if there was significant progress (i.e. more than $\varepsilon$) made at the end of the recent horizon when compared to the beginning of the recent history. 
     If not, then the planner detects a stagnation region (dark grey).
 		Notice that the hysteresis parameters~$\omega_1$ and $\omega_2$ 
 		(i)~induce a lag from the time that the stagnation region starts until it is detected,
@@ -380,6 +405,8 @@ In such cases we request new guidance from the user and replace the previous gui
 %  	\vspace{-5mm}
 %\end{figure}
 
+\os{should we use subscript $\Q$?}
+
 The heuristic functions of search-based planning algorithms, such as MHA*, can be used to estimate in a principled manner when the planner is in a local minimum (Alg~\ref{alg:main}, lines 2, 6). 
 %Specifically, in such algorithms,  we proceed by iteratively choosing  the current-best state from a priority queue and computing all its successors. 
 %
@@ -411,7 +438,7 @@ Thus, our algorithm is given three additional parameters~$\omega_1, \omega_2$ an
 and implements the function \texttt{is\_in\_local\_minimum()} by maintaining for each queue~$\Q$ the values 
 $\kappa_\Q(i, \omega_1)$ and $\kappa_\Q(i - \omega_2, \omega_1 - \omega_2)$.
 Note that testing if a single queue is in a local minimum takes $O(1)$ time.
-
+For a visualization, see Fig.~\ref{fig:filmstrip-local-min}.
 
 
 
@@ -439,7 +466,8 @@ We chose to obtain user guidance
 (Alg~\ref{alg:main}, line~4)
 in the form of an intermediate configuration $\hat{q}$ that is used to guide the planner. We discuss alternative options in Sec~\ref{sec:eval}.
 
-The framework includes a graphical user interface (GUI) capable of  depicting the robot and the workspace.
+The framework includes a graphical user interface (GUI)
+\os{add pic of GUI} capable of  depicting the robot and the workspace.
 Once user guidance is invoked, 
 a configuration in the local minima is obtained and the robot is placed in that configuration (as well as the start configuration and target region) in the GUI.
 This allows the user to try and understand where the planner faces difficulty and how to guide it out of the local minima.
@@ -449,8 +477,6 @@ We note that the user is \emph{not} required to be familiar with the search algo
 \subsection{Using user guidance}
 \label{sec:q3}
 \os{should we add a queue for every heiristic that is used in Vanilla MHA*? }
-
-\os{should we use DTS? }
 
 \os{this notation is not consistent with the one in Sec B}
 
@@ -482,7 +508,8 @@ Once this is detected (Alg~\ref{alg:main}, line~8), the newly-added queue is rem
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Evaluation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Evaluation and future work}\label{sec:eval}
+\section{Evaluation }
+\label{sec:eval}
 We implemented the planning framework described in Sec~\ref{sec:planning} for the case of a humanoid robot. We gave the robot the task of climbing up a set of stairs while avoiding collision with obstacles as well as adhering to the physical constraints of the robot (see Fig.~\ref{fig:robot}).
 We used MHA* with one non-admissible heuristic called the \emph{baseline} heuristic.
 Results demonstrating the effectiveness of our framework are depicted in Fig.~\ref{fig:res}
@@ -498,10 +525,18 @@ as well as in the supplementary video\footnote{
 		Progress of MHA* with and without user guidance---heuristic values as a function of the number of queue expansions.
 		When a local minima is detected (red cross) in the baseline heuristic (cyan), a dynamic heuristic is generated (blue) until the local minima is escaped (green circle) or until a local minima is detected (blue cross) in the dynamic heuristic.
 		Plots depicting the baseline heuristic values when only a limited amount of guidance is given demonstrate that without guidance, the planner remains stuck in local minima (we note that as MHA* is complete, it will eventually escape all local minima).
+		\os{should we introduce the notions of baseline and dynamic heuristics formally in text?}
 		}
 \vspace{-5mm}
    	\label{fig:res}
 \end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Discussion and future work
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Discussion and future work}
+\label{sec:future}
+\os{add discussion on sampling based planners}
 
 While providing promising initial results, our framework is far from being complete.
 We are interested in experimenting with alternative forms of user guidance such as providing a \emph{constrained submanifold} of the configuration space. This may be used to guide the humanoid to use the railing while planning the stairs.
