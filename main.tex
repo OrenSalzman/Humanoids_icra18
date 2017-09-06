@@ -407,13 +407,6 @@ In such cases we request new guidance from the user and replace the previous gui
 
 \os{should we use subscript $\Q$?}
 
-\os{Definitions for local minima:
-(i)~stagnation region,
-(ii)~stalled progress,
-(iii)~local minima
-(iv)~depression
-}
-
 The heuristic functions of search-based planning algorithms, such as MHA*, can be used to estimate in a principled manner when the planner is in a local minimum (Alg~\ref{alg:main}, lines 2, 6). 
 %Specifically, in such algorithms,  we proceed by iteratively choosing  the current-best state from a priority queue and computing all its successors. 
 %
@@ -517,16 +510,28 @@ Once this is detected (Alg~\ref{alg:main}, line~8), the newly-added queue is rem
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Evaluation }
 \label{sec:eval}
-We implemented the planning framework described in Sec~\ref{sec:planning} for the case of a humanoid robot. We gave the robot the task of climbing up a set of stairs while avoiding collision with obstacles as well as adhering to the physical constraints of the robot (see Fig.~\ref{fig:robot}).
-We used MHA* with one non-admissible heuristic called the \emph{baseline} heuristic.
+%We implemented the planning framework described in Sec~\ref{sec:planning} for the case of a humanoid robot. We gave the robot the task of climbing up a set of stairs while avoiding collision with obstacles as well as adhering to the physical constraints of the robot (see Fig.~\ref{fig:robot}).
+%We used MHA* with one non-admissible heuristic called the \emph{baseline} heuristic.
+%Results demonstrating the effectiveness of our framework are depicted in Fig.~\ref{fig:res}
+%as well as in the supplementary video\footnote{
+%\url{https://drive.google.com/file/d/0B5cCvECYZLYZYlF2cFFPSmQ1clE/view?ts=591cd6e1}}. 
+
+We evaluated the performance of our planning framework described in Sec~\ref{sec:planning} on the 34-DOF humanoid robot which is constrained to maintain static stability at all times by design. The robot has four symmetric limbs having 7 revolute joints each. The other 6 dimensions come from the pose of the robot with respect to some global frame of reference. The initial state of the robot is defined as the full dimensional 34-DOF configuration of the robot whereas the goal state is represented as a cylindrical region which the robot needs to enter (depicted in Fig.~\ref{fig:robot})). As described earlier, our approach runs in the so called tracking phase of the underlying adaptive dimensionality framework, in which the planner attempts to find a plan in the full dimension of the robot in order to track the footstep plan generated in the planning phase. 
+
+We used a set of motion primitives which are short kinematically feasible motion sequences to generate the actions or the successors during the search. The primitives included clockwise and counter-clockwise rotation of individual joints. Three different types of motion primitives are used; 1) primitives for the free limbs of the robot i.e. the limbs whose end effectors are not constrained by any contact surface 2) primitives to move the torso of the robot which requires solving closed chain inverse kinematics for the constrained limbs 3) primitives to latch onto the footstep path which also requires solving inverse kinematics for the target footstep position.
+
+The admissible heuristic which we use as the anchor heuristic in the MHA* search is computed as \os{(discuss with Max)}. On top of that we use only one inadmissible baseline heuristic which assists the search with a general walking or stepping capability for the robot but is not intelligent enough to encounter contingencies e.g an obstacle in the way or if the robot needs to make use of a support surface in order to make further progress towards the goal. Again the idea here is to have a small number of reasonably generic baseline heuristics and eliminate the need to hand engineer several domain specific heuristics. The dynamic heuristic that we used is the euclidean distance in the joint 34-DOF space.
+
+\subsection{The Staircase Experiment}
+We gave the robot the task of climbing up a set of stairs while avoiding collision with obstacles (steps and handrails) as well as adhering to the physical constraints of the robot (see Fig.~\ref{fig:robot}). In the absence of handrails the planner successfully finds a path to the goal without invoking the user for guidance. The handrails make the planning problem  harder. As the robot has to sway sideways during the stepping motion to maintain static stability, the handrails make it harder for the robot to climb up the staircase if it make use of them for support. To this end we allow the user to provide guidance to the planner to be able to use support surfaces. We pre-specify a set of valid contact surfaces (handrail cylinders in this experiment). When the user brings any of the robot hands within a threshold distance to a valid contact pose on a support surface, the GUI snaps the robot state to establish a valid support contact by solving the inverse kinematics for the respective limb. The planner incorporates this contact information in the robot stability calculations. Resultantly when the user provides such a guidance, the dynamic heuristic guides the search to reach this user provide state and continues to expand its successor states with the hand contact because they enable the search to make further progress. In the context of motion primitives, in this case we allow two types of motions for the robot torso, one with the hands in contact and the other that allow free motions for the robot arms. This helps the robot to let go of the handrail when it no longer needs the support.
+
 Results demonstrating the effectiveness of our framework are depicted in Fig.~\ref{fig:res}
 as well as in the supplementary video\footnote{
-\url{https://drive.google.com/file/d/0B5cCvECYZLYZYlF2cFFPSmQ1clE/view?ts=591cd6e1}}. 
-
-
+%\url{https://drive.google.com/file/d/0B5cCvECYZLYZYlF2cFFPSmQ1clE/view?ts=591cd6e1}}. 
+to be added}
 \begin{figure}[tb]
   \centering
-  	\includegraphics[width=0.4\textwidth]{fig/heuristic_value.jpg}
+  	\includegraphics[width=0.5\textwidth]{fig/h_staircase.jpg}
   	\vspace{-2mm}
   \caption{
 		Progress of MHA* with and without user guidance---heuristic values as a function of the number of queue expansions.
