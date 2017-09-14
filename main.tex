@@ -36,7 +36,7 @@ In contrast to existing approaches, we suggest to seek user guidance only when t
 User guidance is given in the form of an intermediate configuration~$\hat{q}$ which, in turn, is used to bias the planner to go through $\hat{q}$.
 We demonstrate our approach for the case where the planning algorithm is Multi-Heuristic A* (MHA*) and the robot is a 34-DOF humanoid.
 We show that using this general approach allows to compute highly-constrained paths such as climbing stairs with little domain knowledge.
-Without our approach, solving such problems require carefully-crafted domain-dependant  heuristics. 
+Without our approach, solving such problems require carefully-crafted domain-dependent  heuristics. 
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
@@ -112,7 +112,7 @@ It is worth emphasising that this is done without requiring the user to understa
 %
 
 While our approach is general and can be incorporated with any motion-planning algorithm (see discussion in Sec.~\ref{sec:future}) it is especially suitable for search-based planning algorithms (see, e.g.,~\cite{CCL14}) that perform a systematic search guided by heuristic functions.
-Specifically, we demonstrate it's effectiveness for the case where the motion-planning algorithm is multi-heuristic A* (MHA*)~\cite{ASNHL16, NAL15} which we detail in Sec.~\ref{sec:mha}.
+Specifically, we demonstrate its effectiveness for the case where the motion-planning algorithm is multi-heuristic A* (MHA*)~\cite{ASNHL16, NAL15} which we detail in Sec.~\ref{sec:mha}.
 %MHA* is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent admissible heuristic.
 %It uses them simultaneously to search the configuration space in an A*-like manner that was shown to be both complete and ensures bounds on sub-optimality. 
 %This allows the search to efficiently combine the guiding powers of different heuristic functions. 
@@ -123,7 +123,7 @@ Specifically, we demonstrate it's effectiveness for the case where the motion-pl
 After describing our approach at high-level (Sec.~\ref{sec:high}) we demonstrate how it can be applied to the case of MHA* (Sec.~\ref{sec:planning}).
 We continue by showing the effectiveness of our planner (Sec.~\ref{sec:eval}).
 Specifically, we show that this general approach allows to compute highly-constrained paths such as climbing stairs with little domain knowledge.
-Without our approach, solving such problems require carefully-crafted domain-dependant heuristics. 
+Without our approach, solving such problems require carefully-crafted domain-dependent heuristics. 
 We conclude this paper with a discussion and an outline of possible future work (Sec.~\ref{sec:future}).
 
 
@@ -137,9 +137,6 @@ Another approach is to reduce the search space by decomposing the degrees of fre
 Then functional-specific algorithms such as footstep planning are applied to the low-dimensional space (see, e.g.,~\cite{CLCKHK05, KNKII01, PSBLY12, XCXZC09, KKNII02} for a prtial list).
 A high-dimensional planner is then used to ``track'' the plan generated in the low-dimensional space.
 
-In this work, we employ the recently-introduced adaptive dimensionality framework~\cite{GCBSL11, GSL12, GSL13}.
-Roughly speaking,  it consists of two stages: an adaptive planning phase which attempts to plan in a low-dimensional space when possible and a tracking phase which plans in the high-dimensional space.
-Our user-guided planner is integrated within the high-dimensional planner.
 
 \subsection{Multi Heuristic A* (MHA*)}
 \label{sec:mha}
@@ -492,42 +489,62 @@ For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:films
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Evaluation }
 \label{sec:eval}
-%We implemented the planning framework described in Sec~\ref{sec:planning} for the case of a humanoid robot. We gave the robot the task of climbing up a set of stairs while avoiding collision with obstacles as well as adhering to the physical constraints of the robot (see Fig.~\ref{fig:robot}).
-%We used MHA* with one non-admissible heuristic called the \emph{baseline} heuristic.
-%Results demonstrating the effectiveness of our framework are depicted in Fig.~\ref{fig:res}
-%as well as in the supplementary video\footnote{
-%\url{https://drive.google.com/file/d/0B5cCvECYZLYZYlF2cFFPSmQ1clE/view?ts=591cd6e1}}. 
-
 We evaluated the performance of our planning framework on a 34-DOF WAREC humanoid robot~\cite{MHSetal15} 
-which is constrained to maintain static stability at all times by design. The robot has four symmetric limbs having 7 revolute joints each. The other 6 dimensions come from the pose of the robot with respect to some global frame of reference. As described earlier, our approach runs in the so called tracking phase of the underlying adaptive dimensionality framework, in which the planner attempts to find a plan in the full dimension of the robot in order to track the footstep plan generated in the planning phase. 
+which is constrained to maintain static stability at all times by design. The robot has four symmetric limbs having seven revolute joints each. The other six dimensions come from the pose of the robot with respect to some global frame of reference. 
+In this work, we employ the recently-introduced adaptive dimensionality framework~\cite{GCBSL11, GSL12, GSL13}.
+Roughly speaking,  it consists of two stages: an adaptive planning phase which attempts to plan in a low-dimensional space when possible and a tracking phase which plans in the high-dimensional space.
+Our user-guided planner is integrated within the high-dimensional planner.
+Specifically, the planner attempts to find a plan in the full-dimension configuration space of the robot in order to track the footstep plan generated in the planning phase. 
 
 \subsection{Implementation details}
-We used a set of motion primitives which are short kinematically feasible motion sequences to generate the actions or the successors during the search. The primitives included clockwise and counter-clockwise rotation of individual joints. Three different types of motion primitives are used; 1) primitives for the free limbs of the robot i.e. the limbs whose end effectors are not constrained by any contact surface 2) primitives to move the torso of the robot which requires solving closed chain inverse kinematics for the constrained limbs 3) primitives to latch onto the target footstep positions which also requires solving inverse kinematics for the corresponding pose 4) primitives to latch onto the user provided configuration once it is within a small threshold distance to the state being expanded.
+We used a set of motion primitives which are short kinematically feasible motion sequences to generate the actions, or the successors, of a state during the search. These primitives included clockwise and counter-clockwise rotation of individual joints. 
+Specifically, four different types of motion primitives are used:
+(i)~primitives for the free limbs of the robot i.e. the limbs whose end effectors are not constrained by any contact surface,  
+(ii)~primitives to move the torso of the robot which 
+(iii)~primitives to latch onto the target footstep positions provided by the planning phase
+and
+(iv)~primitives to latch onto the user-provided configuration once it is within a small threshold distance to the current state being expanded.
+Notice that motion primitives (ii) and (iii) require solving closed-chain inverse kinematics for the constrained limbs.
 
-%\os{mention that we add a motion primitive to the guidance once we are close to it}
-
-
-%The admissible heuristic which we use as the anchor heuristic in the MHA* search is computed as \os{(discuss with Max)}. On top of that we use only one inadmissible baseline heuristic which assists the search with a general walking or stepping capability for the robot but is not intelligent enough to encounter contingencies e.g an obstacle in the way or if the robot needs to make use of a support surface in order to make further progress towards the goal.  The dynamic heuristic that we used is the euclidean distance in the joint 34-DOF space.
-
-We used a very small set of fairly generic heuristics. Again the idea here is to minimize the engineering effort required in hand designing several domain specific heuristics. We conducted two experiments which largely differ in the nature of mobility and thus employ different baseline heuristic functions. The dynamic heuristic function is consistent in both the experiments which is computed as the euclidean distance in the joint 34-DOF space.
+For each experiment we used a very small set of fairly generic heuristics. 
+This is done to demonstrate that our approach allows to significantly reduce the engineering effort required in carefully crafting domain-specific heuristics. 
+We conducted two experiments which largely differ in the nature of mobility and thus employ different baseline heuristic functions. 
+The anchor heuristic function is consistent in both the experiments which is computed as the euclidean distance in the joint 34-DOF space.
 
 \subsection{Climbing a staircase}
+\label{subsec:stairs}
 
-We gave the robot the task of climbing up a set of stairs while avoiding collision with obstacles (steps and handrails) as well as adhering to the physical constraints of the robot (see Fig.~\ref{fig:robot}). The initial state of the robot is defined as the full dimensional 34-DOF configuration of the robot whereas the goal state is represented as a cylindrical region which the robot needs to enter (depicted in Fig.~\ref{fig:robot}).In the absence of handrails the planner successfully finds a path to the goal without invoking the user for guidance. The handrails make the planning problem  harder. As the robot has to sway sideways during the stepping motion to maintain static stability, the handrails make it harder for the robot to climb up the staircase if it make use of them for support. To this end we allow the user to provide guidance to the planner to be able to use support surfaces. We pre-specify a set of valid contact surfaces (handrail cylinders in this experiment). When the user brings any of the robot hands within a threshold distance to a valid contact pose on a support surface, the GUI snaps the robot state to establish a valid support contact by solving the inverse kinematics for the respective limb. The planner incorporates this contact information in the robot stability calculations. Resultantly when the user provides such a guidance, the dynamic heuristic guides the search to reach this user provide state and continues to expand its successor states with the hand contact because they enable the search to make further progress. In the context of motion primitives, in this case we allow two types of motions for the robot torso, one with the hands in contact and the other that allow free motions for the robot arms. This helps the robot to let go of the handrail when it no longer needs the support. A single baseline heuristic is used in this experiment which assists the search with a general walking or stepping capability for the robot but is not intelligent enough to encounter contingencies e.g an obstacle in the way or if the robot needs to make use of a support surface in order to make further progress towards the goal.
+We gave the robot the task of climbing up a set of stairs while avoiding collision with obstacles (steps and handrails) as well as adhering to the physical constraints of the robot (see Fig.~\ref{fig:robot}). The initial state of the robot is defined as the full dimensional 34-DOF configuration of the robot whereas the goal state is represented as a cylindrical region which the robot needs to enter (depicted in Fig.~\ref{fig:robot}).
+
+In the absence of handrails the planner successfully finds a path to the goal without invoking the user for guidance. The handrails make the planning problem  harder. As the robot has to sway sideways during the stepping motion to maintain static stability, the handrails make it harder for the robot to climb up the staircase. 
+To this end, we allow the user to provide guidance to the planner using the notion of support surfaces. 
+We pre-specify a set of valid contact surfaces (handrail cylinders in this experiment). When the user brings any of the robot hands within a threshold distance to a valid contact pose on a support surface, the GUI snaps the robot state to establish a valid support contact by solving the inverse kinematics for the respective limb. The planner incorporates this contact information in the robot stability calculations.
+
+
+Resultantly, when the user provides guidance, the dynamic heuristic guides the search to reach this user-provide state and continues to expand its successor states with the hand in contact.
+This is done because maintaining contact enables the search to make further progress. 
+In the context of motion primitives, here we allow two types of motions for the robot torso, one with the hands in contact and the other that allow free motions for the robot arms. This helps the robot to let go of the handrail when it no longer needs the support. A single baseline heuristic is used in this experiment which assists the search with a general walking or stepping capability for the robot.
+However, it is not designed to avoid obstacles or make use of a support surface in order to make further progress towards the goal.
+
 
 Results demonstrating the effectiveness of our framework are depicted in Fig.~\ref{fig:h_plot}
 as well as in the supplementary video\footnote{
 %\url{https://drive.google.com/file/d/0B5cCvECYZLYZYlF2cFFPSmQ1clE/view?ts=591cd6e1}}. 
-\os{ADD LINK TO VIDEO}}
+\os{ADD LINK TO VIDEO}}.
+Specifically, we plot the heuristic value (as a proxy to the algorithm's progress) as a function of the number of queue expansions.
+For the same setting, we ran our algorithm with and without user guidance.
+Namely, if a stagnation region was detected, we recorded the state of the planner and then continued to run it once without asking the user for guidance and once using our approach. This was done every time a stagnation region was detected. 
+Results show that without guidance, the planner is not able to make any significant progress and the heuristic value does not change.
+On the other hand, when guidance is given, then the algorithm escapes the stagnation region and resumes to make progress towards the goal.
 
 \begin{figure*}[t]%
 %\captionsetup{format = plain}
   \centering%
   \subfigure[Climbing up the staircase]
   {
-  \includegraphics[width=0.4\textwidth]{fig/h_staircase.jpg}
+  \includegraphics[width=0.5\textwidth]{fig/h_staircase.jpg}
   \label{fig:stair_plot}
-  \includegraphics[width=0.3\textwidth]{fig/staircase.png}
+  \includegraphics[width=0.32\textwidth]{fig/staircase.png}
   }
 
   \subfigure[Mounting onto the ladder]
@@ -539,8 +556,8 @@ as well as in the supplementary video\footnote{
 
   \caption{%
     Progress of MHA* with and without user guidance---heuristic values as a function of the number of queue expansions.
-		When a local minima is detected (red cross) in the baseline heuristic (cyan), a dynamic heuristic is generated (blue) until the local minima is escaped (green circle) or until a new local minima is detected (blue cross) in the dynamic heuristic.
-		Plots depicting the baseline heuristic values when only a limited amount of guidance is given demonstrate that without guidance, the planner remains stuck in local minima (we note that as MHA* is complete, it will eventually escape all local minima).}
+		When a stagnation region is detected (red cross) in the baseline heuristic (cyan), a dynamic heuristic is generated (blue) until the stagnation region is escaped (green circle) or until a new stagnation region is detected (blue cross) in the dynamic heuristic.
+		Plots depicting the baseline heuristic values when only a limited amount of guidance is given demonstrate that without guidance, the planner remains stuck in the stagnation region (we note that as MHA* is complete, it will eventually escape all such regions).}
 
 
   \label{fig:h_plot}%
@@ -550,9 +567,11 @@ as well as in the supplementary video\footnote{
 \end{figure*}
 
 \subsection{Mounting onto a ladder}
-We also tested our method for the task of mounting onto a ladder while starting from a standing position (see Fig.~\ref{fig:ladder}). Similar to the previous experiment, the initial state of the robot here is a full dimensional joint configuration. The goal state however, is defined as 6-DOF poses for all the four end effectors (hands and feet) of the robot. These poses are predefined contact positions on the ladder rungs which ensure a reasonable degree of robot stability. The modality involved in this problem makes it harder to solve as the planner would have to figure out the sequence in which each of these target contacts has to be reached. Moreover, the targets need to be approached in a certain direction to establish the desired contacts. The inability of heuristic functions to model such task specific constraints introduce local minima in the search. The baseline heuristic function that we used in this experiment is computed as the summation of 6 dimensional euclidean distance for each of the four end effectors.
+We also tested our method for the task of mounting onto a ladder while starting from a standing position (see Fig.~\ref{fig:ladder}). Similar to the previous experiment, the initial state of the robot here is a full-dimensional configuration. The goal state however, is defined as 6-DOF poses for all the four end effectors (hands and feet) of the robot. These poses are predefined contact positions on the ladder rungs which ensure a reasonable degree of robot stability. The modality involved in this problem makes it harder to solve as the planner would have to figure out the sequence in which each of these target contacts has to be reached. Moreover, the targets need to be approached in a certain direction to establish the desired contacts. The inability of heuristic functions to model such task-specific constraints introduce stagnation regions in the search. 
+The baseline heuristic function that we used in this experiment is computed as the summation of six-dimensional  distance for each of the four end effectors and their respective target poses.
 
-A similar plot depicting how the varied number of user guidances effects the search progress is shown in Fig.~\ref{fig:ladder_plot}
+We conducted a similar experiment to the one described in Sec.~\ref{subsec:stairs} where we simulate the progress with and without user guidance for each depression region detected.
+A similar trend can be seen in Fig.~\ref{fig:ladder_plot}.
 
 
 \begin{table}[t!]
@@ -560,12 +579,12 @@ A similar plot depicting how the varied number of user guidances effects the sea
 \begin{tabular}{l|ccc}	
       & Staircase & Ladder\\ 
         \hline
-            Success Rate(percent) & - & 100\\
-            Mean planning time(s) & - & 113 $\pm$ 36\\
-            Mean total time(s) & - & 222 $\pm$ 55\\
-		   Mean state expansions & - & 708 $\pm$ 189\\
-			Mean num of guidances & - & 5.5 $\pm$ 0.85\\
-			Mean time per guidance(s) & - & 20 $\pm$ 3.6\\
+            Success Rate(percent) & 100 & 100\\
+            Mean planning time(s) & 101 $\pm$ 17.5 & 113 $\pm$ 36\\
+            Mean total time(s) & 246 $\pm$ 53.5 & 222 $\pm$ 55\\
+       Mean state expansions & 1219 $\pm$ 242 & 708 $\pm$ 189\\
+      Mean num of guidances & 8 $\pm$ 2 & 5.5 $\pm$ 0.85\\
+      Mean time per guidance(s) & 18.5 $\pm$ 3 & 20 $\pm$ 3.6\\
 \end{tabular}
 \caption{Experimental results for the the staircase and ladder scenarios averaged over 10 trials}\label{tab:stats}
 \end{table}
@@ -579,7 +598,7 @@ A similar plot depicting how the varied number of user guidances effects the sea
 
 \subsection{Discussion}
 In Sec.~\ref{sec:eval} we demonstrated how using user guidance allows to solve highly-constrained motion-planning in high-dimensional spaces with only simple baseline heuristics.
-An alternative approach would be to add domain-dependant carefully-crafted heuristics~\cite{V17} which allow to faster solve the same problems completely autonomously.
+An alternative approach would be to add domain-dependent carefully-crafted heuristics~\cite{V17} which allow to faster solve the same problems completely autonomously.
 \os{Add citation to alternative submission if arXiv version exists}
 
 
