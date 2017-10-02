@@ -1,19 +1,9 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%2345678901234567890123456789012345678901234567890123456789012345678901234567890
-%        1         2         3         4         5         6         7         8
-
-\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
-
-%\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
-
-\IEEEoverridecommandlockouts                              % This command is only needed if 
-                                                          % you want to use the \thanks command
-
-\overrideIEEEmargins                                      % Needed to meet printer requirements.
-
+\documentclass[letterpaper, 10 pt]{IEEEtran}
+\overrideIEEEmargins
+\IEEEoverridecommandlockouts 
 \usepackage{savesym}
-\usepackage{amsmath,amssymb,amsfonts}
-%\usepackage[numbers]{natbib}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage[numbers]{natbib}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 \usepackage{algorithm,algorithmicx}
@@ -27,17 +17,6 @@
 \usepackage[bookmarks=true]{hyperref}
 \usepackage{graphicx,subfigure}
 
-% See the \addtolength command later in the file to balance the column lengths
-% on the last page of the document
-
-% The following packages can be found on http:\\www.ctan.org
-%\usepackage{graphics} % for pdf, bitmapped graphics files
-%\usepackage{epsfig} % for postscript graphics files
-%\usepackage{mathptmx} % assumes new font selection scheme installed
-%\usepackage{times} % assumes new font selection scheme installed
-%\usepackage{amsmath} % assumes amsmath package installed
-%\usepackage{amssymb}  % assumes amsmath package installed
-
 \title{	Online, interactive user guidance for \\
 		high-dimensional, constrained motion planning }
 
@@ -48,7 +27,6 @@
   }%
 }
 
-
 \begin{document}
 
 
@@ -58,7 +36,7 @@
 \pagestyle{empty}
 
 \input{macros.tex}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{abstract}
 We consider the problem of planning a collision-free path for a high-dimensional robot.
 Specifically, we suggest a planning framework where a motion-planning algorithm can obtain guidance from a user.
@@ -69,12 +47,13 @@ We show that using this general approach allows to compute highly-constrained pa
 Without our approach, solving such problems require carefully-crafted domain-dependent  heuristics. 
 \end{abstract}
 
+\IEEEpeerreviewmaketitle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Intro
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\begin{comment}
-
+\vspace{-5mm}
 \section{Introduction}
 \label{sec:intro}
 
@@ -360,7 +339,6 @@ Once user guidance is invoked,
 a configuration in the stagnation region is obtained and the robot is placed in that configuration (as well as the start configuration and target region) in the GUI.
 This allows the user to intuitively try and understand where the planner faces difficulty and how to guide it out of the stagnation region.
 The user then suggests the guidance $\hat{q}$ by moving the robot's joints and end effectors.
-The tool runs a state validity checker in the background which restricts the user from providing invalid configurations, e.g. with respect to collision, joint limits and stability.
 Note that the user is \emph{not} required to be familiar with the search algorithm.
 
 \begin{figure}[tb]
@@ -496,6 +474,20 @@ For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:films
 %	
 \vspace{2mm}
 %
+\Function{\texttt{is\_in\_stagnation\_region()}}{}
+%
+	\If {baseline heuristics are in stagnation
+ 			\textbf{and} \\
+			\hspace{10mm} 
+		dynamic heuristic isn't in stagnation}
+		\State \textbf{return} true
+	\Else
+		\State \textbf{return} false
+	\EndIf
+\EndFunction 
+%	
+\vspace{2mm}
+%
 \Function{\texttt{remove\_user\_guidance()}}{}
 	\If {dynamic heuristic is in local minimum}
 		\State {remove dynamic heuristic}
@@ -538,8 +530,7 @@ Notice that motion primitives (ii) and (iii) require solving closed-chain invers
 For each experiment we used a very small set of fairly generic heuristics. 
 This is done to demonstrate that our approach allows to significantly reduce the engineering effort required in carefully crafting domain-specific heuristics. 
 We conducted two experiments which largely differ in the nature of mobility and thus employ different baseline heuristic functions. 
-The dynamic heuristic function in both the experiments is the Euclidean distance in the joint 34-DOF space.
-The parameter values that we used consistently in the two experiments are $\omega_1 (200), \omega_2 (50)$ and $\varepsilon (50)$.
+The baseline heuristic function in both the experiments is the Euclidean distance in the joint 34-DOF space.
 Finally in our final experiment, we show that while our approach uses several parameters, it is highly robust to the choice of parameters for our domain.
 
 \subsection{Mounting onto a ladder}
@@ -576,7 +567,7 @@ However, it is not designed to avoid obstacles or utilize support surfaces.
 
 
 We conducted a similar experiment to the one described in Sec.~\ref{subsec:stairs} where we simulate the progress with and without user guidance for each depression region detected.
-A similar trend can be seen in Fig.~\ref{fig:h_plot}. Note that for this experiment the plot depicts the instances where the dynamic heuristic also gets stuck in stagnation region because of the imperfections in the guidance but then eventually escapes it with additional guidances.
+A similar trend can be seen in Fig.~\ref{fig:h_plot}.
 
 \begin{figure*}[t]%
 %\captionsetup{format = plain}
@@ -631,7 +622,7 @@ We introduced three parameters in section Sec.~\ref{sec:q1} i.e ~$\omega_1, \ome
 
 For the experiments that we conducted, the results don't vary with changing $\omega_1$ because the heuristic functions that we used don't show dips as illustrated in the hypothetical illustration in Fig.~\ref{fig:filmstrip-local-min} but in general, such a trend can occur in an arbitrarily inadmissible heuristic. $\varepsilon$ is a domain dependent parameter and its magnitude should be set relative to the scale of the corresponding heuristic function. For instance if we use $n$ baseline heuristics, then the value of $\varepsilon$ for each of these heuristics should be proportional to the scale of that heuristic. Having said that one can fix $\varepsilon$ and tune the parameter $\omega_2$ until you get the desired behaviour, as both of them are correlated and measure the rate of progress being made by a heuristic. 
 
-To show robustness to $\omega_2$, we linearly swept its value over a window centred at the nominal value used for experiments and checked how many of the stagnation region detections matched with the nominal results. Fig. ~\ref{fig:robustness} shows the evaluation for the two experiments. For the values of $\omega_2$ where the matching ratio is 1, the planner would have invoked the user exactly for the same stagnation regions as the ones for which the guidance was called using the nominal parameters.
+To show robustness to $\omega_2$, we linearly swept its value over a window centred at the nominal value used for experiments and checked how many of the stagnation region detections matched with the nominal results. Fig. ~\ref{fig:robustness} shows the evaluation for the two experiments.
 
 \begin{figure}[t]%
 %\captionsetup{format = plain}
@@ -651,7 +642,7 @@ To show robustness to $\omega_2$, we linearly swept its value over a window cent
   }
 
   \caption{%
-    The plot shows the ratio of the number stagnation region detections matched to the total number of regions detected by the nominal parameter values, for $\omega_2$ values swept around the nominal value (50) by $\pm$ 40 expansions with a step of 5. 
+    The plot shows the ratio of the number stagnation region detections matched to the total number of regions detected by the nominal parameter values, for $\omega_2$ values swept around the nominal values by $\pm$ 40 expansions with a step of 5. 
   \vspace{-5mm}
 }
    	\label{fig:robustness}
@@ -676,7 +667,7 @@ There is no clear answer to this question and our approach simply offers a gener
 
 \subsection{Future work}
 While providing promising initial results, our framework is far from being complete.
-We are interested in experimenting with alternative forms of user guidance such as providing a \emph{constrained sub-manifold} of the configuration space which can be more informative for the planner instead of providing it with a single joint configuration and could potentially reduce the number of user invocations. 
+We are interested in experimenting with alternative forms of user guidance such as providing a \emph{constrained sub-manifold} of the configuration space. This may be used to guide the humanoid to use the railing while planning the stairs.
 Finally, once a guide is given, we want our planner to be able to \emph{generalize} the guidance obtained to future stagnation regions that are similar in nature to the ones encountered (e.g., climbing up multiple stairs).
 
 Finally we are interested in implemented our approach using sampling-based planners. Here, once the user will provide guidance, it can be used to bias the sampling procedure. 
@@ -690,3 +681,8 @@ An open challenge remains how to automatically detect that the planner is not pr
 \bibliography{bibliography}
 
 \end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
