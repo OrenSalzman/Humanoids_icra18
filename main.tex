@@ -2,14 +2,18 @@
 %2345678901234567890123456789012345678901234567890123456789012345678901234567890
 %        1         2         3         4         5         6         7         8
 
-\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
+\documentclass{article}
+\pdfpagewidth=8.5in
+\pdfpageheight=11in
+% The file ijcai18.sty is the style file for IJCAI-18 (same as ijcai08.sty).
+\usepackage{ijcai18}
 
-%\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
-
-\IEEEoverridecommandlockouts                              % This command is only needed if 
-                                                          % you want to use the \thanks command
-
-\overrideIEEEmargins                                      % Needed to meet printer requirements.
+% Use the postscript times font!
+\usepackage{times}
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage[utf8]{inputenc}
+\usepackage[small]{caption}
 
 \usepackage{savesym}
 \usepackage{amsmath,amssymb,amsfonts}
@@ -82,18 +86,18 @@ Motion-planning is a fundamental problem in robotics that has been studied for o
 However, efficiently planning paths in high-dimensional, constrained spaces remains an ongoing challenge.
 One approach to address this challenge is to incorporate user input to guide the motion-planning algorithm.
 While there has been much work on planning using human demonstration 
-(see, e.g.,~\cite{ACVB09, HS16, PHCL16, SHLA16, YA17}), 
+(see, e.g.,~\cite{ACVB09,HS16,PHCL16,SHLA16,YA17}), 
 there has been far less research incorporating guidance as an interactive part of the planning~loop.
 
 Broadly speaking, interactive planning has been typically used in the context of sampling-based motion-planning algorithms~\cite{L06}.
 User guidance was employed by biasing the sampling scheme of the planner.
 This was done by having the user mark regions in the \emph{workspace} that should be avoided or 
 %explored~\cite{DSJA14}.
-explored~\cite{DSJA14, MTMKDC15, YPB15}.
+explored~\cite{DSJA14,MTMKDC15,YPB15}.
 %\os{Mention Vinitha's paper when arXived}
 Alternatively, interactive devices such as a 3D mouse or a haptic arm have been used to generate paths in a (low-dimensional) configuration space. This path was then used by a planner to bias its 
 %sampling domain~\cite{TFF12}.
-sampling domain~\cite{BTFF16, FTF09, TFF12}.
+sampling domain~\cite{BTFF16,FTF09,TFF12}.
 %Interestingly, in all the examples mentioned, an implicit assumption taken is that the user is dedicated to guide and interact with the planning algorithm.
 
 We are interested in planning in high-dimensional, constrained spaces such as those encountered by a humanoid robot (see Fig.~\ref{fig:robot} and Sec.~\ref{sec:rel}).
@@ -130,7 +134,7 @@ It is worth emphasising that this is done without requiring the user to understa
   	%\vspace{-2mm}
   \caption{
 		Planning domain---Humanoid robot needs to use the ladder or the staircase to reach the top while avoiding collision with the obstacles and adhering to the physical stability constraints.
-  	\vspace{-15mm}
+%  	\vspace{-15mm}
 }
    	\label{fig:robot}
 \end{figure}
@@ -142,7 +146,7 @@ It is worth emphasising that this is done without requiring the user to understa
 %
 
 While our approach is general and can be incorporated with any motion-planning algorithm (see discussion in Sec.~\ref{sec:future}) it is especially suitable for search-based planning algorithms (see, e.g.,~\cite{CCL14}) that perform a systematic search guided by heuristic functions.
-Specifically, we demonstrate its effectiveness for the case where the motion-planning algorithm is multi-heuristic A* (MHA*)~\cite{ASNHL16, NAL15} which we detail in Sec.~\ref{sec:mha}.
+Specifically, we demonstrate its effectiveness for the case where the motion-planning algorithm is multi-heuristic A* (MHA*)~\cite{ASNHL16,NAL15} which we detail in Sec.~\ref{sec:mha}.
 %MHA* is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent admissible heuristic.
 %It uses them simultaneously to search the configuration space in an A*-like manner that was shown to be both complete and ensures bounds on sub-optimality. 
 %This allows the search to efficiently combine the guiding powers of different heuristic functions. 
@@ -164,13 +168,13 @@ Humanoid robots, for which we demonstrate our approach, often have several dozen
 One approach to plan the motion for such systems, is to use predefined, carefully chosen fixed gaits~\cite{KKKHKHAI04}. 
 However, when the terrain is uneven, such planners are inadequate at computing stable motions~\cite{HBLHW08}.
 Another approach is to reduce the search space by decomposing the degrees of freedom into functional groups such as locomotion and manipulation.
-Then functional-specific algorithms such as footstep planning are applied to the low-dimensional space (see, e.g.,~\cite{CLCKHK05, KNKII01, PSBLY12, XCXZC09, KKNII02} for a partial list).
+Then functional-specific algorithms such as footstep planning are applied to the low-dimensional space (see, e.g.,~\cite{CLCKHK05,KNKII01,PSBLY12,XCXZC09,KKNII02} for a partial list).
 A high-dimensional planner is then used to ``track'' the plan generated in the low-dimensional space.
 
 
 \subsection{Multi Heuristic A* (MHA*)}
 \label{sec:mha}
-Multi Heuristic A* (MHA*)~\cite{ASNHL16, NAL15} is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent heuristic termed the \emph{anchor} heuristic.
+Multi Heuristic A* (MHA*)~\cite{ASNHL16,NAL15} is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent heuristic termed the \emph{anchor} heuristic.
 It then uses the heuristic functions to simultaneously perform a set of weighted-A*~\cite{pohl1970first}-like searches.
 Using multiple searches allows the algorithm to efficiently combine the guiding powers of the different heuristic functions. 
 
@@ -182,7 +186,7 @@ sophisticated approaches that allow to automatically calibrate the weight given 
 Part of the efficiency of MHA* is due to the fact that the value of the cost-to-come (the $g$-value) computed for each state is shared between all the different searches\footnote{To be precise, Aine et al.~\cite{ASNHL16} define two variants of MHA*: Independent and Shared MHA* where the queues do not share and do share the $g$-values of states, respectively. In this paper when we use the term MHA*, it refers to the latter (shared) variant.}.
 Sharing cost-to-come values between searches implies that if a better path to a state is discovered by any of the searches, the information is updated in all the
 priority queues. 
-Moreover, if one search ceases to make progress towards the goal (a state which we call ``stagnation region'' and which will be formally defined in Sec.~\ref{sec:planning}) it can use ``promising'' states found by other searches to escape this stagnation region (see also~\cite{HB12, I92}).
+Moreover, if one search ceases to make progress towards the goal (a state which we call ``stagnation region'' and which will be formally defined in Sec.~\ref{sec:planning}) it can use ``promising'' states found by other searches to escape this stagnation region (see also~\cite{HB12,I92}).
 Furthermore, path sharing allows SMHA* to expand each state at most twice.
 Finally, in graph search, heuristic functions give a principled way to identify when the planner ceases to make progress (see, e.g.,~\cite{VNL17}).
 
@@ -520,7 +524,7 @@ For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:films
 \label{sec:eval}
 We evaluated the performance of our planning framework on a 34-DOF WAREC humanoid robot~\cite{MHSetal15} 
 which is constrained to maintain static stability at all times. The robot has four symmetric limbs each having seven revolute joints. The other six dimensions come from the pose of the robot with respect to some global frame of reference. 
-In one of the experiments (Sec.~\ref{subsec:stairs}), we employ the recently-introduced adaptive dimensionality framework~\cite{GCBSL11, GSL12, GSL13}.
+In one of the experiments (Sec.~\ref{subsec:stairs}), we employ the recently-introduced adaptive dimensionality framework~\cite{GCBSL11,GSL12,GSL13}.
 Roughly speaking,  it consists of two stages: an adaptive planning phase which attempts to plan in a low-dimensional space when possible and a tracking phase which plans in the high-dimensional space.
 Our user-guided planner is integrated within the high-dimensional planner.
 Specifically, the planner attempts to find a plan in the full-dimension configuration space of the robot in order to track the footstep plan generated in the planning phase. 
@@ -686,7 +690,8 @@ An open challenge remains how to automatically detect that the planner is not pr
 %\newpage
 
 %\bibliographystyle{plainnat}
-\bibliographystyle{abbrv}
+\bibliographystyle{named}
+%\bibliographystyle{abbrv}
 \bibliography{bibliography}
 
 \end{document}
