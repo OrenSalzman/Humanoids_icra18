@@ -171,7 +171,15 @@ Another approach is to reduce the search space by decomposing the degrees of fre
 Then functional-specific algorithms such as footstep planning are applied to the low-dimensional space (see, e.g.,~\cite{CLCKHK05,KNKII01,PSBLY12,XCXZC09,KKNII02} for a partial list).
 A high-dimensional planner is then used to ``track'' the plan generated in the low-dimensional space.
 
-
+\os{
+User guidance has been intensively incorporated in controlling the motion of humanoid robots, especially in complex tasks as those presented in the Darpa Robotics Challenge (DRC)~\cite{drc18}.
+In such settings, guidance ranged from teleoperating the robot through shared autonomy to high-level task guidance~\cite{mcgill2017team,zucker2015general,gray2017architecture,dedonato2017team,marion2017director}.
+However, as far as we are aware of, in all the aforementioned cases, \emph{identification} of when to use guidance was done by a human operator and not by the system (except for relatively simple metrics where the system asks for help when it fails to complete some given task).
+Furthermore, the human guidance used was used as a ``hard'' constraint forcing the system to make use of the guidance.
+In contrast, in our work the system automatically and independently identifies when it is in need of guidance.
+This guidance is then seamlessly incorporated as a soft constraint--- the system biases the search towards the guidance but also continues to explore the search space as if the guidance was not given.
+}
+ 
 \subsection{Multi Heuristic A* (MHA*)}
 \label{sec:mha}
 Multi Heuristic A* (MHA*)~\cite{ASNHL16,NAL15} is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent heuristic termed the \emph{anchor} heuristic.
