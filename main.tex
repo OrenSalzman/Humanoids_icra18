@@ -563,24 +563,67 @@ On the other hand, when guidance is given, then the algorithm escapes the stagna
 
 
 
-\subsection{Climbing a staircase}
-\label{subsec:stairs}
-The second task we considered is climbing up a set of stairs while avoiding collision with obstacles (steps and handrails) as well as adhering to the physical constraints of the robot (see Fig.~\ref{fig:robot}). The initial state of the robot again is the full dimensional 34-DOF configuration of the robot but the goal state in this experiment is represented just as a cylindrical region which the robot needs to enter (depicted in Fig.~\ref{fig:stair_plot}).
+% \subsection{Climbing a staircase}
+% \label{subsec:stairs}
+% The second task we considered is climbing up a set of stairs while avoiding collision with obstacles (steps and handrails) as well as adhering to the physical constraints of the robot (see Fig.~\ref{fig:robot}). The initial state of the robot again is the full dimensional 34-DOF configuration of the robot but the goal state in this experiment is represented just as a cylindrical region which the robot needs to enter (depicted in Fig.~\ref{fig:stair_plot}).
 
-In the absence of handrails the planner successfully finds a path to the goal without invoking the user for guidance. The handrails make the planning problem  harder. As the robot has to sway sideways during the stepping motion to maintain static stability, the handrails constrain its mobility.
-To this end, we allow the user to provide guidance to the planner using the notion of support surfaces. 
-We prespecify a set of valid contact surfaces (handrail cylinders in this experiment). When the user brings any of the robot hands within a threshold distance to a valid contact pose on a support surface, the GUI snaps the robot state to establish a valid support contact by solving the inverse kinematics for the respective limb. The planner incorporates this contact information while doing the stability evaluation for a state. 
+% In the absence of handrails the planner successfully finds a path to the goal without invoking the user for guidance. The handrails make the planning problem  harder. As the robot has to sway sideways during the stepping motion to maintain static stability, the handrails constrain its mobility.
+% To this end, we allow the user to provide guidance to the planner using the notion of support surfaces. 
+% We prespecify a set of valid contact surfaces (handrail cylinders in this experiment). When the user brings any of the robot hands within a threshold distance to a valid contact pose on a support surface, the GUI snaps the robot state to establish a valid support contact by solving the inverse kinematics for the respective limb. The planner incorporates this contact information while doing the stability evaluation for a state. 
 
 
-Resultantly, when the user provides guidance, the dynamic heuristic guides the search to reach this user-provided state and continues to expand its successor states which moves the robot forward while maintaining the hand contact.
+% Resultantly, when the user provides guidance, the dynamic heuristic guides the search to reach this user-provided state and continues to expand its successor states which moves the robot forward while maintaining the hand contact.
  
-In the context of motion primitives, here we allow two types of motions for the robot torso, one with the hands in contact and the other that allow free motions for the robot arms. This helps the robot to let go of the handrail when it no longer needs the support. A single baseline heuristic is used in this experiment which assists the search with a general walking or stepping capability for the robot.
-However, it is not designed to avoid obstacles or utilize support surfaces.
+% In the context of motion primitives, here we allow two types of motions for the robot torso, one with the hands in contact and the other that allow free motions for the robot arms. This helps the robot to let go of the handrail when it no longer needs the support. A single baseline heuristic is used in this experiment which assists the search with a general walking or stepping capability for the robot.
+% However, it is not designed to avoid obstacles or utilize support surfaces.
 
 
 
-We conducted a similar experiment to the one described in Sec.~\ref{subsec:stairs} where we simulate the progress with and without user guidance for each depression region detected.
-A similar trend can be seen in Fig.~\ref{fig:h_plot}. Note that for this experiment the plot depicts the instances where the dynamic heuristic also gets stuck in stagnation region because of the imperfections in the guidance but then eventually escapes it with additional guidances.
+% We conducted a similar experiment to the one described in Sec.~\ref{subsec:stairs} where we simulate the progress with and without user guidance for each depression region detected.
+% A similar trend can be seen in Fig.~\ref{fig:h_plot}. Note that for this experiment the plot depicts the instances where the dynamic heuristic also gets stuck in stagnation region because of the imperfections in the guidance but then eventually escapes it with additional guidances.
+
+\subsection{Bipedal locomotion}
+\label{subsec:locomotion}
+The second task we considered is bipedal locomotion of the robot while avoiding collisions with the obstacles in the environment as well as adhering to the physical constraints of the robot. The initial state of the robot again is the full dimensional 34-DOF configuration of the robot but the goal state in this experiment is represented just as a cylindrical region which the robot needs to enter (depicted in Fig.~\ref{fig:robot}).
+
+As briefly discussed earlier, for this experiment we use the adaptive planning framework. The planning phase generates the footstep plan first followed by the tracking phase which runs the full high-dimensional planner in order to track those footsteps. We integrate our approach into the latter. A single baseline heuristic is used in this experiment which assists the search with a general walking or stepping capability for the robot. For each step the footprint of the target footstep is visualized for the user to be able to better understand where the planner is stuck and how to provide the guidance. In relatively easier scenarios this heuristic would suffice in guiding the search. However if the search encounters harder situations such as those depicted in Fig.~\ref{biped_locomotion}, then it would trap into local minima. Our approach invokes the user for guidance at four different instances. In all these instances the a user can assist the planner by providing the guiding configuration by looking at the respective scenario. When the user provides the guidance, the dynamic heuristic guides the search to pass through that configuration until the baseline heuristic escapes the stagnation region.
+
+\begin{figure*}[t]%
+%\captionsetup{format = plain}
+  \centering%
+  \subfigure[]
+  {
+  \includegraphics[width=0.225\textwidth]{fig/stuck_bar.png}
+  \label{fig:stuck_bar}
+  }
+  \subfigure[]
+  {
+  \label{fig:stuck_tables}
+  \includegraphics[width=0.225\textwidth]{fig/stuck_tables.png}
+  }
+  \subfigure[]
+  {
+  \label{fig:stuck_door}
+  \includegraphics[width=0.225\textwidth]{fig/stuck_door.png}
+  }  
+  \subfigure[]
+  {
+  \label{fig:stuck_step}
+  \includegraphics[width=0.225\textwidth]{fig/stuck_step.png}
+  }
+  \caption{%
+    Biped locomotion in challenging scenarios: 
+  \subref{fig:stuck_bar}~shows an instance where the robot has to squat or bend down to pass under a beam.
+    %
+  \subref{fig:stuck_tables}~depicts a situation where the robot has to pass through two tables by may be lifting the elbows high above the tables.
+    %
+  Progressing further, \subref{fig:stuck_door}~is a situation where the robot has to squeeze through narrow doorway by tucking in its arms.
+    %
+  \subref{fig:stuck_step}~shows a scenario where the robot has to step onto a relatively high platform to reach the goal for which it has to lean a little bit more to it's right side to be able to lift the left foot further up.
+  }%
+  \label{fig:biped_locomotion}%
+  % \vspace{-2.5mm}
+\end{figure*}
 
 \begin{figure*}[t]%
 %\captionsetup{format = plain}
@@ -627,7 +670,7 @@ We evaluated the performance by running the experiments on the two environments.
       Mean time per guidance(s) & 20 $\pm$ 3.6 & 18.5 $\pm$ 3\\
 \end{tabular}
 \caption{Experimental results for the the staircase and ladder scenarios averaged over 10 trials}\label{tab:stats}
-\vspace{-10mm}
+% \vspace{-10mm}
 \end{table}
 
 \subsection{Robustness to algorithmic parameters}
