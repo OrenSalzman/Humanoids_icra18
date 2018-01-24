@@ -69,8 +69,8 @@ Specifically, we suggest a planning framework where a motion-planning algorithm 
 In contrast to existing approaches, we suggest to seek user guidance only when the planner identifies that it ceases to make significant progress towards the goal.
 User guidance is given in the form of an intermediate configuration~$\hat{q}$ which, in turn, is used to bias the planner to go through $\hat{q}$.
 We demonstrate our approach for the case where the planning algorithm is Multi-Heuristic A* (MHA*) and the robot is a 34-DOF humanoid.
-We show that using this general approach allows to compute highly-constrained paths such as climbing stairs with little domain knowledge.
-Without our approach, solving such problems require carefully-crafted domain-dependent  heuristics. 
+We show that using this general approach allows to compute highly-constrained paths with little domain knowledge.
+Without our approach, solving such problems require carefully-crafted domain-dependent heuristics. 
 \end{abstract}
 
 
@@ -130,10 +130,11 @@ It is worth emphasising that this is done without requiring the user to understa
 
 \begin{figure}[tb]
   \centering
-  	\includegraphics[width=0.453\textwidth]{fig/env.png}
+  	\includegraphics[width=0.4\textwidth]{fig/env.png}
   	%\vspace{-2mm}
   \caption{
-		Planning domain---Humanoid robot needs to use the ladder or the staircase to reach the top while avoiding collision with the obstacles and adhering to the physical stability constraints.
+  Planning domain---Humanoid robot needs to plan a path in a challenging environment that involves circumventing obstacles and passing through tight spaces.
+		% Planning domain---Humanoid robot needs to use the ladder or the staircase to reach the top while avoiding collision with the obstacles and adhering to the physical stability constraints.
 %  	\vspace{-15mm}
 }
    	\label{fig:robot}
@@ -555,7 +556,7 @@ The parameter values that we used consistently in the two experiments are $\omeg
 Finally in our final experiment, we show that while our approach uses several parameters, it is highly robust to the choice of parameters for our domain.
 
 \subsection{Mounting onto a ladder}
-The first task we considered was  mounting onto a ladder while starting from a standing position  (see Fig.~\ref{fig:ladder_plot}). 
+The first task we considered was  mounting onto a ladder while starting from a standing position  (see Fig.~\ref{fig:gui}). 
 The initial state of the robot here is a full-dimensional configuration. The goal state is defined as 6-DOF poses for all the four end effectors (hands and feet) of the robot. These poses are predefined contact positions on the ladder rungs which ensure a reasonable degree of robot stability. 
 This is a challenging problem as the planner is required to compute the order in which each of these target contacts has to be reached. Moreover, the targets need to be approached in a certain direction to establish the desired contacts while avoiding collisions. 
 The inability of heuristic functions to model such task-specific constraints introduce stagnation regions in the search. 
@@ -594,7 +595,7 @@ On the other hand, when guidance is given, then the algorithm escapes the stagna
 \label{subsec:locomotion}
 The second task we considered is bipedal locomotion of the robot while avoiding collisions with the obstacles in the environment as well as adhering to the physical constraints of the robot. The initial state of the robot again is the full dimensional 34-DOF configuration of the robot but the goal state in this experiment is represented just as a cylindrical region which the robot needs to enter (depicted in Fig.~\ref{fig:robot}).
 
-As briefly discussed earlier, for this experiment we use the adaptive planning framework. The planning phase generates the footstep plan first followed by the tracking phase which runs the full high-dimensional planner in order to track those footsteps. We integrate our approach into the latter. A single baseline heuristic is used in this experiment which assists the search with a general walking or stepping capability for the robot. For each step the footprint of the target footstep is visualized for the user to be able to better understand where the planner is stuck and how to provide the guidance. In relatively easier scenarios this heuristic would suffice in guiding the search. However if the search encounters harder situations such as those depicted in Fig.~\ref{biped_locomotion}, then it would trap into local minima. Our approach invokes the user for guidance at four different instances. In all these instances the a user can assist the planner by providing the guiding configuration by looking at the respective scenario. When the user provides the guidance, the dynamic heuristic guides the search to pass through that configuration until the baseline heuristic escapes the stagnation region.
+As briefly discussed earlier, for this experiment we use the adaptive planning framework. The planning phase generates the footstep plan first followed by the tracking phase which runs the full high-dimensional planner in order to track those footsteps. We integrate our approach into the latter. A single baseline heuristic is used in this experiment which assists the search with a general walking or stepping capability for the robot. For each step the footprint of the target footstep is visualized for the user to be able to better understand where the planner is stuck and how to provide the guidance. In relatively easier scenarios this heuristic would suffice in guiding the search. However if the search encounters harder situations such as those depicted in Fig.~\ref{fig:biped_locomotion}, then it would get trapped into local minima. Our approach invokes the user for guidance at four different instances where the baseline heuristic fails to make progress. In all of these instances the user can assist the planner by providing the guiding configuration after analysing the respective scenario. When the user provides the guidance, the dynamic heuristic guides the search to pass through that configuration until the baseline heuristic escapes the stagnation region.
 
 \begin{figure*}[t]%
 %\captionsetup{format = plain}
@@ -640,14 +641,14 @@ As briefly discussed earlier, for this experiment we use the adaptive planning f
   {
   \includegraphics[width=0.375\textwidth]{fig/h_ladder.jpg}
   \label{fig:ladder_plot}
-  \includegraphics[width=0.3\textwidth]{fig/ladder.png}
+  % \includegraphics[width=0.3\textwidth]{fig/ladder.png}
   }  
 %
   \subfigure[Climbing up the staircase]
   {
   \includegraphics[width=0.37\textwidth]{fig/h_staircase.jpg}
   \label{fig:stair_plot}
-  \includegraphics[width=0.3\textwidth]{fig/staircase.png}
+  % \includegraphics[width=0.3\textwidth]{fig/staircase.png}
   }
 
   \caption{%
