@@ -199,22 +199,31 @@ Moreover, if one search ceases to make progress towards the goal (a state which 
 Furthermore, path sharing allows SMHA* to expand each state at most twice.
 Finally, in graph search, heuristic functions give a principled way to identify when the planner ceases to make progress (see, e.g.,~\cite{VNL17}).
 
+\os{
+\subsection{Identifying progress in search-based planners}
+}
 
-%heuristic depression
-%regions, i.e., regions in the search space where the correlation between the heuristic values and the actual cost-to-go is
-%weak
-%
-%Intuitively, a heuristic depression is a bounded region of the search space
-%in which the heuristic is inaccurate with respect to the heuristic values of the states in
-%the border of the region
-%
-%Ishida (1992) gave a constructive definition for \textbf{heuristic depressions}. The construction
-%starts with a node s such that its heuristic value is equal to or less than those of the
-%surrounding states. The region is then extended by adding a state of its border if all states
-%in the resulting region have a heuristic value lower or equal than those of the states in the
-%border. As a result, the heuristic depression D is a maximal connected component of states
-%such that all states in the boundary of D h
+\os{
+A key component in our work is automatically detecting when our planner requires user guidance.
+This requires characterizing regions where the planner ceases to make progress an algorithmic tools to detect such regions. 
+These two requirements are closely related to the notion of~\emph{heuristic depressions}~\cite{I92}
+and~\emph{expansion delays}~\cite{DTR11,BRD13}.
+}
 
+\os{
+A heuristic depression region is a  region in the search space where the correlation between the heuristic values and the actual cost-to-go is weak.
+It is defined as a maximal connected component of states~$\mathcal{D}$ such that all states in the boundary of~$\mathcal{D}$ have a heuristic value that is greater than or equal to the heuristic value of any state in~$\mathcal{D}$.
+}
+
+\os{
+Expansion delay, defined as the average number of node expansions from when a node is generated until it is expanded, is a tool used to estimate the average progress that a planner makes along any single path.
+When the heuristic used by a planner is perfect, the expansion delay equals one, while when performing uniform-cost search, the expansion delay can grow exponentially.
+}
+
+\os{
+Depression regions are typically used in the context of real-time planning~\cite{} where a heuristic is learned in an online fashion.
+It is used as 
+}
 
 
 
