@@ -68,7 +68,7 @@ We consider the problem of planning a collision-free path for a high-dimensional
 Specifically, we suggest a planning framework where a motion-planning algorithm can obtain guidance from a user.
 In contrast to existing approaches, we suggest to seek user guidance only when the planner identifies that it ceases to make significant progress towards the goal.
 User guidance is given in the form of an intermediate configuration~$\hat{q}$ which, in turn, is used to bias the planner to go through $\hat{q}$.
-We demonstrate our approach for the case where the planning algorithm is Multi-Heuristic A* (MHA*) and the robot is a 34-DOF humanoid.
+We demonstrate our approach for the case where the planning algorithm is Multi-Heuristic \astar (\mhastar) and the robot is a 34-DOF humanoid.
 We show that using this general approach allows to compute highly-constrained paths with little domain knowledge.
 Without our approach, solving such problems require carefully-crafted domain-dependent heuristics. 
 \end{abstract}
@@ -82,7 +82,7 @@ Without our approach, solving such problems require carefully-crafted domain-dep
 \section{Introduction}
 \label{sec:intro}
 
-Motion-planning is a fundamental problem in robotics that has been studied for over four decades~\cite{CBHKKLT05,L06,S04}.
+Motion-planning is a fundamental problem in robotics that has been studied for over four decades~\cite{CBHKKLT05,L06,HSS17}.
 However, efficiently planning paths in high-dimensional, constrained spaces remains an ongoing challenge.
 One approach to address this challenge is to incorporate user input to guide the motion-planning algorithm.
 While there has been much work on planning using human demonstration 
@@ -146,15 +146,15 @@ It is worth emphasising that this is done without requiring the user to understa
 %
 
 While our approach is general and can be incorporated with any motion-planning algorithm (see discussion in Sec.~\ref{sec:future}) it is especially suitable for search-based planning algorithms (see, e.g.,~\cite{CCL14}) that perform a systematic search guided by heuristic functions.
-Specifically, we demonstrate its effectiveness for the case where the motion-planning algorithm is multi-heuristic A* (MHA*)~\cite{ASNHL16,NAL15} which we detail in Sec.~\ref{sec:mha}.
-%MHA* is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent admissible heuristic.
-%It uses them simultaneously to search the configuration space in an A*-like manner that was shown to be both complete and ensures bounds on sub-optimality. 
+Specifically, we demonstrate its effectiveness for the case where the motion-planning algorithm is multi-heuristic \astar (\mhastar)~\cite{ASNHL16,NAL15} which we detail in Sec.~\ref{sec:mha}.
+%MH\hastar is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent admissible heuristic.
+%It uses them simultaneously to search the configuration space in an \astar-like manner that was shown to be both complete and ensures bounds on sub-optimality. 
 %This allows the search to efficiently combine the guiding powers of different heuristic functions. 
 
 
 
 
-After describing our approach at high-level (Sec.~\ref{sec:high}) we demonstrate how it can be applied to the case of MHA* (Sec.~\ref{sec:planning}).
+After describing our approach at high-level (Sec.~\ref{sec:high}) we demonstrate how it can be applied to the case of \mhastar (Sec.~\ref{sec:planning}).
 We continue by showing the effectiveness of our planner (Sec.~\ref{sec:eval}).
 Specifically, we show that this general approach allows to compute highly-constrained paths such as climbing stairs with little domain knowledge.
 Without our approach, solving such problems require carefully-crafted domain-dependent heuristics. 
@@ -175,28 +175,28 @@ A high-dimensional planner is then used to ``track'' the plan generated in the l
 User guidance has been intensively incorporated in controlling the motion of humanoid robots, especially in complex tasks as those presented in the Darpa Robotics Challenge (DRC)~\cite{drc18}.
 In such settings, guidance ranged from teleoperating the robot through shared autonomy to high-level task guidance~\cite{mcgill2017team,zucker2015general,gray2017architecture,dedonato2017team,marion2017director}.
 However, as far as we are aware of, in all the aforementioned cases, \emph{identification} of when to use guidance was done by a human operator and not by the system (except for relatively simple metrics where the system asks for help when it fails to complete some given task).
-Furthermore, the human guidance used was used as a ``hard'' constraint forcing the system to make use of the guidance.
+Furthermore, the human guidance was used as a ``hard'' constraint forcing the system to make use of the guidance.
 In contrast, in our work the system automatically and independently identifies when it is in need of guidance.
 This guidance is then seamlessly incorporated as a soft constraint--- the system biases the search towards the guidance but also continues to explore the search space as if the guidance was not given.
 }
  
-\subsection{Multi Heuristic A* (MHA*)}
+\subsection{Multi Heuristic \astar (\mhastar)}
 \label{sec:mha}
-Multi Heuristic A* (MHA*)~\cite{ASNHL16,NAL15} is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent heuristic termed the \emph{anchor} heuristic.
-It then uses the heuristic functions to simultaneously perform a set of weighted-A*~\cite{pohl1970first}-like searches.
+Multi Heuristic \astar (\mhastar)~\cite{ASNHL16,NAL15} is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent heuristic termed the \emph{anchor} heuristic.
+It then uses the heuristic functions to simultaneously perform a set of weighted-\astar~\cite{pohl1970first}-like searches.
 Using multiple searches allows the algorithm to efficiently combine the guiding powers of the different heuristic functions. 
 
-Specifically, for each search, MHA* uses a separate priority queue associated with each heuristic. 
+Specifically, for each search, \mhastar uses a separate priority queue associated with each heuristic. 
 The algorithm iterates between the searches in a structured manner that ensures bounds on sub-optimality. 
 This can be done in a round-robin fashion, or using more 
 sophisticated approaches that allow to automatically calibrate the weight given to each heuristic~\cite{PNAL15}.
 
-Part of the efficiency of MHA* is due to the fact that the value of the cost-to-come (the $g$-value) computed for each state is shared between all the different searches\footnote{To be precise, Aine et al.~\cite{ASNHL16} define two variants of MHA*: Independent and Shared MHA* where the queues do not share and do share the $g$-values of states, respectively. In this paper when we use the term MHA*, it refers to the latter (shared) variant.}.
+Part of the efficiency of \mhastar is due to the fact that the value of the cost-to-come (the $g$-value) computed for each state is shared between all the different searches\footnote{To be precise, Aine et al.~\cite{ASNHL16} define two variants of \mhastar: Independent and Shared \mhastar where the queues do not share and do share the $g$-values of states, respectively. In this paper when we use the term \mhastar, it refers to the latter (shared) variant.}.
 Sharing cost-to-come values between searches implies that if a better path to a state is discovered by any of the searches, the information is updated in all the
 priority queues. 
-Moreover, if one search ceases to make progress towards the goal (a state which we call ``stagnation region'' and which will be formally defined in Sec.~\ref{sec:planning}) it can use ``promising'' states found by other searches to escape this stagnation region (see also~\cite{HB12,I92}).
-Furthermore, path sharing allows SMHA* to expand each state at most twice.
-Finally, in graph search, heuristic functions give a principled way to identify when the planner ceases to make progress (see, e.g.,~\cite{VNL17}).
+Moreover, if one search ceases to make progress towards the goal (a state which we call ``stagnation region'' and which will be formally defined in Sec.~\ref{sec:planning}) it can use ``promising'' states found by other searches to escape this stagnation region.
+%Furthermore, path sharing allows \mhastar to expand each state at most twice.
+%Finally, in graph search, heuristic functions give a principled way to identify when the planner ceases to make progress (see, e.g.,~\cite{VNL17}).
 
 \os{
 \subsection{Identifying progress in search-based planners}
@@ -204,29 +204,26 @@ Finally, in graph search, heuristic functions give a principled way to identify 
 
 \os{
 A key component in our work is automatically detecting when our planner requires user guidance.
-This requires characterizing regions where the planner ceases to make progress an algorithmic tools to detect such regions. 
+This requires \emph{characterizing} regions where the planner ceases to make progress and algorithmic tools to \emph{detect} such regions. 
 These two requirements are closely related to the notion of~\emph{heuristic depressions}~\cite{I92}
 and~\emph{expansion delays}~\cite{DTR11,BRD13}.
 }
 
 \os{
 A heuristic depression region is a  region in the search space where the correlation between the heuristic values and the actual cost-to-go is weak.
-It is defined as a maximal connected component of states~$\mathcal{D}$ such that all states in the boundary of~$\mathcal{D}$ have a heuristic value that is greater than or equal to the heuristic value of any state in~$\mathcal{D}$.
+It is defined as a maximal connected component of states~$\mathcal{D}$ such that all states in the boundary of~$\mathcal{D}$ have a heuristic value that is greater than or equal to the heuristic value of any state in~$\mathcal{D}$.}
+
+\os{
+Such regions often occur in real-time search algorithms such as \algname{LRTA*}~\cite{K90} and \algname{LSS-LRTA*}~\cite{KS09} where the heuristic function is updated as the search progresses.
+Subsequently, current state-of-the-art algorithms  guide the search to avoide states that have been marked as part of a heuristic depression~\cite{HB12}.
+As we will see, we will use a slightly different characterization of when the planner ceases to make progress which we call \emph{stagnation regions}. For details, see Sec.~\ref{}. 
 }
 
 \os{
 Expansion delay, defined as the average number of node expansions from when a node is generated until it is expanded, is a tool used to estimate the average progress that a planner makes along any single path.
 When the heuristic used by a planner is perfect, the expansion delay equals one, while when performing uniform-cost search, the expansion delay can grow exponentially.
+We will use the notion of expansion delays to identify when the planner is in a stagnation region (i.e., when it ceases to make progress towards the goal). For details, see Sec.~\ref{}.
 }
-
-\ToDo{
-Describe when these two notions are used (real-time planning for depression regions and contract planning for expansion delays) and how they are related to the ideas we use
-}
-%\os{
-%Depression regions are typically used in the context of real-time planning~\cite{} where a heuristic is learned in an online fashion.
-%It is used as 
-%}
-
 
 
 \section{Algorithmic approach---user-guided planning}
@@ -273,11 +270,11 @@ It is then run while using the guidance as long as it is still in the stagnation
 Once it escapes the stagnation region, $\A$ is updated to remove the guidance that was provided by the user (line~8).
 
 
-\section{User-guided planning via MHA*}
+\section{User-guided planning via \mhastar}
 \label{sec:planning}
 
-We demonstrate our general planning framework described in Sec.~\ref{sec:high} for the case where the motion-planning algorithm~$\A$ is multi-heuristic A* (MHA*)~\cite{ASNHL16}.
-We assume that MHA* has a set of possibly inadmissible heuristics in addition to the anchor heuristic. We will refer to these heuristics as \emph{baseline heuristics}.
+We demonstrate our general planning framework described in Sec.~\ref{sec:high} for the case where the motion-planning algorithm~$\A$ is multi-heuristic \astar (\mhastar)~\cite{ASNHL16}.
+We assume that \mhastar has a set of possibly inadmissible heuristics in addition to the anchor heuristic. We will refer to these heuristics as \emph{baseline heuristics}.
 The user guidance will be used to generate \emph{dynamic heuristics}.
 We start (Sec.~\ref{sec:q1}-\ref{sec:q3}) by describing how we answer the three questions we posed in Sec.~\ref{sec:intro}.
 We then continue to detail how they are used in our planning framework.
@@ -285,7 +282,6 @@ This implementation is slightly more complicated than that described in Alg.~\re
 
 \subsection{Invoking user guidance (Q1)}
 \label{sec:q1}
-
 
 \begin{figure*}[t]%
 %\captionsetup{format = plain}
@@ -336,41 +332,66 @@ This implementation is slightly more complicated than that described in Alg.~\re
 
 \end{figure*}
 
-
-The heuristic functions of search-based planning algorithms, such as MHA*, can be used to estimate in a principled manner when the planner is in a stagnation region (Alg~\ref{alg:main}, lines 2, 6). 
-%Specifically, in such algorithms,  we proceed by iteratively choosing  the current-best state from a priority queue and computing all its successors. 
+\os{
+The heuristic functions of search-based planning algorithms, such as \mhastar, can be used to estimate in a principled manner when the planner is in a stagnation region (Alg~\ref{alg:main}, lines 2, 6). 
 %
-We suggest to identify when the planner is in a stagnation region as follows:
-Let~$\Q$ be a priority queue 
-ordered according to some heuristic function~$h(\cdot)$,
-$s_i$ be the node expanded from~$\Q$ at the $i$'th iteration and $\omega_1, \omega_2$ be parameters such that $\omega_1 > \omega_2$.
-%
-We define 
-$\kappa_\Q(i, \omega) = \min_{i-\omega \leq j \leq i} \{ h(s_j)\}$.
-Namely, $\kappa_\Q(i, \omega)$ denotes the minimal value attained by $h$ in the past~$\omega$ states. 
-%
+We identify when the planner is in a stagnation region using the notion of expansion delays~\cite{DTR11}:
+Let~$\Q$ be a priority queue and let $e_\text{curr}$ be a counter tracking the total number of node expansions performed when using~$\Q$.
+When a node is expanded, for each child node $s$ we store the current expansion number using a counter $e(s)$.
+Now, the expansion delay for a state $s$ is defined as
+$$
+\Delta e = e_\text{curr} - e(s).
+$$ 
+}
+\os{
+Given some parameter $\omega >0$ we compute $\Delta e(\omega)$---the average expansion delay over a moving window of size $\omega$. This gives a principled way to identify when a planner ceases to make progress towards the goal, a state which we call \emph{stagnation}:
 \begin{definition}
-A heuristic~$h$ associated with a queue~$\Q$ is defined to be in a stagnation region if 
-$\kappa_\Q(i, \omega_1) \geq \kappa_\Q(i - \omega_2, \omega_1 - \omega_2) - \varepsilon$.
+Let 
+$\omega>0$ be some window size
+and
+$\tau_0 > \tau_1 $ be some threshold values.
+A heuristic~$h$ associated with a queue~$\Q$ is defined to
+\begin{enumerate}
+	\item  enter a stagnation region if $\Delta e(\omega) \geq \tau_0$,
+	\item exit a stagnation region if $\Delta e(\omega) \leq \tau_1$
+\end{enumerate}
 \end{definition}
-\noindent Namely,~$\Q$ is in a stagnation region if looking at the previous~$\omega_1$ iterations, 
-there was no reduction 
-(by more than some threshold $\varepsilon$) 
-in the minimum value of~$h$ 
-in the last $\omega_2$ states expanded from $\Q$.
+}
 
-%\begin{definition}
-%MHA* is defined to be in a local minimum if 
-%all it's queues are in local minima.
-%\end{definition}
-
-Thus, our algorithm is given three additional parameters~$\omega_1, \omega_2$ and $\varepsilon$ 
-and maintains  for each queue~$\Q$ the values~$\kappa_\Q(i, \omega_1)$ and $\kappa_\Q(i - \omega_2, \omega_1 - \omega_2)$.
+\os{
 Note that testing if a single queue is in a stagnation region takes $O(1)$ time.
 For a visualization, see Fig.~\ref{fig:filmstrip-local-min}.
+}
 
-%As an aside, we note that our approach may have ``false detections''.
-%As our heuristics may be incomplete, we can erroneously detect a stagnation region even if the planner will  actually make progress}
+
+%The heuristic functions of search-based planning algorithms, such as \mhastar, can be used to estimate in a principled manner when the planner is in a stagnation region (Alg~\ref{alg:main}, lines 2, 6). 
+%%Specifically, in such algorithms,  we proceed by iteratively choosing  the current-best state from a priority queue and computing all its successors. 
+%%
+%We suggest to identify when the planner is in a stagnation region as follows:
+%Let~$\Q$ be a priority queue 
+%ordered according to some heuristic function~$h(\cdot)$,
+%$s_i$ be the node expanded from~$\Q$ at the $i$'th iteration and $\omega_1, \omega_2$ be parameters such that $\omega_1 > \omega_2$.
+%%
+%We define 
+%$\kappa_\Q(i, \omega) = \min_{i-\omega \leq j \leq i} \{ h(s_j)\}$.
+%Namely, $\kappa_\Q(i, \omega)$ denotes the minimal value attained by $h$ in the past~$\omega$ states. 
+%%
+%\begin{definition}
+%A heuristic~$h$ associated with a queue~$\Q$ is defined to be in a stagnation region if 
+%$\kappa_\Q(i, \omega_1) \geq \kappa_\Q(i - \omega_2, \omega_1 - \omega_2) - \varepsilon$.
+%\end{definition}
+%\noindent Namely,~$\Q$ is in a stagnation region if looking at the previous~$\omega_1$ iterations, 
+%there was no reduction 
+%(by more than some threshold $\varepsilon$) 
+%in the minimum value of~$h$ 
+%in the last $\omega_2$ states expanded from $\Q$.
+%
+%
+%Thus, our algorithm is given three additional parameters~$\omega_1, \omega_2$ and $\varepsilon$ 
+%and maintains  for each queue~$\Q$ the values~$\kappa_\Q(i, \omega_1)$ and $\kappa_\Q(i - \omega_2, \omega_1 - \omega_2)$.
+%Note that testing if a single queue is in a stagnation region takes $O(1)$ time.
+%For a visualization, see Fig.~\ref{fig:filmstrip-local-min}.
+
 
 \subsection{Form of user guidance (Q2)}
 \label{sec:q2}
@@ -378,8 +399,7 @@ We chose to obtain user guidance
 (Alg~\ref{alg:main}, line~4)
 in the form of an intermediate configuration $\hat{q}$ that is used to guide the planner. We discuss alternative options in Sec.~\ref{sec:future}.
 
-The framework includes a graphical user interface (GUI) (Fig.
-~\ref{fig:gui}) capable of  depicting the robot and the workspace.
+The framework includes a graphical user interface (GUI) (Fig.~\ref{fig:gui}) capable of  depicting the robot and the workspace.
 Once user guidance is invoked, 
 a configuration in the stagnation region is obtained and the robot is placed in that configuration (as well as the start configuration and target region) in the GUI.
 This allows the user to intuitively try and understand where the planner faces difficulty and how to guide it out of the stagnation region.
@@ -400,6 +420,8 @@ Note that the user is \emph{not} required to be familiar with the search algorit
 
 \subsection{Using user guidance (Q3)}
 \label{sec:q3}
+
+\ToDo{mention island heuristic}
 
 \begin{figure*}[t]%
 %\captionsetup{format = plain}
@@ -429,9 +451,9 @@ Note that the user is \emph{not} required to be familiar with the search algorit
     States popped from a priority queue are depicted using dark colors while states still in a queue are depicted by a light color.
     Start, target and user-guided states are depicted in purple with the letters \texttt{s}, \texttt{t}, \texttt{g}, respectively. 
     %
-    In this example MHA* alternates between queues in a round-robin fashion. Furthermore, heuristics are inflated by a weight of $w=\infty$. Namely, the priority queues are ordered according to the heuristic-value of the states.
+    In this example \mhastar alternates between queues in a round-robin fashion. Furthermore, heuristics are inflated by a weight of $w=\infty$. Namely, the priority queues are ordered according to the heuristic-value of the states.
     %
-	\subref{fig:dynamic_heuristic1}~MHA* starts with a single baseline heuristic (green) which is the Euclidean distance to goal and a local minimum is identified.
+	\subref{fig:dynamic_heuristic1}~\mhastar starts with a single baseline heuristic (green) which is the Euclidean distance to goal and a stagnation region is identified.
     %
 	\subref{fig:dynamic_heuristic2}~User provides guidance and the algorithm automatically generates an additional heuristic (red) that drives the search towards the guidance (notice that the anchore heuristic continues to search the local minimum).
     %
@@ -445,7 +467,7 @@ Note that the user is \emph{not} required to be familiar with the search algorit
 
 
 
-We assume that MHA* has at least one baseline heuristic~$h_{\text{goal}}$ which approximates the cost to reach the goal from every state.
+We assume that \mhastar has at least one baseline heuristic~$h_{\text{goal}}$ which approximates the cost to reach the goal from every state.
 Furthermore, we assume that there exists a family of (possibly inadmissible) heuristic functions $\H$, such that for every configuration~$q$, there exists a heuristic $h_q \in \H$ where~$h_q(s)$ estimates the cost to reach $q$ from state $s$.
 %%%%
 
@@ -454,7 +476,7 @@ Given user guidance in the form of a configuration $\hat{q}$, we dynamically gen
 \begin{cases}
     h_{\hat{q}}(s) + h_{\text{goal}}(\hat{q}),	& 
     		\text{if } \hat{q} \text{ is not an ancestor of } s,\\
-    h_{\textbf{•}{goal}}(s),            		& 
+    h_{{goal}}(s),            		& 
     		\text{if } \hat{q} \text{ is an ancestor of } s.
 \end{cases}
 $$
@@ -462,10 +484,10 @@ Namely,~$\hat{h}$ estimates the
 cost to reach the goal (via the term~$h_{\text{goal}}$) by passing through $\hat{q}$ (via the term $h_{\hat{q}}$). If the state was reached by passing through $\hat{q}$, then the value of $\hat{h}$ is simply the estimation of the cost to reach the goal.
 
 
-Equipped with the heuristic $\hat{h}$, we add a new queue to the MHA* algorithm prioritized using the heuristic $\hat{h}$. %(Alg~\ref{alg:main}, line~4). 
-States expanded using this queue will be biased towards $\hat{q}$ (see also~\cite{INL15} for more details on adding heuristics and queues dynamically to MHA*
+Equipped with the heuristic $\hat{h}$, we add a new queue to the \mhastar algorithm prioritized using the heuristic $\hat{h}$. %(Alg~\ref{alg:main}, line~4). 
+States expanded using this queue will be biased towards $\hat{q}$ (see also~\cite{INL15} for more details on adding heuristics and queues dynamically to \mhastar
 and~\cite{NAL15} for more details on dealing with calibrating the different values used by different heuristic functions).
-Note that in MHA*, nodes are shared between the different queues.
+Note that in \mhastar, nodes are shared between the different queues.
 Thus, once a state has been found that can be used to get the planner out of the stagnation region, it will be expanded by the other queues using their heuristics.
 Once this is detected 
 %(Alg~\ref{alg:main}, line~8),
@@ -473,9 +495,9 @@ the newly-added queue is removed.
 
 We note that we can add a dynamic queue for every baseline heuristic if there are more than one. However, for simplicity, in this work we use a single baseline heuristic and add one dynamically generated queue when the user provides guidance.
 
-\subsection{User-guided MHA*}
+\subsection{User-guided \mhastar}
 \label{sec:instantiation}
-We are now ready to describe how we apply our general framework of user-guided planning to the case of MHA*.
+We are now ready to describe how we apply our general framework of user-guided planning to the case of \mhastar.
 This differs slightly from the general approach described in Sec.~\ref{sec:high} due to our ability to identify which queue is in stagnation and to detect if the configuration~$\hat{q}$ (i.e., the guidance) was reached.
 
 Specifically, if the baseline heuristic escaped a stagnation region but the configuration $\hat{q}$ was \emph{not} reached, we suspend the dynamic queue but do not discard it. 
@@ -493,7 +515,7 @@ For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:films
 
 %\algrenewcommand\algorithmicindent{2em}
 \begin{algorithm}[tb]
-\caption{User-guided MHA*}
+\caption{User-guided \mhastar}
 \label{alg:instantiation}	
 \begin{algorithmic}[1]
 \small
@@ -521,10 +543,10 @@ For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:films
 \vspace{2mm}
 %
 \Function{\texttt{remove\_user\_guidance()}}{}
-	\If {dynamic heuristic is in local minimum}
+	\If {dynamic heuristic is in stagnation}
 		\State {remove dynamic heuristic}
 		\Comment{guidance is not useful}
-	\Else 	\Comment{dynamic heuristic is not in local minimum}
+	\Else 	\Comment{dynamic heuristic is not in stagnation}
 		\If {states passed through guidance}
 			\State {discard dynamic heuristic}
 			\Comment{will not be useful in future}
@@ -571,7 +593,7 @@ The first task we considered was  mounting onto a ladder while starting from a s
 The initial state of the robot here is a full-dimensional configuration. The goal state is defined as 6-DOF poses for all the four end effectors (hands and feet) of the robot. These poses are predefined contact positions on the ladder rungs which ensure a reasonable degree of robot stability. 
 This is a challenging problem as the planner is required to compute the order in which each of these target contacts has to be reached. Moreover, the targets need to be approached in a certain direction to establish the desired contacts while avoiding collisions. 
 The inability of heuristic functions to model such task-specific constraints introduce stagnation regions in the search. 
-The baseline heuristic function that we used in this experiment is computed as the summation of four six-dimensional euclidean distances between each of the four end effectors and their respective target poses.
+The baseline heuristic function that we used in this experiment is computed as the summation of four six-dimensional Euclidean distances between each of the four end effectors and their respective target poses.
 
 
 Results demonstrating the effectiveness of our framework are depicted in Fig.~\ref{fig:ladder_plot}
@@ -606,7 +628,7 @@ On the other hand, when guidance is given, then the algorithm escapes the stagna
 \label{subsec:locomotion}
 The second task we considered is bipedal locomotion of the robot while avoiding collisions with the obstacles in the environment as well as adhering to the physical constraints of the robot. The initial state of the robot again is the full dimensional 34-DOF configuration of the robot but the goal state in this experiment is represented just as a cylindrical region which the robot needs to enter (depicted in Fig.~\ref{fig:robot}).
 
-As briefly discussed earlier, for this experiment we use the adaptive planning framework. The planning phase generates the footstep plan first followed by the tracking phase which runs the full high-dimensional planner in order to track those footsteps. We integrate our approach into the latter. A single baseline heuristic is used in this experiment which assists the search with a general walking or stepping capability for the robot. For each step the footprint of the target footstep is visualized for the user to be able to better understand where the planner is stuck and how to provide the guidance. In relatively easier scenarios this heuristic would suffice in guiding the search. However if the search encounters harder situations such as those depicted in Fig.~\ref{fig:biped_locomotion}, then it would get trapped into local minima. Our approach invokes the user for guidance at four different instances where the baseline heuristic fails to make progress. In all of these instances the user can assist the planner by providing the guiding configuration after analysing the respective scenario. When the user provides the guidance, the dynamic heuristic guides the search to pass through that configuration until the baseline heuristic escapes the stagnation region.
+As briefly discussed earlier, for this experiment we use the adaptive planning framework. The planning phase generates the footstep plan first followed by the tracking phase which runs the full high-dimensional planner in order to track those footsteps. We integrate our approach into the latter. A single baseline heuristic is used in this experiment which assists the search with a general walking or stepping capability for the robot. For each step the footprint of the target footstep is visualized for the user to be able to better understand where the planner is stuck and how to provide the guidance. In relatively easier scenarios this heuristic would suffice in guiding the search. However if the search encounters harder situations such as those depicted in Fig.~\ref{fig:biped_locomotion}, then it would get trapped into a stagnation region. Our approach invokes the user for guidance at four different instances where the baseline heuristic fails to make progress. In all of these instances the user can assist the planner by providing the guiding configuration after analysing the respective scenario. When the user provides the guidance, the dynamic heuristic guides the search to pass through that configuration until the baseline heuristic escapes the stagnation region.
 
 \begin{figure*}[t]%
 %\captionsetup{format = plain}
@@ -663,9 +685,9 @@ As briefly discussed earlier, for this experiment we use the adaptive planning f
   }
 
   \caption{%
-    Progress of MHA* with and without user guidance---heuristic values as a function of the number of queue expansions.
+    Progress of \mhastar with and without user guidance---heuristic values as a function of the number of queue expansions.
 		When a stagnation region is detected (red cross) in the baseline heuristic (cyan), a dynamic heuristic is generated (blue) until the stagnation region is escaped (green circle) or until a new stagnation region is detected (blue cross) in the dynamic heuristic.
-		Plots depicting the baseline heuristic values when only a limited amount of guidance is given demonstrate that without guidance, the planner remains stuck in the stagnation region (we note that as MHA* is complete, it will eventually escape all such regions).}
+		Plots depicting the baseline heuristic values when only a limited amount of guidance is given demonstrate that without guidance, the planner remains stuck in the stagnation region (we note that as \mhastar is complete, it will eventually escape all such regions).}
 
 
   \label{fig:h_plot}%
@@ -693,12 +715,16 @@ We evaluated the performance by running the experiments on the two environments.
 % \vspace{-10mm}
 \end{table}
 
+\removed{
 \subsection{Robustness to algorithmic parameters}
 We introduced three parameters in section Sec.~\ref{sec:q1} i.e ~$\omega_1, \omega_2$ and $\varepsilon$ which govern where the user guidance will be invoked. We can show that our approach is not very sensitive to the change in these parameters and thus they don't require fine tuning. The results presented in Fig. ~\ref{fig:h_plot} are for some nominal values of the parameters. 
+}
 
-For the experiments that we conducted, the results don't vary with changing $\omega_1$ because the heuristic functions that we used don't show dips as illustrated in the hypothetical illustration in Fig.~\ref{fig:filmstrip-local-min} but in general, such a trend can occur in an arbitrarily inadmissible heuristic. $\varepsilon$ is a domain dependent parameter and its magnitude should be set relative to the scale of the corresponding heuristic function. For instance if we use $n$ baseline heuristics, then the value of $\varepsilon$ for each of these heuristics should be proportional to the scale of that heuristic. Having said that one can fix $\varepsilon$ and tune the parameter $\omega_2$ until you get the desired behaviour, as both of them are correlated and measure the rate of progress being made by a heuristic. 
+\removed{
+For the experiments that we conducted, the results don't vary with changing $\omega_1$ because the heuristic functions that we used don't show dips as illustrated in the hypothetical illustration in Fig.~\ref{fig:filmstrip-local-min} but in general, such a trend can occur in an arbitrarily inadmissible heuristic. $\varepsilon$ is a domain dependent parameter and its magnitude should be set relative to the scale of the corresponding heuristic function. For instance if we use $n$ baseline heuristics, then the value of $\varepsilon$ for each of these heuristics should be proportional to the scale of that heuristic. Having said that one can fix $\varepsilon$ and tune the parameter $\omega_2$ until you get the desired behaviour, as both of them are correlated and measure the rate of progress being made by a heuristic. }
 
-To show robustness to $\omega_2$, we linearly swept its value over a window centred at the nominal value used for experiments and checked how many of the stagnation region detections matched with the nominal results. Fig. ~\ref{fig:robustness} shows the evaluation for the two experiments. For the values of $\omega_2$ where the matching ratio is 1, the planner would have invoked the user exactly for the same stagnation regions as the ones for which the guidance was called using the nominal parameters.
+\removed{
+To show robustness to $\omega_2$, we linearly swept its value over a window centred at the nominal value used for experiments and checked how many of the stagnation region detections matched with the nominal results. Fig. ~\ref{fig:robustness} shows the evaluation for the two experiments. For the values of $\omega_2$ where the matching ratio is 1, the planner would have invoked the user exactly for the same stagnation regions as the ones for which the guidance was called using the nominal parameters.}
 
 \begin{figure}[t]%
 %\captionsetup{format = plain}
@@ -718,7 +744,7 @@ To show robustness to $\omega_2$, we linearly swept its value over a window cent
   }
 
   \caption{%
-    The plot shows the ratio of the number stagnation region detections matched to the total number of regions detected by the nominal parameter values, for $\omega_2$ values swept around the nominal value (50) by $\pm$ 40 expansions with a step of 5. 
+\removed{    The plot shows the ratio of the number stagnation region detections matched to the total number of regions detected by the nominal parameter values, for $\omega_2$ values swept around the nominal value (50) by $\pm$ 40 expansions with a step of 5. }
   \vspace{-5mm}
 }
    	\label{fig:robustness}
@@ -742,12 +768,12 @@ There is no clear answer to this question and our approach simply offers a gener
 
 
 \subsection{Future work}
-While providing promising initial results, our framework is far from being complete.
+%While providing promising initial results, our framework is far from being complete.
 We are interested in experimenting with alternative forms of user guidance such as providing a \emph{constrained sub-manifold} of the configuration space which can be more informative for the planner instead of providing it with a single joint configuration and could potentially reduce the number of user invocations. 
 Finally, once a guide is given, we want our planner to be able to \emph{generalize} the guidance obtained to future stagnation regions that are similar in nature to the ones encountered (e.g., climbing up multiple stairs).
 
-Finally we are interested in implemented our approach using sampling-based planners. Here, once the user will provide guidance, it can be used to bias the sampling procedure. 
-An open challenge remains how to automatically detect that the planner is not progressing toward the goal.
+\removed{Finally we are interested in implemented our approach using sampling-based planners. Here, once the user will provide guidance, it can be used to bias the sampling procedure. 
+An open challenge remains how to automatically detect that the planner is not progressing toward the goal.}
 
 
 %\newpage
