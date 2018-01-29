@@ -283,54 +283,66 @@ This implementation is slightly more complicated than that described in Alg.~\re
 \subsection{Invoking user guidance (Q1)}
 \label{sec:q1}
 
-\begin{figure*}[t]%
-%\captionsetup{format = plain}
-  \centering%
-  \subfigure[]
-  {
-  \includegraphics[width=0.34\textwidth]{fig/local_min_detection_1.pdf}
-  \label{fig:local_min1}
-  }
-  \hspace{-10mm}
-%  \subfigure[]
-%  {
-%  \label{fig:local_min2}
-%  \includegraphics[width=0.265\textwidth]{fig/local_min_detection_2.pdf}
-%  }
-%  \hspace{-10mm}
-  \subfigure[]
-  {
-  \label{fig:local_min3}
-  \includegraphics[width=0.34\textwidth]{fig/local_min_detection_3.pdf}
-  }  
-  \hspace{-10mm}
-  \subfigure[]
-  {
-  \label{fig:local_min4}
-  \includegraphics[width=0.34\textwidth]{fig/local_min_detection_4.pdf}
-  }
-  \vspace{-1mm}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.475\textwidth]{fig/local_min_detection_new2.pdf}
   \caption{%
     Visualization of the way stagnation regions are detected.   
-	\subref{fig:local_min1}~The heuristic value $h(s_i)$ (solid blue) has three local minima, $m_1, m_2$ and $m_3$ followed by three stagnation regions (light grey). Local minima $m_2$ is very small while~$m_3$ is not a local minimum per se, yet the progress made between consecutive steps is smaller than the predefined threshold~$\varepsilon$.
-    %
-    \subref{fig:local_min3}~The function $\kappa(i,\omega_1)$ (dashed green) returns the minimal value $h(s_i)$ attained over the past~$\omega_1$ iterations (referred to  as the ``recent history'').
-    %
-%    \subref{fig:local_min3}~
-    The function $\kappa(i-\omega_2,\omega_1-\omega_2)$ (dotted red) returns the minimal value $h(s_i)$ attained over the beginning of the recent history.
-    %
-    \subref{fig:local_min4}~The difference between the two functions (solid purple) indicates if there was significant progress (i.e. more than $\varepsilon$) made at the end of the recent horizon when compared to the beginning of the recent history. 
-    If not, then the planner detects a stagnation region (dark grey).
-		Notice that the hysteresis parameters~$\omega_1$ and $\omega_2$ 
-		(i)~induce a lag from the time that the stagnation region starts until it is detected,
-		(ii)~allow to avoid detecting stagnation region~$r_2$.  
-		}%
-
+	The expansion delay $e_{\text{curr}}$ and the average expansion delay~$\Delta e(\omega)$, computed over some recent history~$\omega$ are depicted using solid blue and dashed red lines, respectively.
+	The stagnation region is depicted using the gray region. 
+	It is detected once $\Delta w(\omega) \geq \tau$, where $\tau$ is some predefined threshold.
+ 	The stagnation regions ends when $e_{\text{curr}} = 1$ however, this is detected after $\omega$ additional steps.}%
   \label{fig:filmstrip-local-min}%
-
-  \vspace{-4.5mm}
-
-\end{figure*}
+\end{figure}
+%
+%\begin{figure*}[t]%
+%%\captionsetup{format = plain}
+%  \centering%
+%  \subfigure[]
+%  {
+%  \includegraphics[width=0.34\textwidth]{fig/local_min_detection_1.pdf}
+%  \label{fig:local_min1}
+%  }
+%  \hspace{-10mm}
+%%  \subfigure[]
+%%  {
+%%  \label{fig:local_min2}
+%%  \includegraphics[width=0.265\textwidth]{fig/local_min_detection_2.pdf}
+%%  }
+%%  \hspace{-10mm}
+%  \subfigure[]
+%  {
+%  \label{fig:local_min3}
+%  \includegraphics[width=0.34\textwidth]{fig/local_min_detection_3.pdf}
+%  }  
+%  \hspace{-10mm}
+%  \subfigure[]
+%  {
+%  \label{fig:local_min4}
+%  \includegraphics[width=0.34\textwidth]{fig/local_min_detection_4.pdf}
+%  }
+%  \vspace{-1mm}
+%  \caption{%
+%    Visualization of the way stagnation regions are detected.   
+%	\subref{fig:local_min1}~The heuristic value $h(s_i)$ (solid blue) has three local minima, $m_1, m_2$ and $m_3$ followed by three stagnation regions (light grey). Local minima $m_2$ is very small while~$m_3$ is not a local minimum per se, yet the progress made between consecutive steps is smaller than the predefined threshold~$\varepsilon$.
+%    %
+%    \subref{fig:local_min3}~The function $\kappa(i,\omega_1)$ (dashed green) returns the minimal value $h(s_i)$ attained over the past~$\omega_1$ iterations (referred to  as the ``recent history'').
+%    %
+%%    \subref{fig:local_min3}~
+%    The function $\kappa(i-\omega_2,\omega_1-\omega_2)$ (dotted red) returns the minimal value $h(s_i)$ attained over the beginning of the recent history.
+%    %
+%    \subref{fig:local_min4}~The difference between the two functions (solid purple) indicates if there was significant progress (i.e. more than $\varepsilon$) made at the end of the recent horizon when compared to the beginning of the recent history. 
+%    If not, then the planner detects a stagnation region (dark grey).
+%		Notice that the hysteresis parameters~$\omega_1$ and $\omega_2$ 
+%		(i)~induce a lag from the time that the stagnation region starts until it is detected,
+%		(ii)~allow to avoid detecting stagnation region~$r_2$.  
+%		}%
+%
+%  \label{fig:filmstrip-local-min}%
+%
+%  \vspace{-4.5mm}
+%
+%\end{figure*}
 
 \os{
 The heuristic functions of search-based planning algorithms, such as \mhastar, can be used to estimate in a principled manner when the planner is in a stagnation region (Alg~\ref{alg:main}, lines 2, 6). 
@@ -349,11 +361,11 @@ Given some parameter $\omega >0$ we compute $\Delta e(\omega)$---the average exp
 Let 
 $\omega>0$ be some window size
 and
-$\tau_0 > \tau_1 $ be some threshold values.
+$\tau$ be some threshold value.
 A heuristic~$h$ associated with a queue~$\Q$ is defined to
 \begin{enumerate}
-	\item  enter a stagnation region if $\Delta e(\omega) \geq \tau_0$,
-	\item exit a stagnation region if $\Delta e(\omega) \leq \tau_1$
+	\item enter a stagnation region if $\Delta e(\omega) \geq \tau$,
+	\item exit a stagnation region if $\Delta e(\omega) = 1$
 \end{enumerate}
 \end{definition}
 }
