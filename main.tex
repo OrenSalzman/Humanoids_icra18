@@ -82,21 +82,21 @@ Without our approach, solving such problems require carefully-crafted domain-dep
 \section{Introduction}
 \label{sec:intro}
 
-Motion-planning is a fundamental problem in robotics that has been studied for over four decades~\cite{CBHKKLT05,L06,HSS17}.
+Motion-planning is a fundamental problem in robotics that has been studied for over four \arxiv{decades~\cite{CBHKKLT05,L06,HSS17}}{decades~\cite{L06}}.
 However, efficiently planning paths in high-dimensional, constrained spaces remains an ongoing challenge.
 One approach to address this challenge is to incorporate user input to guide the motion-planning algorithm.
 While there has been much work on planning using human demonstration 
-(see, e.g.,~\cite{ACVB09,HS16,PHCL16,SHLA16,YA17}), 
+\arxiv{(see, e.g.,~\cite{ACVB09,HS16,PHCL16,SHLA16,YA17}),}{(see, e.g.,~\cite{ACVB09,YA17}),}  
 there has been far less research incorporating guidance as an interactive part of the planning~loop.
 
 Broadly speaking, interactive planning has been typically used in the context of sampling-based motion-planning algorithms~\cite{L06}.
 User guidance was employed by biasing the sampling scheme of the planner.
 This was done by having the user mark regions in the \emph{workspace} that should be avoided or 
 %explored~\cite{DSJA14}.
-explored~\cite{DSJA14,MTMKDC15,YPB15,RSL17}.
+\arxiv{explored~\cite{DSJA14,MTMKDC15,YPB15,RSL17}.}{explored~\cite{DSJA14,YPB15}.}
 Alternatively, interactive devices such as a 3D mouse or a haptic arm have been used to generate paths in a (low-dimensional) configuration space. This path was then used by a planner to bias its 
 %sampling domain~\cite{TFF12}.
-sampling domain~\cite{BTFF16,FTF09,TFF12}.
+\arxiv{sampling domain~\cite{BTFF16,FTF09,TFF12}.}{sampling domain~\cite{TFF12}.}
 %Interestingly, in all the examples mentioned, an implicit assumption taken is that the user is dedicated to guide and interact with the planning algorithm.
 
 We are interested in planning in high-dimensional, constrained spaces such as those encountered by a humanoid robot (see Fig.~\ref{fig:robot} and Sec.~\ref{sec:rel}).
@@ -168,12 +168,14 @@ Humanoid robots, for which we demonstrate our approach, often have several dozen
 One approach to plan the motion for such systems, is to use predefined, carefully chosen fixed gaits~\cite{KKKHKHAI04}. 
 However, when the terrain is uneven, such planners are inadequate at computing stable motions~\cite{HBLHW08}.
 Another approach is to reduce the search space by decomposing the degrees of freedom into functional groups such as locomotion and manipulation.
-Then functional-specific algorithms such as footstep planning are applied to the low-dimensional space (see, e.g.,~\cite{CLCKHK05,KNKII01,PSBLY12,XCXZC09,KKNII02} for a partial list).
+Then functional-specific algorithms such as footstep planning are applied to the low-dimensional space 
+\arxiv{(see, e.g.,~\cite{CLCKHK05,KNKII01,PSBLY12,XCXZC09,KKNII02} for a partial list).}{(see, e.g.,~\cite{PSBLY12,XCXZC09} for a partial list).}
 A high-dimensional planner is then used to ``track'' the plan generated in the low-dimensional space.
 
 \os{
 User guidance has been intensively incorporated in controlling the motion of humanoid robots, especially in complex tasks as those presented in the Darpa Robotics Challenge (DRC)~\cite{drc18}.
-In such settings, guidance ranged from teleoperating the robot through shared autonomy to high-level task guidance~\cite{mcgill2017team,zucker2015general,gray2017architecture,dedonato2017team,marion2017director}.
+In such settings, guidance ranged from teleoperating the robot through shared autonomy to high-level 
+\arxiv{task guidance~\cite{mcgill2017team,zucker2015general,gray2017architecture,dedonato2017team,marion2017director}.}{{task guidance~(see e.g.,~\cite{mcgill2017team,gray2017architecture}).}}
 However, as far as we are aware of, in all the aforementioned cases, \emph{identification} of when to use guidance was done by a human operator and not by the system (except for relatively simple metrics where the system asks for help when it fails to complete some given task).
 Furthermore, the human guidance was used as a ``hard'' constraint forcing the system to make use of the guidance.
 In contrast, in our work the system automatically and independently identifies when it is in need of guidance.
@@ -287,13 +289,20 @@ This implementation is slightly more complicated than that described in Alg.~\re
   \centering
   \includegraphics[width=0.475\textwidth]{fig/local_min_detection_new2.pdf}
   \caption{%
-    Visualization of the way stagnation regions are detected.   
-	The expansion delay $e_{\text{curr}}$ and the average expansion delay~$\Delta e(\omega)$, computed over some recent history~$\omega$ are depicted using solid blue and dashed red lines, respectively.
-	The stagnation region is depicted using the gray region. 
-	It is detected once $\Delta w(\omega) \geq \tau$, where $\tau$ is some predefined threshold.
- 	The stagnation regions ends when $e_{\text{curr}} = 1$ however, this is detected after $\omega$ additional steps.}%
+    Visualization of the way stagnation regions are detected.  
+    Notice that the stagnation regions ends when $e_{\text{curr}} = 1$ however, this is detected after $\omega$ additional steps.}
+%    The expansion delay $e_{\text{curr}}$ and
+%    the average expansion delay~$\Delta e(\omega)$, 
+%	computed over some recent history~$\omega$ 
+%	are depicted using solid blue and dashed red lines, respectively.
+%	The stagnation region is depicted using the gray region. 
+%	It is detected once $\Delta w(\omega) \geq \tau$, where $\tau$ is some predefined threshold.
+% 	The stagnation regions ends when $e_{\text{curr}} = 1$ however, this is detected after $\omega$ additional steps.}%
   \label{fig:filmstrip-local-min}%
 \end{figure}
+
+
+
 %
 %\begin{figure*}[t]%
 %%\captionsetup{format = plain}
@@ -440,23 +449,23 @@ Note that the user is \emph{not} required to be familiar with the search algorit
   \centering%
   \subfigure[]
   {
-  \includegraphics[width=0.225\textwidth]{fig/example_1.pdf}
+  \includegraphics[width=0.2125\textwidth]{fig/example_1.pdf}
   \label{fig:dynamic_heuristic1}
   }
   \subfigure[]
   {
   \label{fig:dynamic_heuristic2}
-  \includegraphics[width=0.225\textwidth]{fig/example_2.pdf}
+  \includegraphics[width=0.2125\textwidth]{fig/example_2.pdf}
   }
   \subfigure[]
   {
   \label{fig:dynamic_heuristic3}
-  \includegraphics[width=0.225\textwidth]{fig/example_3.pdf}
+  \includegraphics[width=0.2125\textwidth]{fig/example_3.pdf}
   }  
   \subfigure[]
   {
   \label{fig:dynamic_heuristic4}
-  \includegraphics[width=0.225\textwidth]{fig/example_4.pdf}
+  \includegraphics[width=0.2125\textwidth]{fig/example_4.pdf}
   }
   \caption{%
     Algorithm progression.
@@ -701,7 +710,6 @@ As briefly discussed earlier, for this experiment we use the adaptive planning f
 		When a stagnation region is detected (red cross) in the baseline heuristic (cyan), a dynamic heuristic is generated (blue) until the stagnation region is escaped (green circle) or until a new stagnation region is detected (blue cross) in the dynamic heuristic.
 		Plots depicting the baseline heuristic values when only a limited amount of guidance is given demonstrate that without guidance, the planner remains stuck in the stagnation region (we note that as \mhastar is complete, it will eventually escape all such regions).}
 
-
   \label{fig:h_plot}%
 
   \vspace{-4.5mm}
@@ -732,40 +740,41 @@ We evaluated the performance by running the experiments on the two environments.
 We introduced three parameters in section Sec.~\ref{sec:q1} i.e ~$\omega_1, \omega_2$ and $\varepsilon$ which govern where the user guidance will be invoked. We can show that our approach is not very sensitive to the change in these parameters and thus they don't require fine tuning. The results presented in Fig. ~\ref{fig:h_plot} are for some nominal values of the parameters. 
 }
 
-\removed{
-For the experiments that we conducted, the results don't vary with changing $\omega_1$ because the heuristic functions that we used don't show dips as illustrated in the hypothetical illustration in Fig.~\ref{fig:filmstrip-local-min} but in general, such a trend can occur in an arbitrarily inadmissible heuristic. $\varepsilon$ is a domain dependent parameter and its magnitude should be set relative to the scale of the corresponding heuristic function. For instance if we use $n$ baseline heuristics, then the value of $\varepsilon$ for each of these heuristics should be proportional to the scale of that heuristic. Having said that one can fix $\varepsilon$ and tune the parameter $\omega_2$ until you get the desired behaviour, as both of them are correlated and measure the rate of progress being made by a heuristic. }
-
-\removed{
-To show robustness to $\omega_2$, we linearly swept its value over a window centred at the nominal value used for experiments and checked how many of the stagnation region detections matched with the nominal results. Fig. ~\ref{fig:robustness} shows the evaluation for the two experiments. For the values of $\omega_2$ where the matching ratio is 1, the planner would have invoked the user exactly for the same stagnation regions as the ones for which the guidance was called using the nominal parameters.}
-
-\begin{figure}[t]%
-%\captionsetup{format = plain}
-  \centering%
-  \hspace{-2mm}
-  \subfigure[\footnotesize Mounting onto the ladder]
-  {
-  \includegraphics[width=0.20\textwidth]{fig/ladderly.png}
-  
-  \label{fig:robust_ladder}
-  }
+%\removed{
+%For the experiments that we conducted, the results don't vary with changing $\omega_1$ because the heuristic functions that we used don't show dips as illustrated in the hypothetical illustration in Fig.~\ref{fig:filmstrip-local-min} but in general, such a trend can occur in an arbitrarily inadmissible heuristic. $\varepsilon$ is a domain dependent parameter and its magnitude should be set relative to the scale of the corresponding heuristic function. For instance if we use $n$ baseline heuristics, then the value of $\varepsilon$ for each of these heuristics should be proportional to the scale of that heuristic. Having said that one can fix $\varepsilon$ and tune the parameter $\omega_2$ until you get the desired behaviour, as both of them are correlated and measure the rate of progress being made by a heuristic. }
 %
-  \subfigure[\footnotesize Climbing up the staircase]
-  {
-  \includegraphics[width=0.20\textwidth]{fig/stairly.png}
-  \label{fig:robust_stair}
-  }
+%\removed{
+%To show robustness to $\omega_2$, we linearly swept its value over a window centred at the nominal value used for experiments and checked how many of the stagnation region detections matched with the nominal results. Fig. ~\ref{fig:robustness} shows the evaluation for the two experiments. For the values of $\omega_2$ where the matching ratio is 1, the planner would have invoked the user exactly for the same stagnation regions as the ones for which the guidance was called using the nominal parameters.}
 
-  \caption{%
-\removed{    The plot shows the ratio of the number stagnation region detections matched to the total number of regions detected by the nominal parameter values, for $\omega_2$ values swept around the nominal value (50) by $\pm$ 40 expansions with a step of 5. }
-  \vspace{-5mm}
-}
-   	\label{fig:robustness}
-\end{figure}
+%\begin{figure}[t]%
+%%\captionsetup{format = plain}
+%  \centering%
+%  \hspace{-2mm}
+%  \subfigure[\footnotesize Mounting onto the ladder]
+%  {
+%  \includegraphics[width=0.20\textwidth]{fig/ladderly.png}
+%  
+%  \label{fig:robust_ladder}
+%  }
+%%
+%  \subfigure[\footnotesize Climbing up the staircase]
+%  {
+%  \includegraphics[width=0.20\textwidth]{fig/stairly.png}
+%  \label{fig:robust_stair}
+%  }
+%
+%  \caption{%
+%\removed{    The plot shows the ratio of the number stagnation region detections matched to the total number of regions detected by the nominal parameter values, for $\omega_2$ values swept around the nominal value (50) by $\pm$ 40 expansions with a step of 5. }
+%  \vspace{-5mm}
+%}
+%   	\label{fig:robustness}
+%\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Discussion and future work
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Discussion and future work}
+%\section{Discussion and future work}
+\section{Discussion}
 \label{sec:future}
 
 \subsection{Discussion}
@@ -779,13 +788,13 @@ If our problem requires planning in multiple, diverse types of domains this prob
 There is no clear answer to this question and our approach simply offers a general alternative to existing approaches.
 
 
-\subsection{Future work}
-%While providing promising initial results, our framework is far from being complete.
-We are interested in experimenting with alternative forms of user guidance such as providing a \emph{constrained sub-manifold} of the configuration space which can be more informative for the planner instead of providing it with a single joint configuration and could potentially reduce the number of user invocations. 
-Finally, once a guide is given, we want our planner to be able to \emph{generalize} the guidance obtained to future stagnation regions that are similar in nature to the ones encountered (e.g., climbing up multiple stairs).
-
-\removed{Finally we are interested in implemented our approach using sampling-based planners. Here, once the user will provide guidance, it can be used to bias the sampling procedure. 
-An open challenge remains how to automatically detect that the planner is not progressing toward the goal.}
+%\subsection{Future work}
+%%While providing promising initial results, our framework is far from being complete.
+%We are interested in experimenting with alternative forms of user guidance such as providing a \emph{constrained sub-manifold} of the configuration space which can be more informative for the planner instead of providing it with a single joint configuration and could potentially reduce the number of user invocations. 
+%Finally, once a guide is given, we want our planner to be able to \emph{generalize} the guidance obtained to future stagnation regions that are similar in nature to the ones encountered (e.g., climbing up multiple stairs).
+%
+%\removed{Finally we are interested in implemented our approach using sampling-based planners. Here, once the user will provide guidance, it can be used to bias the sampling procedure. 
+%An open challenge remains how to automatically detect that the planner is not progressing toward the goal.}
 
 
 %\newpage
