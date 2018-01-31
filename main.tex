@@ -13,7 +13,7 @@
 \usepackage{xcolor}
 \usepackage{soul}
 \usepackage[utf8]{inputenc}
-\usepackage[small]{caption}
+\usepackage[font=footnotesize]{caption}
 
 \usepackage{savesym}
 \usepackage{amsmath,amssymb,amsfonts}
@@ -106,7 +106,7 @@ Thus,  while beneficial, user guidance should be employed scarcely.
 
 \begin{figure}[tb]
   \centering
-  	\includegraphics[width=0.38\textwidth]{fig/cover3.png}
+  	\includegraphics[trim={5cm 6cm 2.5cm 2.5cm},clip, width=0.35\textwidth]{fig/cover3.png}
   	\vspace{-2mm}
   \caption{
   Planning domain---Humanoid robot (top left) needs to plan a path in a challenging environment that involves circumventing obstacles and passing through narrow passages.
@@ -338,15 +338,15 @@ We then continue (Sec.~\ref{sec:instantiation}) to detail how they are used in o
   }
   \vspace{-2mm}
   \caption{%
-    Visualization of the way heuristic-based stagnation regions are detected.   
-	\subref{fig:local_min1}~The heuristic value $h(s_i)$ (solid blue) has three local minima, $m_1, m_2$ and $m_3$ followed by three stagnation regions (light grey). Local minima $m_2$ is very small while~$m_3$ is not a local minimum per se, yet the progress made between consecutive steps is smaller than the predefined threshold~$\varepsilon$.
+    Visualization of heuristic-based stagnation-region detected.   
+	\subref{fig:local_min1}~Heuristic $h(s_i)$ (solid blue) has three local minima, $m_1, m_2$ and $m_3$ followed by three stagnation regions (light grey). Local minima $m_2$ is very small while~$m_3$ is not a local minimum per se, yet the progress made between consecutive steps is smaller than the predefined threshold~$\varepsilon$.
     %
     \subref{fig:local_min3}~The function $\kappa(i,\omega_1)$ (dashed green) returns the minimal value $h(s_i)$ attained over the past~$\omega_1$ iterations (referred to  as the ``recent history'').
     %
 %    \subref{fig:local_min3}~
     The function $\kappa(i-\omega_2,\omega_1-\omega_2)$ (dotted red) returns the minimal value $h(s_i)$ attained over the beginning of the recent history.
     %
-    \subref{fig:local_min4}~The difference between the two functions (solid purple) indicates if there was significant progress (i.e. more than $\varepsilon$) made at the end of the recent horizon when compared to the beginning of the recent history. 
+    \subref{fig:local_min4}~The difference between the two functions (solid purple) indicates if there was significant progress (i.e., more than $\varepsilon$) made at the end of the recent history when compared to the beginning of the recent history. 
     If not, then the planner detects a stagnation region (dark grey).
 		Notice that the hysteresis parameters~$\omega_1$ and~$\omega_2$ 
 		(i)~induce a lag from the time that the stagnation region starts until it is detected,
@@ -484,23 +484,23 @@ The tool runs a state validity checker in the background which restricts the use
   \centering%
   \subfigure[]
   {
-  \includegraphics[width=0.2\textwidth]{fig/example_1.pdf}
+  \includegraphics[width=0.182\textwidth]{fig/example_1.pdf}
   \label{fig:dynamic_heuristic1}
   }
   \subfigure[]
   {
   \label{fig:dynamic_heuristic2}
-  \includegraphics[width=0.2\textwidth]{fig/example_2.pdf}
+  \includegraphics[width=0.182\textwidth]{fig/example_2.pdf}
   }
   \subfigure[]
   {
   \label{fig:dynamic_heuristic3}
-  \includegraphics[width=0.2\textwidth]{fig/example_3.pdf}
+  \includegraphics[width=0.182\textwidth]{fig/example_3.pdf}
   }  
   \subfigure[]
   {
   \label{fig:dynamic_heuristic4}
-  \includegraphics[width=0.2\textwidth]{fig/example_4.pdf}
+  \includegraphics[width=0.182\textwidth]{fig/example_4.pdf}
   }
 	\vspace{-3mm}
   \caption{%
@@ -569,7 +569,7 @@ Thus, when the planner will detect that it is in a stagnation region, it will fi
 If the baseline heuristic escaped a stagnation region and the configuration~$\hat{q}$ was  reached it will no longer be useful again and hence will be discarded.
 Finally, if the dynamic heuristic is in a stagnation region then it is discarded and the user will be queried for a new guidance. 
 
-For pseudo-code describing the implementation of each specific function of our general pseudocode (Alg.~\ref{alg:main}), see Alg.~\ref{alg:instantiation}.
+For pseudo-code describing each specific function used  in Alg.~\ref{alg:main}, see Alg.~\ref{alg:instantiation}.
 For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:filmstrip-dynamic_heuristic}. Note that although for the illustrated example, the search happens to pass through the guidance, in general it is not a constraint in the framework. 
 %
 %Specifically, the planner can be in a local minima in the dynamically-generated queue that is used to escape the original local minima. 
@@ -659,7 +659,11 @@ We conducted the same experiments (results ommited due to lack of space) with a 
 Planning statistics for all experiments are provided in Table~\ref{tab:stats}.
 Notice that in all the experiments the planner succeeds to reach the goal with the help of a user. 
 The deviations in the results come from the quality of the guidance provided.
+For videos demonstrating the approach, 
+see~\url{https://goo.gl/cjJ7KU}.
+%see~\url{https://drive.google.com/open?id=137rTFQdE7VW9zluy6EV5GVcLzyP0XDlQ}.
 \begin{table}
+ \resizebox{\linewidth}{!}{%
   \begin{tabular}{lcccc}
     \hline
     \multirow{2}{*}{Dataset} &
@@ -673,8 +677,8 @@ The deviations in the results come from the quality of the guidance provided.
     Num. of guidances & 5.4 & 5.3 & - & - \\
     Guidance time & 16.4 & 13.6 & - & - \\
     \hline
-  \end{tabular}
-\caption{Experimental results for the bipedal locomotion and ladder mounting tasks averaged over 10 trials}\label{tab:stats}
+  \end{tabular}} 	
+\caption{Experimental results for the bipedal locomotion and ladder mounting tasks averaged over 10 trials.}\label{tab:stats}
 	\vspace{-4mm}
 \end{table}
 \begin{figure*}[t]%
@@ -701,7 +705,7 @@ The deviations in the results come from the quality of the guidance provided.
   \includegraphics[width=0.2125\textwidth]{fig/step_2.png}
   }
   \caption{%
-    Biped locomotion in challenging scenarios: 
+    Bipedal locomotion in challenging scenarios: 
   \subref{fig:stuck_bar}~The robot has to squat or bend down to pass under a beam.
     %
   \subref{fig:stuck_tables}~The robot has to pass through two tables by may be lifting the elbows high above the tables.
@@ -719,14 +723,14 @@ The deviations in the results come from the quality of the guidance provided.
   \centering%
   \subfigure[Vacillation-based detection]
   {
-  \includegraphics[width=0.225\textwidth]{fig/ed_plot.pdf}
+  \includegraphics[width=0.36\textwidth]{fig/ed_plot.pdf}
   \label{fig:ed_plot}
   % \includegraphics[width=0.3\textwidth]{fig/ladder.png}
   }  
 %
   \subfigure[Heuristic-based  detection]
   {
-  \includegraphics[width=0.225\textwidth]{fig/h_plot.pdf}
+  \includegraphics[width=0.36\textwidth]{fig/h_plot.pdf}
   \label{fig:h_plot}
   % \includegraphics[width=0.3\textwidth]{fig/staircase.png}
   }
