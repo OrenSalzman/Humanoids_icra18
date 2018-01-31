@@ -46,10 +46,9 @@
 \title{	Online, interactive user guidance for \\
 		high-dimensional, constrained motion planning }
 
-\author{Fahad Islam$^{\dag}$, Oren Salzman$^{\dag}$ and Maxim Likhachev$^{\dag}$% <-this % stops a space
-  \thanks{$^{\dag}$Robotics Institute, Carnegie Mellon University,
-    Pittsburgh, USA
-    {\tt\small \{fi,osalzman\} at andrew.cmu.edu, maxim@cs.cmu.edu}
+\author{Fahad Islam, Oren Salzman and Maxim Likhachev% <-this % stops a space
+  \thanks{Robotics Institute, Carnegie Mellon University, Pittsburgh, PA, USA
+    {\tt\small \{fi,osalzman\}@andrew.cmu.edu, maxim@cs.cmu.edu}
   }%
 }
 
@@ -408,11 +407,11 @@ $\kappa_\Q(i, \omega_1) \geq \kappa_\Q(i - \omega_2, \omega_1 - \omega_2) - \var
 there was no reduction 
 (by more than some threshold $\varepsilon$) 
 in the minimum value of~$h$ 
-in the last $\omega_2$ states expanded from $\Q$.
-
-
-Thus, our algorithm is given three additional parameters~$\omega_1, \omega_2$ and $\varepsilon$ 
-and maintains  for each queue~$\Q$ the values~$\kappa_\Q(i, \omega_1)$ and $\kappa_\Q(i - \omega_2, \omega_1 - \omega_2)$.
+in the last~$\omega_2$ states expanded from $\Q$.
+%
+%
+%Thus, our algorithm is given three additional parameters~$\omega_1, \omega_2$ and $\varepsilon$ 
+%and maintains  for each queue~$\Q$ the values~$\kappa_\Q(i, \omega_1)$ and $\kappa_\Q(i - \omega_2, \omega_1 - \omega_2)$.
 For a visualization of heuristic-based stagnation regions and how they are detected (Def.~\ref{def:heur}), see Fig.~\ref{fig:filmstrip-local-min2}.
 
 
@@ -468,13 +467,13 @@ The tool runs a state validity checker in the background which restricts the use
 
 \begin{figure}[tb]
   \centering
-  	\includegraphics[width=0.453\textwidth]{fig/panel.png}
+  	\includegraphics[width=0.355\textwidth]{fig/panel.png}
   	%\vspace{-2mm}
   \caption{
 		GUI used to provide guidance to the planner. The panel on the right hand side allows to select different joint groups, move the joints and pass the guidance to the planner. The interactive marker shown on the left hand side allows to move the robot's end effectors.
-  	\vspace{-2.5mm}
 }
    	\label{fig:gui}
+  	\vspace{-4.5mm}
 \end{figure}
 
 \subsection{Using user guidance (Q3)}
@@ -485,38 +484,40 @@ The tool runs a state validity checker in the background which restricts the use
   \centering%
   \subfigure[]
   {
-  \includegraphics[width=0.2125\textwidth]{fig/example_1.pdf}
+  \includegraphics[width=0.2\textwidth]{fig/example_1.pdf}
   \label{fig:dynamic_heuristic1}
   }
   \subfigure[]
   {
   \label{fig:dynamic_heuristic2}
-  \includegraphics[width=0.2125\textwidth]{fig/example_2.pdf}
+  \includegraphics[width=0.2\textwidth]{fig/example_2.pdf}
   }
   \subfigure[]
   {
   \label{fig:dynamic_heuristic3}
-  \includegraphics[width=0.2125\textwidth]{fig/example_3.pdf}
+  \includegraphics[width=0.2\textwidth]{fig/example_3.pdf}
   }  
   \subfigure[]
   {
   \label{fig:dynamic_heuristic4}
-  \includegraphics[width=0.2125\textwidth]{fig/example_4.pdf}
+  \includegraphics[width=0.2\textwidth]{fig/example_4.pdf}
   }
+	\vspace{-3mm}
   \caption{%
     Algorithm progression.
-    States popped from a priority queue are depicted using dark colors while states still in a queue are depicted by a light color.
+    States popped from a priority queue~$Q$ (still in~~$Q$) are depicted using dark (light) colors.
     Start, target and user-guided states are depicted in purple with the letters \texttt{s}, \texttt{t}, \texttt{g}, respectively. 
     %
-    In this example \mhastar alternates between queues in a round-robin fashion. Furthermore, heuristics are inflated by a weight of $w=\infty$. Namely, the priority queues are ordered according to the heuristic-value of the states.
+    In this example \mhastar alternates between queues in a round-robin fashion and heuristic values are inflated by a weight of $w=\infty$. 
+    %Namely, the priority queues are ordered according to the heuristic-value of the states.
     %
 	\subref{fig:dynamic_heuristic1}~\mhastar starts with a single baseline heuristic (green) which is the Euclidean distance to goal and a stagnation region is identified.
     %
-	\subref{fig:dynamic_heuristic2}~User provides guidance and the algorithm automatically generates an additional heuristic (red) that drives the search towards the guidance (notice that the anchore heuristic continues to search the local minimum).
+	\subref{fig:dynamic_heuristic2}~User provides guidance~$\texttt{g}$ and an additional heuristic (red) is automatically generated and drives the search towards the guidance (notice that the anchor heuristic continues to search the local minimum).
     %
-	\subref{fig:dynamic_heuristic3}~After passing through the guidance, the additional heuristic (red) drives the search towards the goal.
+	\subref{fig:dynamic_heuristic3}~After passing through the~$\texttt{g}$, the additional heuristic (red) drives the search towards the goal.
     %
-	\subref{fig:dynamic_heuristic4}~After the additional heuristic found states that are placed at the top of the priority queue of the anchor heuristic, the additional heuristic is deleted and the anchor heuristic drives the search towards the goal.
+	\subref{fig:dynamic_heuristic4}~After the additional heuristic found states that are placed at the top of~$Q$, the additional heuristic is deleted and the anchor heuristic continues to drive the search towards the goal.
   }%
   \label{fig:filmstrip-dynamic_heuristic}%
   \vspace{-2.5mm}
@@ -525,7 +526,9 @@ The tool runs a state validity checker in the background which restricts the use
 
 
 We assume that \mhastar has at least one baseline heuristic~$h_{\text{goal}}$ which approximates the cost to reach the goal from every state.
-Furthermore, we assume that there exists a family of (possibly inadmissible) heuristic functions $\H$, such that for every configuration~$q$, there exists a heuristic $h_q \in \H$ where~$h_q(s)$ estimates the cost to reach $q$ from state $s$.
+Furthermore, we assume that for every configuration~$q$, there exists a (possibly inadmissible) heuristic $h_q$ where~$h_q(s)$ estimates the cost to reach $q$ from state $s$.
+%
+%we assume that there exists a family of (possibly inadmissible) heuristic functions $\H$, such that for every configuration~$q$, there exists a heuristic $h_q \in \H$ where~$h_q(s)$ estimates the cost to reach $q$ from state $s$.
 %%%%
 
 Given user guidance in the form of a configuration $\hat{q}$, we dynamically generate a new heuristic $$
@@ -538,10 +541,11 @@ Given user guidance in the form of a configuration $\hat{q}$, we dynamically gen
 \end{cases}
 $$
 Namely,~$\hat{h}$ estimates the 
-cost to reach the goal (via the term~$h_{\text{goal}}$) by passing through $\hat{q}$ (via the term $h_{\hat{q}}$). If the state was reached by passing through $\hat{q}$, then the value of $\hat{h}$ is simply the estimation of the cost to reach the goal.
+cost to reach the goal  by passing through $\hat{q}$ (see also~\cite{CGD86} for intuition regarding such a heuristic). 
+If the state was reached by passing through~$\hat{q}$, then the value of $\hat{h}$ is simply the estimation of the cost to reach the goal.
 
 
-Equipped with the heuristic $\hat{h}$, we add a new queue to the \mhastar algorithm prioritized using the heuristic $\hat{h}$. %(Alg~\ref{alg:main}, line~4). 
+Equipped with the heuristic $\hat{h}$, we add a new queue to \mhastar prioritized using the~$\hat{h}$. %(Alg~\ref{alg:main}, line~4). 
 States expanded using this queue will be biased towards $\hat{q}$ (see also~\cite{INL15} for more details on adding heuristics and queues dynamically to \mhastar
 %and~\cite{NAL15} for more details on dealing with calibrating the different values used by different heuristic functions
 ).
@@ -556,7 +560,7 @@ In general,  we can add a dynamic queue for every baseline heuristic if there ar
 \subsection{User-guided \mhastar}
 \label{sec:instantiation}
 We are now ready to describe how we apply our general framework (Alg.~\ref{alg:main}) to the case of \mhastar.
-This differs slightly from the general approach described in Sec.~\ref{sec:high} due to our ability to identify which queue is in stagnation and to detect if the configuration~$\hat{q}$ (i.e., the guidance) was reached.
+This differs slightly from the approach described in Sec.~\ref{sec:high} due to our ability to identify which queue is in stagnation and to detect if the configuration~$\hat{q}$ (i.e., the guidance) was reached.
 
 Specifically, if the baseline heuristic escaped a stagnation region but the configuration $\hat{q}$ was \emph{not} reached, we suspend the dynamic queue but do not discard it. 
 This is done to first try reusing the last guidance before obtaining a new one. 
@@ -565,7 +569,7 @@ Thus, when the planner will detect that it is in a stagnation region, it will fi
 If the baseline heuristic escaped a stagnation region and the configuration~$\hat{q}$ was  reached it will no longer be useful again and hence will be discarded.
 Finally, if the dynamic heuristic is in a stagnation region then it is discarded and the user will be queried for a new guidance. 
 
-For pseudo-code describing the algorithm, describing the implementation of each specific function of our general pseudocode (Alg.~\ref{alg:main}), see Alg.~\ref{alg:instantiation}.
+For pseudo-code describing the implementation of each specific function of our general pseudocode (Alg.~\ref{alg:main}), see Alg.~\ref{alg:instantiation}.
 For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:filmstrip-dynamic_heuristic}. Note that although for the illustrated example, the search happens to pass through the guidance, in general it is not a constraint in the framework. 
 %
 %Specifically, the planner can be in a local minima in the dynamically-generated queue that is used to escape the original local minima. 
@@ -625,14 +629,16 @@ For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:films
 We evaluated the performance of our planning framework on a 34-DOF WAREC humanoid robot~\cite{MHSetal15} 
 which is constrained to maintain static stability at all times. 
 % The robot has four symmetric limbs each having seven revolute joints. The other six dimensions come from the pose of the robot with respect to some global frame of reference. 
-In one of the experiments (Sec.~\ref{subsec:locomotion}), we employ the recently-introduced adaptive dimensionality 
-\arxiv{framework~\cite{GCBSL11,GSL12,GSL13}.}{framework~\cite{GCBSL11,GSL12}.}
-At a high level,  it consists of two stages: an adaptive planning phase which attempts to plan in a low-dimensional space when possible and a tracking phase which plans in the high-dimensional space.
-Our user-guided planner is integrated within the high-dimensional planner.
-Specifically, the planner attempts to find a plan in the full-dimension configuration space of the robot in order to track the footstep plan generated in the planning phase. 
+In the first experiment (Sec.~\ref{subsec:locomotion}), we employ the recently-introduced adaptive dimensionality 
+\arxiv{framework~\cite{GCBSL11,GSL12,GSL13}.}{framework~\cite{GCBSL11}.}
+which consists of two stages: an adaptive-planning phase which plans in a low-dimensional space when possible and a tracking phase which plans in the high-dimensional space.
+Our user-guided planner is integrated within the high-dimensional planner by searching for a path that tracks the footstep plan generated in the adaptive-planning  phase. 
 
 \subsection{Implementation details}
-To construct the graph on the fly, we used a set of motion primitives which are short kinematically feasible motion sequences to generate the actions, or the successors, of a state during the search. These primitives generate motions for the limbs and torso of the robot (\todo{cite Andrew's paper}). 
+To construct the search space, we used a set of motion primitives which are short kinematically feasible motion sequences. 
+These are used to generate the actions, or the successors, of a state during the search. 
+For additional details see~\cite{DL18}
+%These primitives generate motions for the limbs and torso of the robot (\todo{cite Andrew's paper}). 
 
 % These primitives included clockwise and counter-clockwise rotation of individual joints. 
 % Specifically, four different types of motion primitives are used:
@@ -650,21 +656,123 @@ However, the dynamic heuristic function in both the experiments is the Euclidean
 The parameter values used in both experiments are $\omega_1 (200), \omega_2 (50)$ and $\varepsilon (50)$ for the heuristic-based, and $\tau (30)$ and $\omega (10)$ for the vacillation-based stagnation region detection.
 We conducted the same experiments (results ommited due to lack of space) with a wide variety of parameters and obtained  only slight differences in the results demonstrating that our approach is highly robust to the choice of parameters for our domain.
 
+Planning statistics for all experiments are provided in Table~\ref{tab:stats}.
+Notice that in all the experiments the planner succeeds to reach the goal with the help of a user. 
+The deviations in the results come from the quality of the guidance provided.
+\begin{table}
+  \begin{tabular}{lcccc}
+    \hline
+    \multirow{2}{*}{Dataset} &
+      \multicolumn{2}{c}{Bipedal locomotion} &
+      \multicolumn{2}{c}{Ladder mounting} \\
+      & (a) & (b) & (a) & (b) \\
+      \hline
+    Planning time(s) & 205 & 183 & - & - \\
+    Total time(s) & 293 & 257 & - & - \\
+    Expansions & 1800 & 1770 & - & - \\
+    Num. of guidances & 5.4 & 5.3 & - & - \\
+    Guidance time & 16.4 & 13.6 & - & - \\
+    \hline
+  \end{tabular}
+\caption{Experimental results for the bipedal locomotion and ladder mounting tasks averaged over 10 trials}\label{tab:stats}
+	\vspace{-4mm}
+\end{table}
+\begin{figure*}[t]%
+%\captionsetup{format = plain}
+  \centering%
+  \subfigure[]
+  {
+  \includegraphics[width=0.2125\textwidth]{fig/bar_2.png}
+  \label{fig:stuck_bar}
+  }
+  \subfigure[]
+  {
+  \label{fig:stuck_tables}
+  \includegraphics[width=0.2125\textwidth]{fig/tables_1.png}
+  }
+  \subfigure[]
+  {
+  \label{fig:stuck_door}
+  \includegraphics[width=0.2125\textwidth]{fig/door_2.png}
+  }  
+  \subfigure[]
+  {
+  \label{fig:stuck_step}
+  \includegraphics[width=0.2125\textwidth]{fig/step_2.png}
+  }
+  \caption{%
+    Biped locomotion in challenging scenarios: 
+  \subref{fig:stuck_bar}~The robot has to squat or bend down to pass under a beam.
+    %
+  \subref{fig:stuck_tables}~The robot has to pass through two tables by may be lifting the elbows high above the tables.
+    %
+  \subref{fig:stuck_door}~The robot has to squeeze through a narrow doorway by tucking in its arms.
+    %
+  \subref{fig:stuck_step}~The robot has to step onto a relatively high platform to reach the goal for which it has to lean a little bit more to its left side to be able to lift the left foot further up.
+  }%
+  \label{fig:biped_locomotion}%
+  \vspace{-4.5mm}
+\end{figure*}
+
+\begin{figure}[t]%
+%\captionsetup{format = plain}
+  \centering%
+  \subfigure[Vacillation-based detection]
+  {
+  \includegraphics[width=0.225\textwidth]{fig/ed_plot.pdf}
+  \label{fig:ed_plot}
+  % \includegraphics[width=0.3\textwidth]{fig/ladder.png}
+  }  
+%
+  \subfigure[Heuristic-based  detection]
+  {
+  \includegraphics[width=0.225\textwidth]{fig/h_plot.pdf}
+  \label{fig:h_plot}
+  % \includegraphics[width=0.3\textwidth]{fig/staircase.png}
+  }
+%
+  \caption{%
+    \mhastar progress with and without guidance.
+    \subref{fig:ed_plot}~vacillation-based 
+    and
+    \subref{fig:h_plot}~heuristic-based
+    stagnation-region detection.
+    %---heuristic values as a function of the number of queue expansions.
+%		When a stagnation region is detected (red cross) in the baseline heuristic (cyan), a dynamic heuristic is generated (blue) until the stagnation region is escaped (green circle) or until a new stagnation region is detected (blue cross) in the dynamic heuristic.
+%		Plots depicting the baseline heuristic values when only a limited amount of guidance is given demonstrate that without guidance, the planner remains stuck in the stagnation region (we note that as \mhastar is complete, it will eventually escape all such regions).
+		}
+
+  \label{fig:detection_plot}%
+
+  \vspace{-4.5mm}
+
+\end{figure}
+
 \subsection{Bipedal locomotion}
 \label{subsec:locomotion}
-The first task we considered is bipedal locomotion. The initial state of the robot is the full dimensional 34-DOF configuration whereas the goal is represented as a cylindrical region which the robot needs to enter (depicted in Fig.~\ref{fig:robot}).
 
-As explained earlier, for this experiment we used the adaptive-dimensionality  planning framework. The baseline heuristic is designed to assist the search with a general walking or stepping capability. For each step the footprint of the target footstep is visualized for the user to be able to better understand where the planner is stuck and how to provide the guidance. In relatively easier scenarios this heuristic would suffice in guiding the search. However if the search encounters harder situations such as those depicted in Fig.~\ref{fig:biped_locomotion}, then it is likely to get trapped into a stagnation region and would invoke user-guidance.
 
-Results demonstrating the effectiveness of our framework are depicted in Fig.~\ref{fig:detection_plot}
-Specifically, we plot the heuristic value (a proxy to the algorithm's progress) as a function of the number of queue expansions.
-For the same setting, we ran our algorithm with and without user guidance.
+
+%The first task we considered is bipedal locomotion. The initial state of the robot is the full dimensional 34-DOF configuration whereas the goal is represented as a cylindrical region which the robot needs to enter (depicted in Fig.~\ref{fig:robot}).
+
+The first task we considered is bipedal locomotion, depicted in Fig.~\ref{fig:robot}.
+As mentioned, we used the adaptive-dimensionality  planning framework. The baseline heuristic is designed to assist the search with a general walking or stepping capability. For each step the footprint of the target footstep is visualized for the user to be able to better understand where the planner is stuck and how to provide the guidance. In relatively easier scenarios this heuristic would suffice in guiding the search. However if the search encounters harder situations such as those depicted in Fig.~\ref{fig:biped_locomotion}, then it is likely to get trapped into a stagnation region and would invoke user-guidance.
+
+Results demonstrating the effectiveness of our framework are depicted in Fig.~\ref{fig:detection_plot}.
+Specifically, we plot the 
+method to detect stagnation regions (expansion delay and heuristic values for vacillation-based and heuristic-based detection, respectively) as a function of the number of queue expansions.
+For both methods, we ran our algorithm with and without user guidance.
 Namely, if a stagnation region was detected, we recorded the state of the planner and then continued to run it once without asking the user for guidance and once using our approach. This was done every time a stagnation region was detected. 
 Results show that without guidance, the planner is not able to make any significant progress and the heuristic value does not change.
 On the other hand, when guidance is given, then the algorithm escapes the stagnation region and resumes to make progress towards the goal.
 
+Interestingly, using expansion delays to detect a stagnation region (vacillation-based detection) incurs a lot of noise---notice the large oscillations in the dashed yellow curve in Fig.~\ref{fig:ed_plot}. 
+This is, possibly due to the fact that if there are multiple short paths that can be taken within a region where the planner is trapped, then the expansion delay for each such path will be small while the planner does not really make any progress towards the goal.
+We observed similar trends for the second experiment (ladder climbing) that caused falsely detecting that a stagnation region was exited, results omitted.
+
+
 \subsection{Mounting onto a ladder}
-The second task we considered was mounting onto a ladder from a standing position (see Fig.~\ref{fig:gui}) to the desired contact poses. This again is a challenging planning problem because the ladder rungs and the robot grasping hooks construct narrow spaces in the configuration space which have to be traversed to be able to establish the desired contacts. The baseline heuristic function that we used in this experiment is computed as the summation of four six-dimensional Euclidean distances between each of the four end effectors and their respective target poses. 
+The second task we considered was mounting onto a ladder from a standing position (see Fig.~\ref{fig:gui}) to the desired contact poses. This problem is challenging because the ladder rungs and the robot grasping hooks construct narrow spaces in the configuration space which have to be traversed to establish the desired contacts. The baseline heuristic  used is the summation of four six-dimensional Euclidean distances between each of the four end effectors and their respective target poses. 
 
 
 % \subsection{Climbing a staircase}
@@ -686,92 +794,10 @@ The second task we considered was mounting onto a ladder from a standing positio
 % We conducted a similar experiment to the one described in Sec.~\ref{subsec:stairs} where we simulate the progress with and without user guidance for each depression region detected.
 % A similar trend can be seen in Fig.~\ref{fig:h_plot}. Note that for this experiment the plot depicts the instances where the dynamic heuristic also gets stuck in stagnation region because of the imperfections in the guidance but then eventually escapes it with additional guidances.
 
-\begin{figure*}[t]%
-%\captionsetup{format = plain}
-  \centering%
-  \subfigure[]
-  {
-  \includegraphics[width=0.225\textwidth]{fig/bar_2.png}
-  \label{fig:stuck_bar}
-  }
-  \subfigure[]
-  {
-  \label{fig:stuck_tables}
-  \includegraphics[width=0.225\textwidth]{fig/tables_1.png}
-  }
-  \subfigure[]
-  {
-  \label{fig:stuck_door}
-  \includegraphics[width=0.225\textwidth]{fig/door_2.png}
-  }  
-  \subfigure[]
-  {
-  \label{fig:stuck_step}
-  \includegraphics[width=0.225\textwidth]{fig/step_2.png}
-  }
-  \caption{%
-    Biped locomotion in challenging scenarios: 
-  \subref{fig:stuck_bar}~an instance where the robot has to squat or bend down to pass under a beam.
-    %
-  \subref{fig:stuck_tables}~the robot has to pass through two tables by may be lifting the elbows high above the tables.
-    %
-  \subref{fig:stuck_door}~the robot has to squeeze through a narrow doorway by tucking in its arms.
-    %
-  \subref{fig:stuck_step}~the robot has to step onto a relatively high platform to reach the goal for which it has to lean a little bit more to its left side to be able to lift the left foot further up.
-  }%
-  \label{fig:biped_locomotion}%
-  % \vspace{-2.5mm}
-\end{figure*}
-
-\begin{figure*}[t]%
-%\captionsetup{format = plain}
-  \centering%
-  \subfigure[Heuristic-based detection]
-  {
-  \includegraphics[width=0.37\textwidth]{fig/ed_plot.pdf}
-  \label{fig:ed_plot}
-  % \includegraphics[width=0.3\textwidth]{fig/ladder.png}
-  }  
-%
-  \subfigure[Vacillation-based detection]
-  {
-  \includegraphics[width=0.37\textwidth]{fig/h_plot.pdf}
-  \label{fig:h_plot}
-  % \includegraphics[width=0.3\textwidth]{fig/staircase.png}
-  }
-
-  \caption{%
-    Progress of \mhastar with and without user guidance---heuristic values as a function of the number of queue expansions.
-		When a stagnation region is detected (red cross) in the baseline heuristic (cyan), a dynamic heuristic is generated (blue) until the stagnation region is escaped (green circle) or until a new stagnation region is detected (blue cross) in the dynamic heuristic.
-		Plots depicting the baseline heuristic values when only a limited amount of guidance is given demonstrate that without guidance, the planner remains stuck in the stagnation region (we note that as \mhastar is complete, it will eventually escape all such regions).}
-
-  \label{fig:detection_plot}%
-
-  \vspace{-4.5mm}
-
-\end{figure*}
 
 %% stats
-We evaluated the performance by running the experiments on the two environments. The results are shown in table~\ref{tab:stats}. In all the experiments the planner succeeds to reach the goal with the help of a user. The deviations in the experiments come from how good or bad the guidances were.
+%We evaluated the performance by running the experiments on the two environments. The results are shown in table~\ref{tab:stats}. In all the experiments the planner succeeds to reach the goal with the help of a user. The deviations in the experiments come from how good or bad the guidances were.
 
-\begin{table}
-  \begin{tabular}{lcccc}
-    \hline
-    \multirow{2}{*}{Dataset} &
-      \multicolumn{2}{c}{Bipedal locomotion} &
-      \multicolumn{2}{c}{Ladder mounting} \\
-      & (a) & (b) & (a) & (b) \\
-      \hline
-    Planning time(s) & 205 & 183 & - & - \\
-    Total time(s) & 293 & 257 & - & - \\
-    Expansions & 1800 & 1770 & - & - \\
-    Num. of guidances & 5.4 & 5.3 & - & - \\
-    Guidance time & 16.4 & 13.6 & - & - \\
-    \hline
-  \end{tabular}
-\caption{Experimental results for the bipedal locomotion and ladder mounting tasks averaged over 10 trials}\label{tab:stats}
-\label{tab:stats}
-\end{table}
 
 %\removed{
 %\subsection{Robustness to algorithmic parameters}
@@ -815,7 +841,7 @@ We evaluated the performance by running the experiments on the two environments.
 \section{Discussion}
 \label{sec:future}
 
-\subsection{Discussion}
+%\subsection{Discussion}
 In Sec.~\ref{sec:eval} we demonstrated how using user guidance allows to solve highly-constrained motion-planning in high-dimensional spaces with only simple baseline heuristics.
 An alternative approach would be to add domain-dependent carefully-crafted heuristics~\cite{V17} which allow to faster solve the same problems completely autonomously.
 
