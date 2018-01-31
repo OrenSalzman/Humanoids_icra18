@@ -104,6 +104,18 @@ In such settings, workspace regions often give little guidance to the planner du
 Additionally, obtaining user guidance in the configuration space is extremely time consuming, even for expert users.
 Thus,  while beneficial, user guidance should be employed scarcely.
 
+\begin{figure}[tb]
+  \centering
+  	\includegraphics[width=0.5\textwidth]{fig/cover3.png}
+  	%\vspace{-2mm}
+  \caption{
+  Planning domain---Humanoid robot needs to plan a path in a challenging environment that involves circumventing obstacles and passing through tight spaces.
+		% Planning domain---Humanoid robot needs to use the ladder or the staircase to reach the top while avoiding collision with the obstacles and adhering to the physical stability constraints.
+%  	\vspace{-15mm}
+}
+   	\label{fig:robot}
+\end{figure}
+
 Our key insight is that carefully chosen individual configurations suggested by a user can be used to effectively guide the planner when in need.
 Transforming this insight into a planning framework requires addressing three fundamental questions:
 
@@ -126,18 +138,6 @@ It is worth emphasising that this is done without requiring the user to understa
 % 
 %In the following, we detail our planning framework (Sec.~\ref{sec:high}) and how it addresses each of these questions (Sec.~\ref{sec:q1}-\ref{sec:q3}).
 %We then continue (Sec.~\ref{sec:eval}) to demonstrate its effectiveness in simulations and conclude by describing possible additional future work.
-
-\begin{figure}[tb]
-  \centering
-  	\includegraphics[width=0.4\textwidth]{fig/env.png}
-  	%\vspace{-2mm}
-  \caption{
-  Planning domain---Humanoid robot needs to plan a path in a challenging environment that involves circumventing obstacles and passing through tight spaces.
-		% Planning domain---Humanoid robot needs to use the ladder or the staircase to reach the top while avoiding collision with the obstacles and adhering to the physical stability constraints.
-%  	\vspace{-15mm}
-}
-   	\label{fig:robot}
-\end{figure}
 
 
 
@@ -430,7 +430,7 @@ Note that the user is \emph{not} required to be familiar with the search algorit
 
 \begin{figure}[tb]
   \centering
-  	\includegraphics[width=0.453\textwidth]{fig/gui.png}
+  	\includegraphics[width=0.453\textwidth]{fig/panel.png}
   	%\vspace{-2mm}
   \caption{
 		The graphical user interface used to provide guidance to the planner. The panel on the left hand side can be use to select different joint groups, move the joints around and pass the guidance to the planner. The interactive marker shown on the right hand side can be used to move the robot end effectors.
@@ -656,23 +656,23 @@ As briefly discussed earlier, for this experiment we use the adaptive planning f
   \centering%
   \subfigure[]
   {
-  \includegraphics[width=0.225\textwidth]{fig/stuck_bar.png}
+  \includegraphics[width=0.225\textwidth]{fig/bar_2.png}
   \label{fig:stuck_bar}
   }
   \subfigure[]
   {
   \label{fig:stuck_tables}
-  \includegraphics[width=0.225\textwidth]{fig/stuck_tables.png}
+  \includegraphics[width=0.225\textwidth]{fig/tables_1.png}
   }
   \subfigure[]
   {
   \label{fig:stuck_door}
-  \includegraphics[width=0.225\textwidth]{fig/stuck_door.png}
+  \includegraphics[width=0.225\textwidth]{fig/door_2.png}
   }  
   \subfigure[]
   {
   \label{fig:stuck_step}
-  \includegraphics[width=0.225\textwidth]{fig/stuck_step.png}
+  \includegraphics[width=0.225\textwidth]{fig/step_2.png}
   }
   \caption{%
     Biped locomotion in challenging scenarios: 
