@@ -28,6 +28,7 @@
 %\usepackage[caption=false,font=footnotesize]{subfig}
 \usepackage[left]{showlabels}
 \usepackage{multicol}
+\usepackage{multirow}
 \usepackage[bookmarks=true]{hyperref}
 \usepackage{graphicx,subfigure}
 
@@ -646,7 +647,7 @@ The first task we considered is bipedal locomotion. The initial state of the rob
 
 As explained earlier, for this experiment we used the adaptive-dimensionality  planning framework. The baseline heuristic is designed to assist the search with a general walking or stepping capability. For each step the footprint of the target footstep is visualized for the user to be able to better understand where the planner is stuck and how to provide the guidance. In relatively easier scenarios this heuristic would suffice in guiding the search. However if the search encounters harder situations such as those depicted in Fig.~\ref{fig:biped_locomotion}, then it is likely to get trapped into a stagnation region and would invoke user-guidance.
 
-Results demonstrating the effectiveness of our framework are depicted in Fig.~\ref{fig:stair_plot}
+Results demonstrating the effectiveness of our framework are depicted in Fig.~\ref{fig:detection_plot}
 Specifically, we plot the heuristic value (a proxy to the algorithm's progress) as a function of the number of queue expansions.
 For the same setting, we ran our algorithm with and without user guidance.
 Namely, if a stagnation region was detected, we recorded the state of the planner and then continued to run it once without asking the user for guidance and once using our approach. This was done every time a stagnation region was detected. 
@@ -654,7 +655,7 @@ Results show that without guidance, the planner is not able to make any signific
 On the other hand, when guidance is given, then the algorithm escapes the stagnation region and resumes to make progress towards the goal.
 
 \subsection{Mounting onto a ladder}
-The second task we considered was mounting onto a ladder from a standing position (see Fig.~\ref{fig:gui}) to the desired contact poses. This again is a challenging planning problem because the ladder rungs and the robot grasping hooks construct narrow spaces in the configuration space which have to be traversed to be able to establish the desired contacts. The baseline heuristic function that we used in this experiment is computed as the summation of four six-dimensional Euclidean distances between each of the four end effectors and their respective target poses. The results for this experiment are depicted in Fig.~\ref{fig:stair_plot}
+The second task we considered was mounting onto a ladder from a standing position (see Fig.~\ref{fig:gui}) to the desired contact poses. This again is a challenging planning problem because the ladder rungs and the robot grasping hooks construct narrow spaces in the configuration space which have to be traversed to be able to establish the desired contacts. The baseline heuristic function that we used in this experiment is computed as the summation of four six-dimensional Euclidean distances between each of the four end effectors and their respective target poses. 
 
 
 % \subsection{Climbing a staircase}
@@ -707,7 +708,7 @@ The second task we considered was mounting onto a ladder from a standing positio
     %
   \subref{fig:stuck_door}~the robot has to squeeze through a narrow doorway by tucking in its arms.
     %
-  \subref{fig:stuck_step}~the robot has to step onto a relatively high platform to reach the goal for which it has to lean a little bit more to its right side to be able to lift the left foot further up.
+  \subref{fig:stuck_step}~the robot has to step onto a relatively high platform to reach the goal for which it has to lean a little bit more to its left side to be able to lift the left foot further up.
   }%
   \label{fig:biped_locomotion}%
   % \vspace{-2.5mm}
@@ -716,17 +717,17 @@ The second task we considered was mounting onto a ladder from a standing positio
 \begin{figure*}[t]%
 %\captionsetup{format = plain}
   \centering%
-  \subfigure[Mounting onto the ladder]
+  \subfigure[Heuristic-based detection]
   {
-  \includegraphics[width=0.375\textwidth]{fig/h_ladder.jpg}
-  \label{fig:ladder_plot}
+  \includegraphics[width=0.37\textwidth]{fig/ed_plot.pdf}
+  \label{fig:ed_plot}
   % \includegraphics[width=0.3\textwidth]{fig/ladder.png}
   }  
 %
-  \subfigure[Climbing up the staircase]
+  \subfigure[Vacillation-based detection]
   {
-  \includegraphics[width=0.37\textwidth]{fig/h_staircase.jpg}
-  \label{fig:stair_plot}
+  \includegraphics[width=0.37\textwidth]{fig/h_plot.pdf}
+  \label{fig:h_plot}
   % \includegraphics[width=0.3\textwidth]{fig/staircase.png}
   }
 
@@ -735,7 +736,7 @@ The second task we considered was mounting onto a ladder from a standing positio
 		When a stagnation region is detected (red cross) in the baseline heuristic (cyan), a dynamic heuristic is generated (blue) until the stagnation region is escaped (green circle) or until a new stagnation region is detected (blue cross) in the dynamic heuristic.
 		Plots depicting the baseline heuristic values when only a limited amount of guidance is given demonstrate that without guidance, the planner remains stuck in the stagnation region (we note that as \mhastar is complete, it will eventually escape all such regions).}
 
-  \label{fig:h_plot}%
+  \label{fig:detection_plot}%
 
   \vspace{-4.5mm}
 
@@ -744,20 +745,23 @@ The second task we considered was mounting onto a ladder from a standing positio
 %% stats
 We evaluated the performance by running the experiments on the two environments. The results are shown in table~\ref{tab:stats}. In all the experiments the planner succeeds to reach the goal with the help of a user. The deviations in the experiments come from how good or bad the guidances were.
 
-\begin{table}[t!]
-\centering
-\begin{tabular}{l|ccc}	
-      & Ladder & Staircase\\ 
-        \hline
-            Success Rate(percent) & 100 & 100\\
-            Mean planning time(s) & 113 $\pm$ 36 & 101 $\pm$ 17.5\\
-            Mean total time(s) & 222 $\pm$ 55 & 246 $\pm$ 53.5\\
-       Mean state expansions & 708 $\pm$ 189 & 1219 $\pm$ 242\\
-      Mean num of guidances & 5.5 $\pm$ 0.85 & 8 $\pm$ 2\\
-      Mean time per guidance(s) & 20 $\pm$ 3.6 & 18.5 $\pm$ 3\\
-\end{tabular}
-\caption{Experimental results for the the staircase and ladder scenarios averaged over 10 trials}\label{tab:stats}
-% \vspace{-10mm}
+\begin{table}
+  \begin{tabular}{lcccc}
+    \hline
+    \multirow{2}{*}{Dataset} &
+      \multicolumn{2}{c}{Bipedal locomotion} &
+      \multicolumn{2}{c}{Ladder mounting} \\
+      & (a) & (b) & (a) & (b) \\
+      \hline
+    Planning time(s) & 205 & 183 & - & - \\
+    Total time(s) & 293 & 257 & - & - \\
+    Expansions & 1800 & 1770 & - & - \\
+    Num. of guidances & 5.4 & 5.3 & - & - \\
+    Guidance time & 16.4 & 13.6 & - & - \\
+    \hline
+  \end{tabular}
+\caption{Experimental results for the bipedal locomotion and ladder mounting tasks averaged over 10 trials}\label{tab:stats}
+\label{tab:stats}
 \end{table}
 
 %\removed{
