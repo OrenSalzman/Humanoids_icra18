@@ -586,44 +586,47 @@ For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:films
 \section{Evaluation }
 \label{sec:eval}
 We evaluated the performance of our planning framework on a 34-DOF WAREC humanoid robot~\cite{MHSetal15} 
-which is constrained to maintain static stability at all times. The robot has four symmetric limbs each having seven revolute joints. The other six dimensions come from the pose of the robot with respect to some global frame of reference. 
-In one of the experiments (Sec.~\ref{subsec:stairs}), we employ the recently-introduced adaptive dimensionality framework~\cite{GCBSL11,GSL12,GSL13}.
-Roughly speaking,  it consists of two stages: an adaptive planning phase which attempts to plan in a low-dimensional space when possible and a tracking phase which plans in the high-dimensional space.
+which is constrained to maintain static stability at all times. 
+% The robot has four symmetric limbs each having seven revolute joints. The other six dimensions come from the pose of the robot with respect to some global frame of reference. 
+In one of the experiments (Sec.~\ref{subsec:locomotion}), we employ the recently-introduced adaptive dimensionality framework~\cite{GCBSL11,GSL12,GSL13}.
+At a high level,  it consists of two stages: an adaptive planning phase which attempts to plan in a low-dimensional space when possible and a tracking phase which plans in the high-dimensional space.
 Our user-guided planner is integrated within the high-dimensional planner.
 Specifically, the planner attempts to find a plan in the full-dimension configuration space of the robot in order to track the footstep plan generated in the planning phase. 
 
 \subsection{Implementation details}
-We used a set of motion primitives which are short kinematically feasible motion sequences to generate the actions, or the successors, of a state during the search. These primitives included clockwise and counter-clockwise rotation of individual joints. 
-Specifically, four different types of motion primitives are used:
-(i)~primitives for the free limbs of the robot i.e. the limbs whose end effectors are not constrained by any contact surface,  
-(ii)~primitives to move the torso of the robot,
-(iii)~primitives to latch onto the target end-effector poses
-and
-(iv)~primitives to latch onto the user-provided configuration once it is within a small threshold distance to the state being expanded.
-Notice that motion primitives (ii) and (iii) require solving closed-chain inverse kinematics for the constrained limbs.
+To construct the graph on the fly, we used a set of motion primitives which are short kinematically feasible motion sequences to generate the actions, or the successors, of a state during the search. These primitives generate motions for the limbs and torso of the robot (cite Andrew's paper). 
+
+% These primitives included clockwise and counter-clockwise rotation of individual joints. 
+% Specifically, four different types of motion primitives are used:
+% (i)~primitives for the free limbs of the robot i.e. the limbs whose end effectors are not constrained by any contact surface,  
+% (ii)~primitives to move the torso of the robot,
+% (iii)~primitives to latch onto the target end-effector poses
+% and
+% (iv)~primitives to latch onto the user-provided configuration once it is within a small threshold distance to the state being expanded.
+% Notice that motion primitives (ii) and (iii) require solving closed-chain inverse kinematics for the constrained limbs.
 
 For each experiment we used a very small set of fairly generic heuristics. 
 This is done to demonstrate that our approach allows to significantly reduce the engineering effort required in carefully crafting domain-specific heuristics. 
 We conducted two experiments which largely differ in the nature of mobility and thus employ different baseline heuristic functions. 
-The dynamic heuristic function in both the experiments is the Euclidean distance in the joint 34-DOF space.
-The parameter values that we used consistently in the two experiments are $\omega_1 (200), \omega_2 (50)$ and $\varepsilon (50)$.
-Finally in our final experiment, we show that while our approach uses several parameters, it is highly robust to the choice of parameters for our domain.
+However, the dynamic heuristic function in both the experiments is the Euclidean distance in the joint 34-DOF space.
+The parameter values that we used consistently in the two experiments are $\omega_1 (200), \omega_2 (50)$ and $\varepsilon (50)$ for the heuristic-based, and $\tau (30)$ and $\omega (10)$ for the vacillation-based stagnation region detection.
+Finally in our final experiment, we show that while these approaches have a number of parameters, it is highly robust to the choice of parameters for our domain.
 
-\subsection{Mounting onto a ladder}
-The first task we considered was  mounting onto a ladder while starting from a standing position  (see Fig.~\ref{fig:gui}). 
-The initial state of the robot here is a full-dimensional configuration. The goal state is defined as 6-DOF poses for all the four end effectors (hands and feet) of the robot. These poses are predefined contact positions on the ladder rungs which ensure a reasonable degree of robot stability. 
-This is a challenging problem as the planner is required to compute the order in which each of these target contacts has to be reached. Moreover, the targets need to be approached in a certain direction to establish the desired contacts while avoiding collisions. 
-The inability of heuristic functions to model such task-specific constraints introduce stagnation regions in the search. 
-The baseline heuristic function that we used in this experiment is computed as the summation of four six-dimensional Euclidean distances between each of the four end effectors and their respective target poses.
+\subsection{Bipedal locomotion}
+\label{subsec:locomotion}
+The first task we considered is bipedal locomotion of the robot while avoiding collisions with the obstacles in the environment as well as adhering to the physical constraints of the robot. The initial state of the robot is the full dimensional 34-DOF configuration whereas the goal is represented as a cylindrical region which the robot needs to enter (depicted in Fig.~\ref{fig:robot}).
 
+As explained earlier, for this experiment we used the adaptive-planning framework. The baseline heuristic is desined to assist the search with a general walking or stepping capability. For each step the footprint of the target footstep is visualized for the user to be able to better understand where the planner is stuck and how to provide the guidance. In relatively easier scenarios this heuristic would suffice in guiding the search. However if the search encounters harder situations such as those depicted in Fig.~\ref{fig:biped_locomotion}, then it is likely to get trapped into a stagnation region and would invoke user-guidance.
 
-Results demonstrating the effectiveness of our framework are depicted in Fig.~\ref{fig:ladder_plot}
+Results demonstrating the effectiveness of our framework are depicted in Fig.~\ref{fig:stair_plot}
 Specifically, we plot the heuristic value (a proxy to the algorithm's progress) as a function of the number of queue expansions.
 For the same setting, we ran our algorithm with and without user guidance.
 Namely, if a stagnation region was detected, we recorded the state of the planner and then continued to run it once without asking the user for guidance and once using our approach. This was done every time a stagnation region was detected. 
 Results show that without guidance, the planner is not able to make any significant progress and the heuristic value does not change.
 On the other hand, when guidance is given, then the algorithm escapes the stagnation region and resumes to make progress towards the goal.
 
+\subsection{Mounting onto a ladder}
+The second task we considered was mounting onto a ladder from a standing position (see Fig.~\ref{fig:gui}) to the desired contact poses. This again is a challenging planning problem because the ladder rungs and the robot grasping hooks construct narrow spaces in the configuration space which have to be traversed to be able to establish the desired contacts. The baseline heuristic function that we used in this experiment is computed as the summation of four six-dimensional Euclidean distances between each of the four end effectors and their respective target poses. The results for this experiment are depicted in Fig.~\ref{fig:stair_plot}
 
 
 % \subsection{Climbing a staircase}
@@ -644,12 +647,6 @@ On the other hand, when guidance is given, then the algorithm escapes the stagna
 
 % We conducted a similar experiment to the one described in Sec.~\ref{subsec:stairs} where we simulate the progress with and without user guidance for each depression region detected.
 % A similar trend can be seen in Fig.~\ref{fig:h_plot}. Note that for this experiment the plot depicts the instances where the dynamic heuristic also gets stuck in stagnation region because of the imperfections in the guidance but then eventually escapes it with additional guidances.
-
-\subsection{Bipedal locomotion}
-\label{subsec:locomotion}
-The second task we considered is bipedal locomotion of the robot while avoiding collisions with the obstacles in the environment as well as adhering to the physical constraints of the robot. The initial state of the robot again is the full dimensional 34-DOF configuration of the robot but the goal state in this experiment is represented just as a cylindrical region which the robot needs to enter (depicted in Fig.~\ref{fig:robot}).
-
-As briefly discussed earlier, for this experiment we use the adaptive planning framework. The planning phase generates the footstep plan first followed by the tracking phase which runs the full high-dimensional planner in order to track those footsteps. We integrate our approach into the latter. A single baseline heuristic is used in this experiment which assists the search with a general walking or stepping capability for the robot. For each step the footprint of the target footstep is visualized for the user to be able to better understand where the planner is stuck and how to provide the guidance. In relatively easier scenarios this heuristic would suffice in guiding the search. However if the search encounters harder situations such as those depicted in Fig.~\ref{fig:biped_locomotion}, then it would get trapped into a stagnation region. Our approach invokes the user for guidance at four different instances where the baseline heuristic fails to make progress. In all of these instances the user can assist the planner by providing the guiding configuration after analysing the respective scenario. When the user provides the guidance, the dynamic heuristic guides the search to pass through that configuration until the baseline heuristic escapes the stagnation region.
 
 \begin{figure*}[t]%
 %\captionsetup{format = plain}
