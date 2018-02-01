@@ -106,7 +106,7 @@ Thus,  while beneficial, user guidance should be employed scarcely.
 
 \begin{figure}[tb]
   \centering
-  	\includegraphics[trim={5cm 6cm 2.5cm 2.5cm},clip, width=0.35\textwidth]{fig/cover3.png}
+  	\includegraphics[trim={5cm 6cm 2.5cm 3.5cm},clip, width=0.35\textwidth]{fig/cover3.png}
   	\vspace{-2mm}
   \caption{
   Planning domain---Humanoid robot (top left) needs to plan a path in a challenging environment that involves circumventing obstacles and passing through narrow passages.
@@ -289,11 +289,11 @@ We then continue (Sec.~\ref{sec:instantiation}) to detail how they are used in o
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.45\textwidth]{fig/local_min_detection_new2.pdf}
+  \includegraphics[width=0.35\textwidth]{fig/local_min_detection_new2.pdf}
 	\vspace{-3mm}
 
   \caption{%
-    Visualization of the way vacillation-based stagnation regions are detected.  
+    Visualization of the way vacillation-based stagnation regions are detected---expansion delay as a function of the number of expansions.  
     Notice that the stagnation regions ends when $e_{\text{curr}} = 1$ however, this is detected after $\omega$ additional steps.}
 %    The expansion delay $e_{\text{curr}}$ and
 %    the average expansion delay~$\Delta e(\omega)$, 
@@ -629,12 +629,8 @@ For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:films
 We evaluated the performance of our planning framework on a 34-DOF WAREC humanoid robot~\cite{MHSetal15} 
 which is constrained to maintain static stability at all times. 
 % The robot has four symmetric limbs each having seven revolute joints. The other six dimensions come from the pose of the robot with respect to some global frame of reference. 
-In the first experiment (Sec.~\ref{subsec:locomotion}), we employ the recently-introduced adaptive dimensionality 
-\arxiv{framework~\cite{GCBSL11,GSL12,GSL13}.}{framework~\cite{GCBSL11}.}
-which consists of two stages: an adaptive-planning phase which plans in a low-dimensional space when possible and a tracking phase which plans in the high-dimensional space.
-Our user-guided planner is integrated within the high-dimensional planner by searching for a path that tracks the footstep plan generated in the adaptive-planning  phase. 
-
-\subsection{Implementation details}
+%
+%\subsection{Implementation details}
 To construct the search space, we used a set of motion primitives which are short kinematically feasible motion sequences. 
 These are used to generate the actions, or the successors, of a state during the search. 
 For additional details see~\cite{DL18}
@@ -764,7 +760,12 @@ see~\url{https://goo.gl/cjJ7KU}.
 %The first task we considered is bipedal locomotion. The initial state of the robot is the full dimensional 34-DOF configuration whereas the goal is represented as a cylindrical region which the robot needs to enter (depicted in Fig.~\ref{fig:robot}).
 
 The first task we considered is bipedal locomotion, depicted in Fig.~\ref{fig:robot}.
-As mentioned, we used the adaptive-dimensionality  planning framework. The baseline heuristic is designed to assist the search with a general walking or stepping capability. For each step the footprint of the target footstep is visualized for the user to be able to better understand where the planner is stuck and how to provide the guidance. In relatively easier scenarios this heuristic would suffice in guiding the search. However if the search encounters harder situations such as those depicted in Fig.~\ref{fig:biped_locomotion}, then it is likely to get trapped into a stagnation region and would invoke user-guidance.
+Here, we employ the recently-introduced adaptive dimensionality 
+\arxiv{framework~\cite{GCBSL11,GSL12,GSL13}}{framework~\cite{GCBSL11}}
+which consists of two stages: an adaptive-planning phase which plans in a low-dimensional space when possible and a tracking phase which plans in the high-dimensional space.
+Our user-guided planner is integrated within the high-dimensional planner by searching for a path that tracks the footstep plan generated in the adaptive-planning  phase. 
+
+The baseline heuristic we used was designed to assist the search with a general walking or stepping capability. For each step the footprint of the target footstep is visualized for the user to be able to better understand where the planner is stuck and how to provide the guidance. In relatively easier scenarios this heuristic would suffice in guiding the search. However if the search encounters harder situations such as those depicted in Fig.~\ref{fig:biped_locomotion}, then it is likely to get trapped into a stagnation region and would invoke user-guidance.
 
 Results demonstrating the effectiveness of our framework are depicted in Fig.~\ref{fig:detection_plot}.
 Specifically, we plot the 
@@ -775,14 +776,14 @@ Results show that without guidance, the planner is not able to make any signific
 On the other hand, when guidance is given, then the algorithm escapes the stagnation region and resumes to make progress towards the goal.
 
 Interestingly, using expansion delays to detect a stagnation region (vacillation-based detection) incurs a lot of noise---notice the large oscillations in the dashed yellow curve in Fig.~\ref{fig:ed_plot}. 
-This is possibly due to the fact that if there are multiple short paths that can be taken within a region where the planner is trapped, then the expansion delay for each such path will be small while the planner does not really make any progress towards the goal.
+A possible explanation is that even in regions where the planner cannot ultimately progress towards the goal, there may be multiple short feasible paths to explore. In such settings, then the expansion delay for each such path will can small while the planner does not really progress towards the goal.
 Indeed, numerical results stated in Table~\ref{tab:stats} confirm that our heuristic-based method for stagnation-region detection outperforms the existing  vacillation-based method.
 We observed similar trends for the second experiment (ladder climbing) that caused falsely detecting that a stagnation region was exited, plots omitted.
 
 
 \subsection{Mounting onto a ladder}
 The second task we considered was mounting onto a ladder from a standing position (see Fig.~\ref{fig:gui}) to the desired contact poses. This problem is challenging because the ladder rungs and the robot grasping hooks construct narrow spaces in the configuration space which have to be traversed to establish the desired contacts. The baseline heuristic  used is the summation of four six-dimensional Euclidean distances between each of the four end effectors and their respective target poses. 
-
+For numerical results, see Table~\ref{tab:stats}.
 
 % \subsection{Climbing a staircase}
 % \label{subsec:stairs}
