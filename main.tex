@@ -46,11 +46,11 @@
 \title{	Online, interactive user guidance for \\
 		high-dimensional, constrained motion planning }
 
-\author{Fahad Islam, Oren Salzman and Maxim Likhachev% <-this % stops a space
-  \thanks{Robotics Institute, Carnegie Mellon University, Pittsburgh, PA, USA
-    {\tt\small \{fi,osalzman\}@andrew.cmu.edu, maxim@cs.cmu.edu}
-  }%
-}
+% \author{Fahad Islam, Oren Salzman and Maxim Likhachev% <-this % stops a space
+%   \thanks{Robotics Institute, Carnegie Mellon University, Pittsburgh, PA, USA
+%     {\tt\small \{fi,osalzman\}@andrew.cmu.edu, maxim@cs.cmu.edu}
+%   }%
+% }
 
 
 \begin{document}
@@ -68,7 +68,7 @@ We consider the problem of planning a collision-free path for a high-dimensional
 Specifically, we suggest a planning framework where a motion-planning algorithm can obtain guidance from a user.
 In contrast to existing approaches that try to speed up planning by incorporating experiences or demonstrations ahead of planning, 
 we suggest to seek user guidance only when the planner identifies that it ceases to make significant progress towards the goal.
-Guidance is provided in the form of an intermediate configuration~$\hat{q}$ which, is used to bias the planner to go through~$\hat{q}$.
+Guidance is provided in the form of an intermediate configuration~$\hat{q}$, which is used to bias the planner to go through~$\hat{q}$.
 We demonstrate our approach for the case where the planning algorithm is Multi-Heuristic \astar (\mhastar) and the robot is a 34-DOF humanoid.
 We show that our approach allows to compute highly-constrained paths with little domain knowledge.
 Without our approach, solving such problems requires carefully-crafting domain-dependent heuristics. 
@@ -88,7 +88,7 @@ However, efficiently planning paths in high-dimensional, constrained spaces rema
 One approach to address this challenge is to incorporate user input to guide the motion-planning algorithm.
 While there has been much work on planning using human demonstration 
 \arxiv{(see, e.g.,~\cite{ACVB09,HS16,PHCL16,SHLA16,YA17}),}{(see, e.g.,~\cite{ACVB09,YA17}),}  
-there has been far less research incorporating guidance as an interactive part of the planning~loop.
+there has been far less research on incorporating guidance as an interactive part of the planning~loop.
 
 Broadly speaking, interactive planning has been typically used in the context of sampling-based motion-planning algorithms~\cite{L06}.
 User guidance was employed by biasing the sampling scheme of the planner by having the user mark regions in the \emph{workspace} that should be avoided or 
@@ -102,11 +102,11 @@ Alternatively, interactive devices such as~a 3D mouse or a haptic arm have been 
 We are interested in planning in high-dimensional, constrained spaces such as those encountered by a humanoid robot (see Fig.~\ref{fig:robot} and Sec.~\ref{sec:rel}).
 In such settings, workspace regions often give little guidance to the planner due to the high dimension of the configuration space as well as the physical constraints of the robot.
 Additionally, obtaining user guidance in the configuration space is extremely time consuming, even for expert users.
-Thus,  while beneficial, user guidance should be employed scarcely.
+Thus,  though beneficial, user guidance should be employed scarcely.
 
 \begin{figure}[tb]
   \centering
-  	\includegraphics[trim={5cm 6cm 2.5cm 3.5cm},clip, width=0.35\textwidth]{fig/cover3.png}
+  	\includegraphics[width=0.4\textwidth]{fig/cover.png}
   	\vspace{-2mm}
   \caption{
   Planning domain---Humanoid robot (top left) needs to plan a path in a challenging environment that involves circumventing obstacles and passing through narrow passages.
@@ -114,6 +114,7 @@ Thus,  while beneficial, user guidance should be employed scarcely.
 %  	\vspace{-15mm}
 }
    	\label{fig:robot}
+\vspace{-3mm}
 \end{figure}
 
 Our key insight is that carefully chosen individual configurations suggested by a user can be used to effectively guide the planner when in need.
@@ -162,8 +163,8 @@ We note that the formulation can, in general, be incorporated with any motion-pl
 
 After describing our approach at high-level (Sec.~\ref{sec:high}) we demonstrate how it can be applied to the case of \mhastar (Sec.~\ref{sec:planning}).
 We continue by showing the effectiveness of our planner (Sec.~\ref{sec:eval}).
-Specifically, we show that this general approach allows to compute highly constrained motions for a spectrum of tasks including climbing stairs, walking under a bar, squeezing through a door and others, all with the same planner and the same heuristics.  
-Without our approach, solving such problems requires the design of task-specific planners~\cite{KKKHKHAI04} and carefully-crafted domain-dependent heuristics
+Specifically, we show that this general approach allows to compute highly constrained motion plans for a spectrum of tasks including climbing stairs, walking under a bar, squeezing through a door and others, all with the same planner and heuristics.  
+Without our approach, solving such problems requires the design of task-specific planners~\cite{KKKHKHAI04} and carefully-crafted domain-dependent heuristics.
 We conclude this paper with a discussion (Sec.~\ref{sec:future}).
 %We conclude this paper with a discussion and an outline of possible future work (Sec.~\ref{sec:future}).
 
@@ -188,7 +189,7 @@ to high-level
 However, as far as we are aware of, in all the aforementioned cases, \emph{identification} of when to use guidance was done by a human operator and not by the system (except for relatively simple metrics where the system asks for help when it fails to complete some given task).
 Furthermore, the human guidance was used as a ``hard'' constraint forcing the system to make use of the guidance.
 In contrast, in our work the system automatically and independently identifies when it is in need of guidance.
-This guidance is then seamlessly incorporated as a soft constraint--- the system biases the search towards the guidance but also continues to explore the search space as if the guidance was not given.
+This guidance is then seamlessly incorporated as a soft constraint--- the system biases the search towards the guidance while continuing to explore the search space as if the guidance was not given.
 
  
 \subsection{Multi Heuristic \astar (\mhastar)}
@@ -205,7 +206,7 @@ sophisticated approaches that allow to automatically calibrate the weight given 
 Part of the efficiency of \mhastar is due to the fact that the value of the cost-to-come (the $g$-value) computed for each state is shared between all the different searches\footnote{To be precise, there are two variants of \mhastar described in~\cite{ASNHL16}: Independent and Shared \mhastar where the queues do not share and do share the $g$-values of states, respectively. In this paper when we use the term \mhastar, it refers to the latter (shared) variant.}.
 Sharing cost-to-come values between searches implies that if a better path to a state is discovered by any of the searches, the information is updated in all the
 priority queues. 
-Moreover, if one search ceases to make progress towards the goal (a state which we call ``stagnation region'' and which will be formally defined in Sec.~\ref{sec:planning}) it can use ``promising'' states found by other searches to escape this stagnation region.
+Moreover, if one search ceases to make progress towards the goal, it can use ``promising'' states expolred by other searches to escape the local minimum.
 %Furthermore, path sharing allows \mhastar to expand each state at most twice.
 %Finally, in graph search, heuristic functions give a principled way to identify when the planner ceases to make progress (see, e.g.,~\cite{VNL17}).
 
@@ -239,17 +240,17 @@ We will use the notion of expansion delays to identify when the planner is in a 
 \label{alg:main}	
 \begin{algorithmic}[1]
 \small
-\While{$\neg\A.$\texttt{is\_solution\_found()} } 
-	\While{$\neg\A.$\texttt{is\_in\_stagnation\_region()}} 
+\While{$\neg\A.$\texttt{solution\_found()} } 
+	\While{$\neg\A.$\texttt{in\_stagnation\_region()}} 
 		\State $\A.$\texttt{run()}
 		\Comment{no user guidance}
 	\EndWhile
 %	
 	\State {$g \leftarrow$ \texttt{get\_user\_guidance()}}
-	\Comment{$\A$ is in a stagnation region}
+	\Comment{$\A$ in a stagnation region}
 	\State $\A.$\texttt{update\_user\_guidance($g$)}
 	\Comment{account for guidance}
-	\While{$\A.$\texttt{is\_in\_stagnation\_region()}}
+	\While{$\A.$\texttt{in\_stagnation\_region()} \textbf{and} $\neg\A.$\texttt{in\_stagnation\_region($g$)}}
 		\State $\A.$\texttt{run()}
 		\Comment{$\A$ uses guidance to escape stagnation region}
 	\EndWhile
@@ -257,12 +258,15 @@ We will use the notion of expansion delays to identify when the planner is in a 
 	\State $\A.$\texttt{update\_user\_guidance($\neg g$)}
 	\Comment {remove  guidance}
 \EndWhile
+
 \end{algorithmic}
 \end{algorithm}
 
+
+
 To employ our planning framework, we assume that we are given a motion-planning algorithm $\A$ that is endowed with two non-standard procedures which are planner dependent.
-The first, \texttt{is\_in\_stagnation\_region()}, 
-identifies when it is in a \emph{stagnation region}, namely when $\A$'s search does not progress towards the goal. 
+The first, \texttt{in\_stagnation\_region()}, 
+identifies when it is in a \emph{stagnation region} (with or without the guidance), namely when $\A$'s search does not progress towards the goal. 
 The second, \texttt{update\_user\_guidance()}, 
 incorporates (or removes) the user guidance provided to $\A$. 
 
@@ -270,8 +274,8 @@ Equipped with these functions, we can describe our planning framework, detailed 
 The framework runs as long as no solution is found (line~1).
 It runs the planner~$\A$ (lines~2-3) as long as it continuously makes progress towards the goal (namely, it is not in a stagnation region).
 Once a stagnation region is identified, user guidance is invoked (line~4) and $\A$  is updated to make use of this guidance (line~5).
-It is then run while using the guidance as long as it is still in the stagnation region (lines~6-7).
-Once it escapes the stagnation region, $\A$ is updated to remove the guidance that was provided by the user (line~8).
+The planner continues to run while using the guidance as long as it is still in the stagnation region, and the guidance is useful (lines~6-7).
+Once it escapes the stagnation region (or if the guidance appears appears to be unhelpful), $\A$ is updated to remove the guidance that was provided by the user (line~8).
 
 
 \section{User-guided planning via \mhastar}
@@ -280,8 +284,7 @@ Once it escapes the stagnation region, $\A$ is updated to remove the guidance th
 We demonstrate our general planning framework described in Sec.~\ref{sec:high} for the case where the motion-planning algorithm~$\A$ is  \mhastar.
 We assume that \mhastar has a set of possibly inadmissible heuristics in addition to the anchor heuristic. We will refer to these heuristics as \emph{baseline heuristics}.
 The user guidance will be used to generate \emph{dynamic heuristics}.
-We start (Sec.~\ref{sec:q1}-\ref{sec:q3}) by describing how we answer the three questions we posed in Sec.~\ref{sec:intro}.
-We then continue (Sec.~\ref{sec:instantiation}) to detail how they are used in our planning framework.
+In Sec.~\ref{sec:q1}-\ref{sec:q3} we describe how we answer the three questions that were posed in Sec.~\ref{sec:intro}.
 %This implementation is slightly more complicated than that described in Alg.~\ref{alg:main} and is detailed in Sec.~\ref{sec:instantiation}.
 
 \subsection{Invoking user guidance (Q1)}
@@ -362,7 +365,7 @@ We then continue (Sec.~\ref{sec:instantiation}) to detail how they are used in o
 The heuristic functions of search-based planning algorithms, such as \mhastar, can be used to estimate in a principled manner when the planner is in a stagnation region (Alg~\ref{alg:main}, lines 2 and~6). 
 %
 We suggest two alternative methods to identify when the planner ceases to make progress towards the goal, each resulting in a slightly different definition of a  stagnation region.
-The first, which we call \emph{vacillation-based detection} using the notion of expansion delays~\cite{DTR11}:
+The first, which we call \emph{vacillation-based} detection using the notion of expansion delays~\cite{DTR11}:
 Let~$\Q$ be a priority queue and let $e_\text{curr}$ be a counter tracking the total number of node expansions performed when using~$\Q$.
 When a node is expanded, for each child node $s$ we store the current expansion number using a counter $e(s)$.
 Now, the expansion delay for a state $s$ is defined as
@@ -467,7 +470,7 @@ The tool runs a state validity checker in the background which restricts the use
 
 \begin{figure}[tb]
   \centering
-  	\includegraphics[width=0.355\textwidth]{fig/panel.png}
+  	\includegraphics[width=0.4\textwidth]{fig/panel.png}
   	%\vspace{-2mm}
   \caption{
 		GUI used to provide guidance to the planner. The panel on the right hand side allows to select different joint groups, move the joints and pass the guidance to the planner. The interactive marker shown on the left hand side allows to move the robot's end effectors.
@@ -525,8 +528,8 @@ The tool runs a state validity checker in the background which restricts the use
 
 
 
-We assume that \mhastar has at least one baseline heuristic~$h_{\text{goal}}$ which approximates the cost to reach the goal from every state.
-Furthermore, we assume that for every configuration~$q$, there exists a (possibly inadmissible) heuristic $h_q$ where~$h_q(s)$ estimates the cost to reach $q$ from state $s$.
+We assume that \mhastar has at least one baseline (possibly inadmissible) heuristic~$h_{\text{goal}}$ which approximates the cost to reach the goal from every state.
+Furthermore, we assume that for every configuration~$q$, there exists a heuristic $h_q$ where~$h_q(s)$ estimates the cost to reach $q$ from state $s$.
 %
 %we assume that there exists a family of (possibly inadmissible) heuristic functions $\H$, such that for every configuration~$q$, there exists a heuristic $h_q \in \H$ where~$h_q(s)$ estimates the cost to reach $q$ from state $s$.
 %%%%
@@ -551,25 +554,23 @@ States expanded using this queue will be biased towards $\hat{q}$ (see also~\cit
 ).
 Recall that in \mhastar, nodes are shared between the different queues.
 Thus, once a state has been found that can be used to get the planner out of the stagnation region, it will be expanded by the other queues using their heuristics.
-Once this is detected 
+Once this is detected, 
 %(Alg~\ref{alg:main}, line~8),
 the newly-added queue is removed.
+In general,  we can add a dynamic queue for every baseline heuristic if they are more than one. However, for simplicity, in this work we use a single baseline heuristic and add one dynamically generated queue when the user provides guidance. Since the search runs under the \mhastar framework, although the dynamic heuristic $\hat{q}$ is inadmissible, we still hold completeness and bounded sub-optimality guarantees.
+% \subsection{User-guided \mhastar}
+% \label{sec:instantiation}
+% We are now ready to describe how we apply our general framework (Alg.~\ref{alg:main}) to the case of \mhastar.
+% This differs slightly from the approach described in Sec.~\ref{sec:high} due to our ability to identify which queue is in stagnation and to detect if the configuration~$\hat{q}$ (i.e., the guidance) was reached.
 
-In general,  we can add a dynamic queue for every baseline heuristic if there are more than one. However, for simplicity, in this work we use a single baseline heuristic and add one dynamically generated queue when the user provides guidance.
-
-\subsection{User-guided \mhastar}
-\label{sec:instantiation}
-We are now ready to describe how we apply our general framework (Alg.~\ref{alg:main}) to the case of \mhastar.
-This differs slightly from the approach described in Sec.~\ref{sec:high} due to our ability to identify which queue is in stagnation and to detect if the configuration~$\hat{q}$ (i.e., the guidance) was reached.
-
-Specifically, if the baseline heuristic escaped a stagnation region but the configuration $\hat{q}$ was \emph{not} reached, we suspend the dynamic queue but do not discard it. 
+For pseudo-code describing each specific function used  in Alg.~\ref{alg:main} under the framework of \mhastar, see Alg.~\ref{alg:instantiation}.
+When adding the dynamic heuristic, if the baseline heuristic escaped a stagnation region but the configuration $\hat{q}$ was \emph{not} reached, we suspend the dynamic queue but do not discard it. 
 This is done to first try reusing the last guidance before obtaining a new one. 
 Thus, when the planner will detect that it is in a stagnation region, it will first resume the suspended dynamic heuristic (if one exists).
 %
 If the baseline heuristic escaped a stagnation region and the configuration~$\hat{q}$ was  reached it will no longer be useful again and hence will be discarded.
 Finally, if the dynamic heuristic is in a stagnation region then it is discarded and the user will be queried for a new guidance. 
 
-For pseudo-code describing each specific function used  in Alg.~\ref{alg:main}, see Alg.~\ref{alg:instantiation}.
 For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:filmstrip-dynamic_heuristic}. Note that although for the illustrated example, the search happens to pass through the guidance, in general it is not a constraint in the framework. 
 %
 %Specifically, the planner can be in a local minima in the dynamically-generated queue that is used to escape the original local minima. 
@@ -582,41 +583,57 @@ For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:films
 \begin{algorithmic}[1]
 \small
 %\State \textbf{function} \texttt{is\_in\_stagnation\_region()}
-\Function{\texttt{is\_in\_stagnation\_region()}}{}
- 	\If {baseline heuristic not in stagnation}
+\Function{\texttt{in\_stagnation\_region()}}{}
+ 	\If {baseline heuristic in stagnation}
 		\State \textbf{return} true
 	\Else
 		\State \textbf{return} false
 	\EndIf
 \EndFunction
+% 
+\vspace{2mm}
+%
+\Function{\texttt{in\_stagnation\_region(g)}}{}
+  \If {dynamic heuristic in stagnation}
+    \State \textbf{return} true
+  \Else
+    \State \textbf{return} false
+  \EndIf
+\EndFunction
 %	
 \vspace{2mm}
 %
-\Function{\texttt{get\_user\_guidance()}}{}
-%
+\Function{\texttt{update\_user\_guidance(arg)}}{}
+
+\If {arg $=$ $g$}
+\Comment{account for guidance}
 	\If {exists suspended dynamic heuristic}
-		\State \textbf{return}  {suspended dynamic heuristic}
+		\State {add suspended dynamic heuristic}
 	\Else
 		\State{get new user guidance and add dynamic heuristic}
-		\State \textbf{return}	{new dynamic heuristic}
+		% \State \textbf{return}	{new dynamic heuristic}
 	\EndIf
-\EndFunction 
+\EndIf
 %	
-\vspace{2mm}
+% \vspace{2mm}
 %
-\Function{\texttt{remove\_user\_guidance()}}{}
-	\If {dynamic heuristic is in stagnation}
-		\State {remove dynamic heuristic}
-		\Comment{guidance is not useful}
-	\Else 	\Comment{dynamic heuristic is not in stagnation}
-		\If {states passed through guidance}
-			\State {discard dynamic heuristic}
-			\Comment{will not be useful in future}
-		\Else
-			\State {suspend dynamic heuristic}
-			\Comment{may be useful in future}
-		\EndIf
-	\EndIf
+
+\If {arg $=$ $\neg g$}
+\Comment{remove guidance}
+  \If {\texttt{in\_stagnation\_region(g)}}
+    \State {remove dynamic heuristic}
+    \Comment{guidance is not useful}
+  \Else   \Comment{dynamic heuristic is not in stagnation}
+    \If {states passed through guidance}
+      \State {discard dynamic heuristic}
+      \Comment{will not be useful in future}
+    \Else
+      \State {suspend dynamic heuristic}
+      \Comment{may be useful in future}
+    \EndIf
+  \EndIf
+\EndIf
+
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
@@ -650,14 +667,12 @@ This was done to demonstrate that our approach allows to significantly reduce th
 We conducted two experiments which largely differ in the nature of mobility and thus employ different baseline heuristic functions. 
 However, the dynamic heuristic function in both the experiments is the Euclidean distance in the joint 34-DOF space.
 The parameter values used in both experiments are $\omega_1 (200), \omega_2 (50)$ and $\varepsilon (50)$ for the heuristic-based, and $\tau (30)$ and $\omega (10)$ for the vacillation-based stagnation region detection.
-We conducted the same experiments (results ommited due to lack of space) with a wide variety of parameters and obtained  only slight differences in the results demonstrating that our approach is highly robust to the choice of parameters for our domain.
+We conducted the same experiments (results ommited due to lack of space) with a wide variety of parameters and obtained  only slight differences in the results, demonstrating that our approach is highly robust to the choice of parameters for our domain.
 
 Planning statistics for all experiments are provided in Table~\ref{tab:stats}.
 Notice that in all the experiments the planner succeeds to reach the goal with the help of a user. 
 The deviations in the results come from the quality of the guidance provided.
-For videos demonstrating the approach, 
-%see~\url{https://goo.gl/cjJ7KU}.
-see~\url{https://drive.google.com/drive/folders/1OFJ7XwbiVVbgw1vmentz575nTCrQBtCu?usp=sharing}.
+For videos demonstrating the approach, see \footnote{\small{~\url{https://drive.google.com/drive/folders/1OFJ7XwbiVVbgw1vmentz575nTCrQBtCu?usp=sharing}}}.
 
 %see~\url{https://drive.google.com/open?id=137rTFQdE7VW9zluy6EV5GVcLzyP0XDlQ}.
 \begin{table}
@@ -762,10 +777,10 @@ see~\url{https://drive.google.com/drive/folders/1OFJ7XwbiVVbgw1vmentz575nTCrQBtC
 %The first task we considered is bipedal locomotion. The initial state of the robot is the full dimensional 34-DOF configuration whereas the goal is represented as a cylindrical region which the robot needs to enter (depicted in Fig.~\ref{fig:robot}).
 
 The first task we considered is bipedal locomotion, depicted in Fig.~\ref{fig:robot}.
-Here, we employ the recently-introduced adaptive dimensionality 
+Here, we employ the adaptive dimensionality 
 \arxiv{framework~\cite{GCBSL11,GSL12,GSL13}}{framework~\cite{GCBSL11}}
 which consists of two stages: an adaptive-planning phase which plans in a low-dimensional space when possible and a tracking phase which plans in the high-dimensional space.
-Our user-guided planner is integrated within the high-dimensional planner by searching for a path that tracks the footstep plan generated in the adaptive-planning  phase. 
+Our user-guided planner is integrated within the high-dimensional planner to search for a path that tracks the footstep plan generated in the adaptive-planning  phase. 
 
 The baseline heuristic we used was designed to assist the search with a general walking or stepping capability. For each step the footprint of the target footstep is visualized for the user to be able to better understand where the planner is stuck and how to provide the guidance. In relatively easier scenarios this heuristic would suffice in guiding the search. However if the search encounters harder situations such as those depicted in Fig.~\ref{fig:biped_locomotion}, then it is likely to get trapped into a stagnation region and would invoke user-guidance.
 
@@ -778,13 +793,13 @@ Results show that without guidance, the planner is not able to make any signific
 On the other hand, when guidance is given, then the algorithm escapes the stagnation region and resumes to make progress towards the goal.
 
 Interestingly, using expansion delays to detect a stagnation region (vacillation-based detection) incurs a lot of noise---notice the large oscillations in the dashed yellow curve in Fig.~\ref{fig:ed_plot}. 
-A possible explanation is that even in regions where the planner cannot ultimately progress towards the goal, there may be multiple short feasible paths to explore. In such settings, then the expansion delay for each such path will can small while the planner does not really progress towards the goal.
-Indeed, numerical results stated in Table~\ref{tab:stats} confirm that our heuristic-based method for stagnation-region detection outperforms the existing  vacillation-based method.
+A possible explanation is that even in regions where the planner cannot ultimately progress towards the goal, there may be multiple short feasible paths to explore. In such settings, the expansion delay for each such path will be small while the planner does not really progress towards the goal.
+Indeed, numerical results stated in Table~\ref{tab:stats} confirm that our heuristic-based method for stagnation-region detection outperforms the vacillation-based method.
 We observed similar trends for the second experiment (ladder climbing) that caused falsely detecting that a stagnation region was exited, plots omitted.
 
 
 \subsection{Mounting onto a ladder}
-The second task we considered was mounting onto a ladder from a standing position (see Fig.~\ref{fig:gui}) to the desired contact poses. This problem is challenging because the ladder rungs and the robot grasping hooks construct narrow spaces in the configuration space which have to be traversed to establish the desired contacts. The baseline heuristic  used is the summation of four six-dimensional Euclidean distances between each of the four end effectors and their respective target poses. 
+The second task we considered was mounting onto a ladder from a standing position (see Fig.~\ref{fig:gui}) to the desired contact poses. This problem is challenging because the ladder rungs and the robot grasping hooks induce narrow spaces in the configuration space which have to be traversed to establish the desired contacts. The baseline heuristic  used is the summation of four six-dimensional Euclidean distances between each of the four end effectors and their respective target poses. 
 For numerical results, see Table~\ref{tab:stats}.
 
 % \subsection{Climbing a staircase}
