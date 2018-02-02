@@ -94,7 +94,7 @@ Broadly speaking, interactive planning has been typically used in the context of
 User guidance was employed by biasing the sampling scheme of the planner by having the user mark regions in the \emph{workspace} that should be avoided or 
 %explored~\cite{DSJA14}.
 \arxiv{explored~\cite{DSJA14,MTMKDC15,YPB15,RSL17}.}{explored~\cite{DSJA14,YPB15}.}
-Alternatively, interactive devices such as~a 3D mouse or a haptic arm have been used to generate paths in~a (low-dimensional) configuration space. This path was then used by a planner to bias its 
+Alternatively, interactive devices such as~a 3D mouse or a haptic arm have been used to generate paths in~a (low-dimensional) configuration space. Such paths were then used by a planner to bias its 
 %sampling domain~\cite{TFF12}.
 \arxiv{sampling domain~\cite{BTFF16,FTF09,TFF12}.}{sampling domain~\cite{TFF12}.}
 %Interestingly, in all the examples mentioned, an implicit assumption taken is that the user is dedicated to guide and interact with the planning algorithm.
@@ -135,7 +135,7 @@ comes in stark contrast to existing approaches---we suggest to only employ user 
 %is configuration-space based and \emph{not} workspace-based. This deviation from previous work is due to our specific setting of high-dimensional, constrained systems.
 Once obtained (Q2, Sec~\ref{sec:q2}), guidance is used to \emph{bias} the search algorithm towards regions that are likely to be beneficial (Q3, Sec~\ref{sec:q2}). 
 The search algorithm now has the additional task of deducing how much to rely on the user-provided guidance.
-It is worth emphasizing that this obtaining guidance does not require the user to understand the underlying search algorithm. 
+It is worth emphasizing that obtaining this guidance does not require the user to understand the underlying search algorithm. 
 
 % 
 %In the following, we detail our planning framework (Sec.~\ref{sec:high}) and how it addresses each of these questions (Sec.~\ref{sec:q1}-\ref{sec:q3}).
@@ -163,7 +163,7 @@ Our conjecture is that the formulation can, in general, be incorporated with any
 
 After describing our approach at high-level (Sec.~\ref{sec:high}) we demonstrate how it can be applied to the case of \mhastar (Sec.~\ref{sec:planning}).
 We continue by showing the effectiveness of our planner (Sec.~\ref{sec:eval}).
-Specifically, we show that this general approach allows to compute highly constrained motion plans for a spectrum of tasks including climbing stairs, walking under a bar, squeezing through a door and others, all with the same planner and heuristics.  
+Specifically, we show that this general approach allows to compute highly-constrained motion plans for a spectrum of tasks including climbing stairs, walking under a bar, squeezing through a door and others, all with the same planner and heuristics.  
 Without our approach, solving such problems requires the design of task-specific planners~\cite{KKKHKHAI04} and carefully hand-designed domain-dependent heuristics.
 We conclude this paper with a discussion (Sec.~\ref{sec:future}).
 %We conclude this paper with a discussion and an outline of possible future work (Sec.~\ref{sec:future}).
@@ -175,7 +175,7 @@ We conclude this paper with a discussion (Sec.~\ref{sec:future}).
 Humanoid robots, for which we demonstrate our approach, often have several dozens of degrees of freedom making planning a challenging task, especially when taking additional constraints into account such as stability and contact constraints.
 One approach to plan the motion for such systems, is to use predefined, carefully chosen fixed gaits~\cite{KKKHKHAI04}. 
 However, when the terrain is uneven, such planners are inadequate at computing stable motions~\cite{HBLHW08}.
-Another approach is to reduce the search space by decomposing the degrees of freedom into functional groups such as locomotion and manipulation.
+Another approach is to reduce the size of the search space by decomposing the degrees of freedom into functional groups such as locomotion and manipulation.
 Then functional-specific algorithms such as footstep planning are applied to the low-dimensional space 
 \arxiv{(see, e.g.,~\cite{CLCKHK05,KNKII01,PSBLY12,XCXZC09,KKNII02} for a partial list).}{(see, e.g.,~\cite{PSBLY12,XCXZC09} for a partial list).}
 A high-dimensional planner is then used to ``track'' the plan generated in the low-dimensional space.
@@ -296,7 +296,8 @@ In Sec.~\ref{sec:q1}-\ref{sec:q3} we describe how we answer the three questions 
 
   \caption{%
     Visualization of the way vacillation-based stagnation regions are detected---expansion delay as a function of the number of expansions.  
-    Notice that the stagnation regions ends when $e_{\text{curr}} = 1$ however, this is detected after $\omega$ additional steps.}
+    Notice that the stagnation regions ends when $e_{\text{curr}} = 1$.
+    However, this is detected after $\omega$ additional steps.}
 %    The expansion delay $e_{\text{curr}}$ and
 %    the average expansion delay~$\Delta e(\omega)$, 
 %	computed over some recent history~$\omega$ 
@@ -364,7 +365,7 @@ In Sec.~\ref{sec:q1}-\ref{sec:q3} we describe how we answer the three questions 
 The heuristic functions of search-based planning algorithms, such as \mhastar, can be used to estimate in a principled manner when the planner is in a stagnation region (Alg~\ref{alg:main}, lines 2 and~6). 
 %
 We suggest two alternative methods to identify when the planner ceases to make progress towards the goal, each resulting in a slightly different definition of a  stagnation region.
-The first, which we call \emph{vacillation-based} detection using the notion of expansion delays~\cite{DTR11}:
+The first, which we call \emph{vacillation-based} detection uses the notion of expansion delays~\cite{DTR11}:
 Let~$\Q$ be a priority queue and let $e_\text{curr}$ be a counter tracking the total number of node expansions performed when using~$\Q$.
 When a node is expanded, for each child node $s$ we store the current expansion number using a counter $e(s)$.
 Now, the expansion delay for a state $s$ is defined as
@@ -586,9 +587,9 @@ For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:films
 \Function{\texttt{in\_stagnation\_region()}}{}
  	\If {baseline heuristic in stagnation}
 		\State \textbf{return} true
-	\Else
-		\State \textbf{return} false
 	\EndIf
+	\State \textbf{return} false
+%	\EndIf
 \EndFunction
 % 
 \vspace{2mm}
@@ -596,9 +597,9 @@ For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:films
 \Function{\texttt{in\_stagnation\_region(g)}}{}
   \If {dynamic heuristic in stagnation}
     \State \textbf{return} true
-  \Else
-    \State \textbf{return} false
   \EndIf
+  \State \textbf{return} false
+%  \EndIf
 \EndFunction
 %	
 \vspace{2mm}
@@ -666,7 +667,7 @@ For each experiment we used a small set of fairly generic heuristics.
 This was done to demonstrate that our approach allows to significantly reduce the engineering effort required in carefully crafting domain-specific heuristics. 
 We conducted two experiments which largely differ in the nature of mobility and thus employ different baseline heuristic functions. 
 However, the dynamic heuristic function in both the experiments is the Euclidean distance in the joint 34-DOF space.
-The parameter values used in both experiments are $\omega_1 (200), \omega_2 (50)$ and $\varepsilon (50)$ for the heuristic-based, and $\tau (30)$ and $\omega (10)$ for the vacillation-based stagnation region detection.
+The parameter values used in both experiments are $\omega_1 (200), \omega_2 (50)$ and $\varepsilon (50)$ for the heuristic-based, and $\tau (30)$ and $\omega (10)$ for the vacillation-based stagnation-region detection.
 We conducted the same experiments (results ommited due to lack of space) with a wide variety of parameters and obtained  only slight differences in the results, demonstrating that our approach is highly robust to the choice of parameters for our domain.
 
 Planning statistics for all experiments are provided in Table~\ref{tab:stats}.
@@ -718,15 +719,16 @@ For videos demonstrating the approach, see \footnote{\small{~\url{https://drive.
   \label{fig:stuck_step}
   \includegraphics[width=0.2125\textwidth]{fig/step_2.png}
   }
+\vspace{-2.5mm}
   \caption{%
     Bipedal locomotion in challenging scenarios: 
   \subref{fig:stuck_bar}~The robot has to squat or bend down to pass under a beam.
     %
-  \subref{fig:stuck_tables}~The robot has to pass through two tables by may be lifting the elbows high above the tables.
+  \subref{fig:stuck_tables}~The robot has to pass through two tables by lifting its elbows high above the tables.
     %
   \subref{fig:stuck_door}~The robot has to squeeze through a narrow doorway by tucking in its arms.
     %
-  \subref{fig:stuck_step}~The robot has to step onto a relatively high platform to reach the goal for which it has to lean a little bit more to its left side to be able to lift the left foot further up.
+  \subref{fig:stuck_step}~The robot has to step onto a relatively high platform to reach the goal for which it has to lean a little bit more to its left side to be able to lift the right foot further up.
   }%
   \label{fig:biped_locomotion}%
   \vspace{-4.5mm}
@@ -737,7 +739,7 @@ For videos demonstrating the approach, see \footnote{\small{~\url{https://drive.
   \centering%
   \subfigure[Vacillation-based detection]
   {
-  \includegraphics[height=3.75cm]{fig/ed_plot.pdf}
+  \includegraphics[height=3.35cm]{fig/ed_plot.pdf}
 %  \includegraphics[width=0.346\textwidth]{fig/ed_plot.pdf}
   \label{fig:ed_plot}
   % \includegraphics[width=0.3\textwidth]{fig/ladder.png}
@@ -746,7 +748,7 @@ For videos demonstrating the approach, see \footnote{\small{~\url{https://drive.
 	\vspace{-3mm}
   \subfigure[Heuristic-based  detection]
   {
-  \includegraphics[height=3.75cm]{fig/h_plot.pdf}  
+  \includegraphics[height=3.35cm]{fig/h_plot.pdf}  
 %  \includegraphics[width=0.346\textwidth]{fig/h_plot.pdf}
   \label{fig:h_plot}
   % \includegraphics[width=0.3\textwidth]{fig/staircase.png}
