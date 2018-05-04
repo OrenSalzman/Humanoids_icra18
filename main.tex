@@ -83,7 +83,7 @@ Without our approach, solving such problems requires carefully-crafting domain-d
 \section{Introduction}
 \label{sec:intro}
 
-Motion-planning is a fundamental problem in robotics that has been studied for over four \arxiv{decades~\cite{CBHKKLT05,L06,HSS17}}{decades~\cite{L06}}.
+Motion-planning is a fundamental problem in robotics that has been studied for over four \arxiv{decades~\cite{CBHKKLT05,L06,HSS17}}{decades~\cite{L06,HSS17}}.
 However, efficiently planning paths in high-dimensional, constrained spaces remains an ongoing challenge.
 One approach to address this challenge is to incorporate user input to guide the motion-planning algorithm.
 While there has been much work on planning using human demonstration 
@@ -93,7 +93,7 @@ there has been far less research on incorporating guidance as an interactive par
 Broadly speaking, interactive planning has been typically used in the context of sampling-based motion-planning algorithms~\cite{L06}.
 User guidance was employed for biasing the sampling scheme of the planner by having the user mark regions in the \emph{workspace} that should be avoided or 
 %explored~\cite{DSJA14}.
-\arxiv{explored~\cite{DSJA14,MTMKDC15,YPB15,RSL17}.}{explored~\cite{DSJA14,YPB15}.}
+\arxiv{explored~\cite{DSJA14,MTMKDC15,YPB15,RSL18}.}{explored~\cite{DSJA14,YPB15,RSL18}.}
 Alternatively, interactive devices such as~a 3D mouse or a haptic arm have been used to generate paths in~a (low-dimensional) configuration space. Such paths were then used by a planner to bias its 
 %sampling domain~\cite{TFF12}.
 \arxiv{sampling domain~\cite{BTFF16,FTF09,TFF12}.}{sampling domain~\cite{TFF12}.}
@@ -165,7 +165,7 @@ After describing our approach at high-level (Sec.~\ref{sec:high}) we demonstrate
 We continue by showing the effectiveness of our planner (Sec.~\ref{sec:eval}).
 Specifically, we show that this general approach allows to compute highly-constrained motion plans for a spectrum of tasks including climbing stairs, walking under a bar, squeezing through a door and others, all with the same planner and heuristics.  
 Without our approach, solving such problems requires the design of task-specific planners~\cite{KKKHKHAI04} and carefully hand-designed domain-dependent heuristics.
-We conclude this paper with a discussion (Sec.~\ref{sec:future}).
+%We conclude this paper with a discussion (Sec.~\ref{sec:future}).
 %We conclude this paper with a discussion and an outline of possible future work (Sec.~\ref{sec:future}).
 
 
@@ -191,7 +191,6 @@ Furthermore, the human guidance was used as a ``hard'' constraint forcing the sy
 In contrast, in our work the system automatically and independently identifies when it is in need of guidance.
 This guidance is then seamlessly incorporated as a soft constraint--- the system biases the search towards the guidance while continuing to explore the search space as if the guidance was not given.
 
- 
 \subsection{Multi Heuristic \astar (\mhastar)}
 \label{sec:mha}
 Multi Heuristic \astar (\mhastar)~\cite{NAL15,ASNHL16} is a search-based planning algorithm that takes in multiple, possibly inadmissible heuristic functions in addition to a single consistent heuristic termed the \emph{anchor} heuristic.
@@ -273,7 +272,9 @@ Equipped with these functions, we can describe our planning framework, detailed 
 The framework runs as long as no solution is found (line~1).
 It runs the planner~$\A$ (lines~2-3) as long as it continuously makes progress towards the goal (namely, it is not in a stagnation region).
 Once a stagnation region is identified, user guidance is invoked (line~4) and $\A$  is updated to make use of this guidance (line~5).
-The planner continues to run while using the guidance as long as it is still in the stagnation region, and the guidance is useful (lines~6-7).
+The planner continues to run while using the guidance as long as 
+\new{the planner without the guidance}
+it is still in the stagnation region, and the guidance is useful (lines~6-7).
 Once it escapes the stagnation region (or if the guidance appears appears to be unhelpful), $\A$ is updated to remove the guidance that was provided by the user (line~8).
 
 
@@ -469,6 +470,8 @@ The user then suggests the guidance $\hat{q}$ by moving the robot's joints, end 
 The tool runs a state validity checker in the background which restricts the user from providing invalid configurations, e.g. with respect to collision, joint limits and stability. The same validity checker is used by the planner.
 %Note that the user is \emph{not} required to be familiar with the search algorithm.
 
+\new{We informally experimented with non-expert users, and after some practice with using the 6DOF interactive markers received positive feedback. Our focus in this work was on the algorithmic aspects of our approach and we leave UI challenges to future work.}
+
 \begin{figure}[tb]
   \centering
   	\includegraphics[width=0.4\textwidth]{fig/panel.png}
@@ -512,16 +515,18 @@ The tool runs a state validity checker in the background which restricts the use
     States popped from a priority queue~$Q$ (still in~$Q$) are depicted using dark (light) colors.
     Start, target and user-guided states are depicted in purple with the letters \texttt{s}, \texttt{t}, \texttt{g}, respectively. 
     %
-    In this example \mhastar alternates between queues in a round-robin fashion and heuristic values are inflated by a weight of $w=\infty$. 
+    In this example \mhastar alternates between queues in a round-robin fashion and heuristic values are inflated by a weight of $w=\infty$.
+    \new{Namely, each search greedily follows its heuristic and pops the state with the minimal heuristic value.}
     %Namely, the priority queues are ordered according to the heuristic-value of the states.
     %
 	\subref{fig:dynamic_heuristic1}~\mhastar starts with a single baseline heuristic (green) which is the Euclidean distance to goal and a stagnation region is identified.
     %
-	\subref{fig:dynamic_heuristic2}~User provides guidance~$\texttt{g}$ and an additional heuristic (red) is automatically generated and drives the search towards the guidance (notice that the baseline heuristic continues to search).
+	\subref{fig:dynamic_heuristic2}~User provides guidance~$\texttt{g}$ and an additional heuristic (red) is automatically generated and drives the search towards the guidance (notice that the baseline heuristic continues to search \new{and that the second, red search, starts from the green state that is closest to the guidance}).
     %
-	\subref{fig:dynamic_heuristic3}~After passing through the~$\texttt{g}$, the additional heuristic (red) drives the search towards the goal.
+	\subref{fig:dynamic_heuristic3}~After passing through~$\texttt{g}$, the additional heuristic (red) drives the search towards the goal.
+	\new{Notice that all the green states have lower Euclidian distance to  the target, meaning that the green search continues to expand states in the U-shaped obstacle.}
     %
-	\subref{fig:dynamic_heuristic4}~After the additional heuristic found states that are placed at the top of~$Q$, the additional heuristic is deleted and the baseline heuristic continues to drive the search towards the goal.
+	\subref{fig:dynamic_heuristic4}~After the additional heuristic found states that are placed at the top of \new{the priority queue of the baseline (green) search,} the additional heuristic is deleted and the baseline heuristic continues to drive the search towards the goal.
   }%
   \label{fig:filmstrip-dynamic_heuristic}%
   \vspace{-2.5mm}
@@ -558,7 +563,7 @@ Thus, once a state has been found that can be used to get the planner out of the
 Once this is detected, 
 %(Alg~\ref{alg:main}, line~8),
 the newly-added queue is removed.
-In general,  we can add a dynamic queue for every baseline heuristic if they are more than one. However, for simplicity, in this work we use a single baseline heuristic and add one dynamically generated queue when the user provides guidance. Since the search runs under the \mhastar framework, although the dynamic heuristic $\hat{q}$ is inadmissible, we still hold completeness and bounded sub-optimality guarantees.
+In general,  we can add a dynamic queue for every baseline heuristic if they are more than one. However, for simplicity, in this work we use a single baseline heuristic and add one dynamically generated queue when the user provides guidance. Since the search runs under the \mhastar framework, although the dynamic heuristic $\hat{q}$ is inadmissible, we still maintain completeness and bounded sub-optimality guarantees.
 % \subsection{User-guided \mhastar}
 % \label{sec:instantiation}
 % We are now ready to describe how we apply our general framework (Alg.~\ref{alg:main}) to the case of \mhastar.
@@ -571,6 +576,8 @@ Thus, when the planner will detect that it is in a stagnation region, it will fi
 %
 If the baseline heuristic escaped a stagnation region and the configuration~$\hat{q}$ was  reached it will no longer be useful again and hence will be discarded.
 Finally, if the dynamic heuristic is in a stagnation region then it is discarded and the user will be queried for a new guidance. 
+\new{We emphasize that detecting stagnation is done for \emph{each} heuristic independently}.
+
 
 For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:filmstrip-dynamic_heuristic}. Note that although for the illustrated example, the search happens to pass through the guidance, in general it is not a constraint in the framework. 
 %
@@ -669,11 +676,15 @@ We conducted two experiments which largely differ in the nature of mobility and 
 However, the dynamic heuristic function in both the experiments is the Euclidean distance in the joint 34-DOF space.
 The parameter values used in both experiments are $\omega_1 (200), \omega_2 (50)$ and $\varepsilon (50)$ for the heuristic-based, and $\tau (30)$ and $\omega (10)$ for the vacillation-based stagnation-region detection.
 We conducted the same experiments (results ommited due to lack of space) with a wide variety of parameters and obtained  only slight differences in the results, demonstrating that our approach is highly robust to the choice of parameters for our domain.
+\new{In addition, we conducted  similar experiments with a 7 DOF arm and with a humanoid climbing stairs while using handrails and obtained similar results to the ones we will shortly show. Results omitted.}
 
-Planning statistics for all experiments are provided in Table~\ref{tab:stats}.
-In all the experiments the planner succeeded to reach the goal with the help of a user. 
-The deviations in the results come from the quality of the guidance provided.
+
+Planning statistics, \new{averaged over ten different trials,} for all experiments are provided in Table~\ref{tab:stats}.
+\new{In all the experiments, we successfully test the hypothesis that with the help of user guidance, the planner, augmented only with a simple, generic baseline heuristic, can completely solve challenging problems with a small number of guidances.}
+%In all the experiments the planner succeeded to reach the goal with the help of a user. 
+The deviations in the results presented in Table~\ref{tab:stats} come from the quality of the guidance provided in each run.
 For videos demonstrating the approach, see \footnote{\small{~\url{https://drive.google.com/drive/folders/1OFJ7XwbiVVbgw1vmentz575nTCrQBtCu?usp=sharing}}}.
+\new{UPLOAD VIDEOS TO YOUTUBE AND UPDATE THIS LINK, USE https://goo.gl/ }
 
 %see~\url{https://drive.google.com/open?id=137rTFQdE7VW9zluy6EV5GVcLzyP0XDlQ}.
 \begin{table}
@@ -871,6 +882,7 @@ For numerical results, see Table~\ref{tab:stats}.
 \label{sec:future}
 
 %\subsection{Discussion}
+\subsubsection{Generic vs. domain-specific heuristic}
 In Sec.~\ref{sec:eval} we demonstrated how user guidance allows to solve highly-constrained motion-planning problems in high-dimensional spaces with only simple baseline heuristics.
 An alternative approach would be to add domain-dependent carefully-crafted heuristics~\cite{V17} which allow to faster solve the same problems completely autonomously.
 
@@ -880,7 +892,13 @@ we can either design additional heuristics to tackle this problem or leverage fr
 If our problem requires planning in multiple, diverse domains this problem is accentuated---should we  use a large arsenal of heuristics that can address each domain or should we have a small set of baseline heuristics that will (roughly) address all domains and rely on user guidance when these baseline heuristics fail?
 There is no clear answer to this question and our approach simply offers a general alternative to existing approaches.
 
-
+\new{
+\subsubsection{When ``bad'' guidance is provided}
+A natural question to ask is what if the user provides guidance that is not useful?
+If the planner does not progress due to such guidance it would ask for a new one as it detects stagnation in the dynamic heuristics the same way it does in the baseline heuristic. 
+As can be inferred from the experimental results presented in Sec.~\ref{sec:eval}, for the bipedal locomotion 26\% of the guidances were not useful, yet the planner was able to recover after being provided with useful guidance. 
+It is important tonote that while using \mhastar ensures that a path will be found regardless of the  guidance that is provided, unuseful guidance may drive the search towards unuseful regions and waste computational resources.
+}
 %\subsection{Future work}
 %%While providing promising initial results, our framework is far from being complete.
 %We are interested in experimenting with alternative forms of user guidance such as providing a \emph{constrained sub-manifold} of the configuration space which can be more informative for the planner instead of providing it with a single joint configuration and could potentially reduce the number of user invocations. 
@@ -890,7 +908,7 @@ There is no clear answer to this question and our approach simply offers a gener
 %An open challenge remains how to automatically detect that the planner is not progressing toward the goal.}
 
 
-\newpage
+%\newpage
 
 %\bibliographystyle{plainnat}
 \bibliographystyle{named}
