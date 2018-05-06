@@ -87,7 +87,7 @@ Motion-planning is a fundamental problem in robotics that has been studied for o
 However, efficiently planning paths in high-dimensional, constrained spaces remains an ongoing challenge.
 One approach to address this challenge is to incorporate user input to guide the motion-planning algorithm.
 While there has been much work on planning using human demonstration 
-\arxiv{(see, e.g.,~\cite{ACVB09,HS16,PHCL16,SHLA16,YA17}),}{(see, e.g.,~\cite{ACVB09,YA17}),}  
+\arxiv{(see, e.g.,~\cite{ACVB09,PHCL16,SHLA16,YA17}),}{(see, e.g.,~\cite{ACVB09,YA17}),}  
 there has been far less research on incorporating guidance as an interactive part of the planning~loop.
 
 Broadly speaking, interactive planning has been typically used in the context of sampling-based motion-planning algorithms~\cite{L06}.
@@ -177,7 +177,9 @@ One approach to plan the motion for such systems, is to use predefined, carefull
 However, when the terrain is uneven, such planners are inadequate at computing stable motions~\cite{HBLHW08}.
 Another approach is to reduce the size of the search space by decomposing the degrees of freedom into functional groups such as locomotion and manipulation.
 Then functional-specific algorithms such as footstep planning are applied to the low-dimensional space 
-\arxiv{(see, e.g.,~\cite{CLCKHK05,KNKII01,PSBLY12,XCXZC09,KKNII02} for a partial list).}{(see, e.g.,~\cite{PSBLY12,XCXZC09} for a partial list).}
+\arxiv{(see, e.g.,~\cite{CLCKHK05,KNKII01,PSBLY12,XCXZC09%
+%,KKNII02
+} for a partial list).}{(see, e.g.,~\cite{PSBLY12,XCXZC09} for a partial list).}
 A high-dimensional planner is then used to ``track'' the plan generated in the low-dimensional space.
 
 
@@ -185,7 +187,9 @@ User guidance has been intensively incorporated in controlling the motion of hum
 In such settings, guidance ranged from teleoperating the robot 
 %through shared autonomy 
 to high-level 
-\arxiv{task guidance~\cite{mcgill2017team,zucker2015general,gray2017architecture,dedonato2017team,marion2017director}.}{{task guidance~(see e.g.,~\cite{mcgill2017team,gray2017architecture}).}}
+\arxiv{task guidance~\cite{mcgill2017team,%
+%,zucker2015general,
+gray2017architecture,dedonato2017team,marion2017director}.}{{task guidance~(see e.g.,~\cite{mcgill2017team,gray2017architecture}).}}
 However, as far as we are aware of, in all the aforementioned cases, \emph{identification} of when to use guidance was done by a human operator and not by the system (except for relatively simple metrics where the system asks for help when it fails to complete some given task).
 Furthermore, the human guidance was used as a ``hard'' constraint forcing the system to make use of the guidance.
 In contrast, in our work the system automatically and independently identifies when it is in need of guidance.
@@ -651,42 +655,6 @@ For a visualization of the way the algorithm progresses, see Fig.~\ref{fig:films
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Evaluation }
 \label{sec:eval}
-We evaluated the performance of our planning framework on a 34-DOF WAREC humanoid robot~\cite{MHSetal15} 
-which is constrained to maintain static stability at all times. 
-% The robot has four symmetric limbs each having seven revolute joints. The other six dimensions come from the pose of the robot with respect to some global frame of reference. 
-%
-%\subsection{Implementation details}
-To construct the search space, we used a set of motion primitives which are short kinematically feasible motion sequences. 
-These are used to generate the actions, or the successors, of a state during the search. 
-For additional details see~\cite{DL18}
-%These primitives generate motions for the limbs and torso of the robot (\todo{cite Andrew's paper}). 
-
-% These primitives included clockwise and counter-clockwise rotation of individual joints. 
-% Specifically, four different types of motion primitives are used:
-% (i)~primitives for the free limbs of the robot i.e. the limbs whose end effectors are not constrained by any contact surface,  
-% (ii)~primitives to move the torso of the robot,
-% (iii)~primitives to latch onto the target end-effector poses
-% and
-% (iv)~primitives to latch onto the user-provided configuration once it is within a small threshold distance to the state being expanded.
-% Notice that motion primitives (ii) and (iii) require solving closed-chain inverse kinematics for the constrained limbs.
-
-For each experiment we used a small set of fairly generic heuristics. 
-This was done to demonstrate that our approach allows to significantly reduce the engineering effort required in carefully crafting domain-specific heuristics. 
-We conducted two experiments which largely differ in the nature of mobility and thus employ different baseline heuristic functions. 
-However, the dynamic heuristic function in both the experiments is the Euclidean distance in the joint 34-DOF space.
-The parameter values used in both experiments are $\omega_1 (200), \omega_2 (50)$ and $\varepsilon (50)$ for the heuristic-based, and $\tau (30)$ and $\omega (10)$ for the vacillation-based stagnation-region detection.
-We conducted the same experiments (results ommited due to lack of space) with a wide variety of parameters and obtained  only slight differences in the results, demonstrating that our approach is highly robust to the choice of parameters for our domain.
-\new{In addition, we conducted  similar experiments with a 7 DOF arm and with a humanoid climbing stairs while using handrails and obtained similar results to the ones we will shortly show. Results omitted.}
-
-
-Planning statistics, \new{averaged over ten different trials,} for all experiments are provided in Table~\ref{tab:stats}.
-\new{In all the experiments, we successfully test the hypothesis that with the help of user guidance, the planner, augmented only with a simple, generic baseline heuristic, can completely solve challenging problems with a small number of guidances.}
-%In all the experiments the planner succeeded to reach the goal with the help of a user. 
-The deviations in the results presented in Table~\ref{tab:stats} come from the quality of the guidance provided in each run.
-For the video demonstrating the approach, see \footnote{\small{~\url{https://youtu.be/r7DHlc6XBC0}}}.
-% \new{UPLOAD VIDEOS TO YOUTUBE AND UPDATE THIS LINK, USE https://goo.gl/ }
-
-%see~\url{https://drive.google.com/open?id=137rTFQdE7VW9zluy6EV5GVcLzyP0XDlQ}.
 \begin{table}
  \resizebox{\linewidth}{!}{%
   \begin{tabular}{lcccc}
@@ -782,6 +750,44 @@ For the video demonstrating the approach, see \footnote{\small{~\url{https://you
 
 \end{figure}
 
+
+We evaluated the performance of our planning framework on a 34-DOF WAREC humanoid robot~\cite{MHSetal15} 
+which is constrained to maintain static stability at all times. 
+% The robot has four symmetric limbs each having seven revolute joints. The other six dimensions come from the pose of the robot with respect to some global frame of reference. 
+%
+%\subsection{Implementation details}
+To construct the search space, we used a set of motion primitives which are short kinematically feasible motion sequences. 
+These are used to generate the actions, or the successors, of a state during the search. 
+For additional details see~\cite{DL18}
+%These primitives generate motions for the limbs and torso of the robot (\todo{cite Andrew's paper}). 
+
+% These primitives included clockwise and counter-clockwise rotation of individual joints. 
+% Specifically, four different types of motion primitives are used:
+% (i)~primitives for the free limbs of the robot i.e. the limbs whose end effectors are not constrained by any contact surface,  
+% (ii)~primitives to move the torso of the robot,
+% (iii)~primitives to latch onto the target end-effector poses
+% and
+% (iv)~primitives to latch onto the user-provided configuration once it is within a small threshold distance to the state being expanded.
+% Notice that motion primitives (ii) and (iii) require solving closed-chain inverse kinematics for the constrained limbs.
+
+For each experiment we used a small set of fairly generic heuristics. 
+This was done to demonstrate that our approach allows to significantly reduce the engineering effort required in carefully crafting domain-specific heuristics. 
+We conducted two experiments which largely differ in the nature of mobility and thus employ different baseline heuristic functions. 
+However, the dynamic heuristic function in both the experiments is the Euclidean distance in the joint 34-DOF space.
+The parameter values used in both experiments are $\omega_1 (200), \omega_2 (50)$ and $\varepsilon (50)$ for the heuristic-based, and $\tau (30)$ and $\omega (10)$ for the vacillation-based stagnation-region detection.
+We conducted the same experiments (results ommited due to lack of space) with a wide variety of parameters and obtained  only slight differences in the results, demonstrating that our approach is highly robust to the choice of parameters for our domain.
+\new{In addition, we conducted  similar experiments with a 7 DOF arm and with a humanoid climbing stairs while using handrails and obtained similar results to the ones we will shortly show. Results omitted.}
+
+
+Planning statistics, \new{averaged over ten different trials,} for all experiments are provided in Table~\ref{tab:stats}.
+\new{In all the experiments, we successfully test the hypothesis that with the help of user guidance, the planner, augmented only with a simple, generic baseline heuristic, can completely solve challenging problems with a small number of guidances.}
+%In all the experiments the planner succeeded to reach the goal with the help of a user. 
+The deviations in the results presented in Table~\ref{tab:stats} come from the quality of the guidance provided in each run.
+For the video demonstrating the approach, see \footnote{\small{~\url{https://youtu.be/r7DHlc6XBC0}}}.
+% \new{UPLOAD VIDEOS TO YOUTUBE AND UPDATE THIS LINK, USE https://goo.gl/ }
+
+%see~\url{https://drive.google.com/open?id=137rTFQdE7VW9zluy6EV5GVcLzyP0XDlQ}.
+
 \subsection{Bipedal locomotion}
 \label{subsec:locomotion}
 
@@ -812,7 +818,7 @@ We observed similar trends for the second experiment (ladder climbing) where vac
 
 
 \subsection{Mounting onto a ladder}
-The second task we considered was mounting onto a ladder from a standing position (see Fig.~\ref{fig:gui}) to the desired contact poses. This problem is challenging because the ladder rungs and the robot grasping hooks induce narrow spaces in the configuration space which have to be traversed while maintaining stability, to establish the desired contacts. The baseline heuristic  used is the summation of four six-dimensional Euclidean distances between each of the four end effectors and their respective target poses. 
+The second task considered was mounting onto a ladder from a standing position (see Fig.~\ref{fig:gui}) to the desired contact poses. This problem is challenging because the ladder rungs and the robot grasping hooks induce narrow spaces in the configuration space which have to be traversed while maintaining stability, to establish the desired contacts. The baseline heuristic  used is the summation of four six-dimensional Euclidean distances between each of the four end effectors and their respective target poses. 
 For numerical results, see Table~\ref{tab:stats}.
 
 % \subsection{Climbing a staircase}
@@ -897,7 +903,7 @@ There is no clear answer to this question and our approach simply offers a gener
 A natural question to ask is what if the user provides guidance that is not useful?
 If the planner does not progress due to such guidance it would ask for a new one as it detects stagnation in the dynamic heuristics the same way it does in the baseline heuristic. 
 As can be inferred from the experimental results presented in Sec.~\ref{sec:eval}, for the bipedal locomotion 26\% of the guidances were not useful, yet the planner was able to recover after being provided with useful guidance. 
-It is important tonote that while using \mhastar ensures that a path will be found regardless of the  guidance that is provided, unuseful guidance may drive the search towards unuseful regions and waste computational resources.
+It is important to note that while using \mhastar ensures that a path will be found regardless of the  guidance that is provided, unuseful guidance may drive the search towards unuseful regions and waste computational resources.
 }
 %\subsection{Future work}
 %%While providing promising initial results, our framework is far from being complete.
