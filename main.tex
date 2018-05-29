@@ -46,11 +46,22 @@
 \title{	Online, Interactive User Guidance for \\
 		High-dimensional, Constrained Motion Planning }
 
-\author{Fahad Islam, Oren Salzman and Maxim Likhachev% <-this % stops a space
-  \thanks{Robotics Institute, Carnegie Mellon University, Pittsburgh, PA, USA
-    {\tt\small \{fi,osalzman\}@andrew.cmu.edu, maxim@cs.cmu.edu}
-    \newline This research was in part sponsored by ARL, under the Robotics CTA program grant W911NF-10-2-0016, and by NSF Grant IIS-1409549.
-  }%
+% \author{Fahad Islam, Oren Salzman and Maxim Likhachev% <-this % stops a space
+%   \thanks{Robotics Institute, Carnegie Mellon University, USA
+%     {\tt\small \{fi,osalzman\}@andrew.cmu.edu, maxim@cs.cmu.edu}
+%     \newline This research was in part sponsored by ARL, under the Robotics CTA program grant W911NF-10-2-0016, and by NSF Grant IIS-1409549.
+%   }%
+% }
+
+\author{
+Fahad Islam,
+Oren Salzman,
+Maxim Likhachev
+\\
+Robotics Institute, Carnegie Mellon University, USA\\
+%
+\{fi,osalzman\}@andrew.cmu.edu,
+maxim@cs.cmu.edu
 }
 
 
@@ -170,8 +181,8 @@ Without our approach, solving such problems requires the design of task-specific
 %We conclude this paper with a discussion and an outline of possible future work (Sec.~\ref{sec:future}).
 
 
-\section{Related work and algorithmic background}
-\subsection{Motion planning for humanoid robots}
+\section{Related Work and Algorithmic Background}
+\subsection{Motion Planning for Humanoid Robots}
 \label{sec:rel}
 Humanoid robots, for which we demonstrate our approach, often have several dozens of degrees of freedom making planning a challenging task, especially when taking additional constraints into account such as stability and contact constraints.
 One approach to plan the motion for such systems, is to use predefined, carefully chosen fixed gaits~\cite{KKKHKHAI04}. 
@@ -214,7 +225,7 @@ Moreover, if one search ceases to make progress towards the goal, it can use ``p
 %Furthermore, path sharing allows \mhastar to expand each state at most twice.
 %Finally, in graph search, heuristic functions give a principled way to identify when the planner ceases to make progress (see, e.g.,~\cite{VNL17}).
 
-\subsection{Identifying progress in search-based planners}
+\subsection{Identifying Progress in Search-based Planners}
 
 A key component in our work is automatically detecting when our planner requires user guidance.
 This requires \emph{characterizing} regions where the planner ceases to make progress and algorithmic tools to \emph{detect} such regions. 
@@ -234,12 +245,12 @@ We will use the notion of search vacillation to identify when the planner is in 
 
 
 
-\section{Algorithmic approach---user-guided planning}
+\section{Algorithmic Approach---User-guided Planning}
 \label{sec:high}
 
 \algrenewcommand\algorithmicindent{.8em}
 \begin{algorithm}[tb]
-\caption{User-guided planning ($\A$)}
+\caption{User-guided Planning ($\A$)}
 \label{alg:main}	
 \begin{algorithmic}[1]
 \small
@@ -281,7 +292,7 @@ The planner continues to run while using the guidance as long as the planner wit
 Once it escapes the stagnation region (or if the guidance appears to be unhelpful), $\A$ is updated to remove the guidance that was provided by the user (line~8).
 
 
-\section{User-guided planning via \mhastar}
+\section{User-guided Planning via \mhastar}
 \label{sec:planning}
 
 We demonstrate our general planning framework described in Sec.~\ref{sec:high} for the case where the motion-planning algorithm~$\A$ is  \mhastar.
@@ -290,13 +301,13 @@ The user guidance will be used to generate \emph{dynamic heuristics}.
 In Sec.~\ref{sec:q1}-\ref{sec:q3} we describe how we answer the three questions that were posed in Sec.~\ref{sec:intro}.
 %This implementation is slightly more complicated than that described in Alg.~\ref{alg:main} and is detailed in Sec.~\ref{sec:instantiation}.
 
-\subsection{Invoking user guidance (Q1)}
+\subsection{Invoking User Guidance (Q1)}
 \label{sec:q1}
 
 \begin{figure}
   \centering
   \includegraphics[width=0.35\textwidth]{fig/local_min_detection_new2.pdf}
-	% \vspace{-3mm}
+	\vspace{-2mm}
 
   \caption{%
     Visualization of the way vacillation-based stagnation regions are detected---expansion delay as a function of the number of expansions.  
@@ -310,7 +321,7 @@ In Sec.~\ref{sec:q1}-\ref{sec:q3} we describe how we answer the three questions 
 %	It is detected once $\Delta w(\omega) \geq \tau$, where $\tau$ is some predefined threshold.
 % 	The stagnation regions ends when $e_{\text{curr}} = 1$ however, this is detected after $\omega$ additional steps.}%
 
-	% \vspace{-3mm}
+	\vspace{-1.5mm}
   \label{fig:filmstrip-local-min}%
 \end{figure}
 
@@ -459,7 +470,7 @@ For a visualization of heuristic-based stagnation regions and how they are detec
 %For a visualization, see Fig.~\ref{fig:filmstrip-local-min}.
 
 
-\subsection{Form of user guidance (Q2)}
+\subsection{Form of User Guidance (Q2)}
 \label{sec:q2}
 We chose to obtain user guidance 
 (Alg~\ref{alg:main}, line~4)
@@ -486,7 +497,7 @@ We informally experimented with non-expert users, and after some practice with t
   	\vspace{-2mm}
 \end{figure}
 
-\subsection{Using user guidance (Q3)}
+\subsection{Using User Guidance (Q3)}
 \label{sec:q3}
 
 \begin{figure*}[t]%
@@ -782,12 +793,12 @@ Planning statistics, averaged over ten different trials, for all experiments are
 In all the experiments, we successfully test the hypothesis that with the help of user guidance, the planner, augmented only with a generic baseline heuristic, can completely solve challenging problems with a small number of guidances.
 %In all the experiments the planner succeeded to reach the goal with the help of a user. 
 The deviations in the results presented in Table~\ref{tab:stats} come from the quality of the guidance provided in each run.
-For the video demonstrating the approach, see \footnote{\small{~\url{https://youtu.be/r7DHlc6XBC0}}}.
+For the video demonstrating the approach, see \footnote{~\url{https://youtu.be/r7DHlc6XBC0}}.
 % \new{UPLOAD VIDEOS TO YOUTUBE AND UPDATE THIS LINK, USE https://goo.gl/ }
 
 %see~\url{https://drive.google.com/open?id=137rTFQdE7VW9zluy6EV5GVcLzyP0XDlQ}.
 
-\subsection{Bipedal locomotion}
+\subsection{Bipedal Locomotion}
 \label{subsec:locomotion}
 
 
@@ -816,7 +827,7 @@ Indeed, numerical results stated in Table~\ref{tab:stats} confirm that our heuri
 We observed similar trends for the second experiment (ladder climbing) where vacillation-based method falsely detect that the stagnation region was exited (plots omitted).
 
 
-\subsection{Mounting onto a ladder}
+\subsection{Mounting onto a Ladder}
 The second task considered was mounting onto a ladder from a standing position (see Fig.~\ref{fig:gui}) to the desired contact poses. This problem is challenging because the ladder rungs and the robot grasping hooks induce narrow spaces in the configuration space which have to be traversed while maintaining stability, to establish the desired contacts. The baseline heuristic  used is the summation of four six-dimensional Euclidean distances between each of the four end effectors and their respective target poses. 
 For numerical results, see Table~\ref{tab:stats}.
 
@@ -902,6 +913,9 @@ A natural question to ask is what if the user provides a guidance that is not us
 If the planner does not progress due to such guidance it would ask for a new one as it detects stagnation in the dynamic heuristics the same way it does in the baseline heuristic. 
 As can be inferred from the experimental results presented in Sec.~\ref{sec:eval}, for the bipedal locomotion 26\% of the guidances were not useful, yet the planner was able to recover after being provided with useful guidance. 
 It is important to note that while using \mhastar ensures that a path will be found regardless of the  guidance that is provided, unhelpful guidance may drive the search towards unuseful regions and waste computational resources.
+
+\section*{Acknowledgements}
+This research was in part sponsored by ARL, under the Robotics CTA program grant W911NF-10-2-0016, and by NSF Grant IIS-1409549.
 %\subsection{Future work}
 %%While providing promising initial results, our framework is far from being complete.
 %We are interested in experimenting with alternative forms of user guidance such as providing a \emph{constrained sub-manifold} of the configuration space which can be more informative for the planner instead of providing it with a single joint configuration and could potentially reduce the number of user invocations. 
