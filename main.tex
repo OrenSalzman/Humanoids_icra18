@@ -533,9 +533,9 @@ We informally experimented with non-expert users, and after some practice with t
     Namely, each search greedily follows its heuristic and pops the state with the minimal heuristic value.
     %Namely, the priority queues are ordered according to the heuristic-value of the states.
     %
-	\subref{fig:dynamic_heuristic1}~\mhastar starts with a single baseline heuristic (green) which is the Euclidean distance to goal and a stagnation region is identified.
+	\subref{fig:dynamic_heuristic1}~\mhastar starts with a single baseline heuristic (green, falling pattern) which is the Euclidean distance to goal and a stagnation region is identified.
     %
-	\subref{fig:dynamic_heuristic2}~User provides guidance~$\texttt{g}$ and an additional heuristic (red) is automatically generated and drives the search towards the guidance (notice that the baseline heuristic continues to search and that the second, red search, starts from the green state that is closest to the guidance).
+	\subref{fig:dynamic_heuristic2}~User provides guidance~$\texttt{g}$ and an additional heuristic (red, rising pattern) is automatically generated and drives the search towards the guidance (notice that the baseline heuristic continues to search and that the second, red search, starts from the green state that is closest to the guidance).
     %
 	\subref{fig:dynamic_heuristic3}~After passing through~$\texttt{g}$, the additional heuristic (red) drives the search towards the goal.
 	Notice that all the green states have lower Euclidian distance to  the target, meaning that the green search continues to expand states in the U-shaped obstacle.
